@@ -1,0 +1,255 @@
+############ 1. PODS (all ns, wide) ############
+NAMESPACE     NAME                                      READY   STATUS      RESTARTS       AGE     IP           NODE              NOMINATED NODE   READINESS GATES
+cicd          jenkins-5cf8f4fc75-ckgdj                  1/1     Running     7 (9h ago)     5d23h   10.42.0.13   desktop-a00thlv   <none>           <none>
+default       merged-intent-dfd6cfbb5-ts967             1/1     Running     3 (14m ago)    2d23h   10.42.0.15   desktop-a00thlv   <none>           <none>
+default       vllm-asr-8b848d964-c255d                  1/1     Running     0              14m     10.42.0.22   desktop-a00thlv   <none>           <none>
+default       vllm-asr-8b848d964-c6x9t                  0/1     Error       0              2d23h   <none>       desktop-a00thlv   <none>           <none>
+default       vllm-asr-8b848d964-ls5hr                  0/1     Completed   0              2d16h   <none>       desktop-a00thlv   <none>           <none>
+default       vllm-asr-8b848d964-sscjq                  0/1     Completed   0              23h     <none>       desktop-a00thlv   <none>           <none>
+default       vllm-asr-8b848d964-zlrrn                  0/1     Completed   0              4d21h   <none>       desktop-a00thlv   <none>           <none>
+default       vllm-embed-56fd85fc47-wqnxq               0/1     Completed   0              5d16h   <none>       desktop-a00thlv   <none>           <none>
+default       vllm-embed-6cf97b7dc5-8vt86               0/1     Error       0              2d23h   <none>       desktop-a00thlv   <none>           <none>
+default       vllm-embed-6cf97b7dc5-9bcgv               1/1     Running     0              14m     10.42.0.21   desktop-a00thlv   <none>           <none>
+default       vllm-embed-6cf97b7dc5-fr5hn               0/1     Completed   0              2d16h   <none>       desktop-a00thlv   <none>           <none>
+default       vllm-embed-6cf97b7dc5-t498d               0/1     Completed   0              4d21h   <none>       desktop-a00thlv   <none>           <none>
+default       vllm-embed-6cf97b7dc5-z9fxp               0/1     Completed   0              23h     <none>       desktop-a00thlv   <none>           <none>
+kube-system   coredns-54996dc9b4-d499m                  1/1     Running     88 (9h ago)    19d     10.42.0.16   desktop-a00thlv   <none>           <none>
+kube-system   helm-install-traefik-56kpg                0/1     Completed   1 (19d ago)    19d     <none>       desktop-a00thlv   <none>           <none>
+kube-system   helm-install-traefik-crd-thkp8            0/1     Completed   0              19d     <none>       desktop-a00thlv   <none>           <none>
+kube-system   local-path-provisioner-77b9867795-5t64k   1/1     Running     88 (9h ago)    19d     10.42.0.20   desktop-a00thlv   <none>           <none>
+kube-system   metrics-server-6dc596dfb8-q2rxc           1/1     Running     88 (9h ago)    19d     10.42.0.12   desktop-a00thlv   <none>           <none>
+kube-system   nvidia-device-plugin-daemonset-76czb      1/1     Running     5 (9h ago)     5d13h   10.42.0.18   desktop-a00thlv   <none>           <none>
+kube-system   svclb-traefik-e88d3209-clqxw              2/2     Running     176 (9h ago)   19d     10.42.0.11   desktop-a00thlv   <none>           <none>
+kube-system   traefik-59b7647586-7cd87                  1/1     Running     88 (9h ago)    19d     10.42.0.17   desktop-a00thlv   <none>           <none>
+monitoring    grafana-6f7866b665-c9tv5                  1/1     Running     4 (9h ago)     4d20h   10.42.0.14   desktop-a00thlv   <none>           <none>
+monitoring    prometheus-6bbf796fcb-sdmwq               1/1     Running     13 (9h ago)    18d     10.42.0.19   desktop-a00thlv   <none>           <none>
+
+############ 2. NODE: capacity/allocatable/taints ############
+NAME              STATUS   ROLES           AGE   VERSION        INTERNAL-IP     EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION                              CONTAINER-RUNTIME
+desktop-a00thlv   Ready    control-plane   19d   v1.36.4+k3s1   172.20.71.101   <none>        Ubuntu 24.04.5 LTS   6.18.33.2-microsoft-standard-WSL2 (amd64)   docker://29.8.1
+Capacity:
+  cpu:                20
+  ephemeral-storage:  1055762868Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             32766616Ki
+  nvidia.com/gpu:     4
+  pods:               110
+Allocatable:
+  cpu:                20
+  ephemeral-storage:  1027046117185
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             32766616Ki
+  nvidia.com/gpu:     4
+  pods:               110
+System Info:
+Allocatable:
+  cpu:                20
+  ephemeral-storage:  1027046117185
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             32766616Ki
+  nvidia.com/gpu:     4
+  pods:               110
+System Info:
+--- taints ---
+Taints:             <none>
+Unschedulable:      false
+Lease:
+  HolderIdentity:  desktop-a00thlv
+  AcquireTime:     <unset>
+
+############ 3. describe: State/Reason/LastState/Events ############
+======== POD vllm-asr-8b848d964-c255d ========
+Status:           Running
+IP:               10.42.0.22
+-- Last State / Reason --
+    State:          Running
+    Restart Count:  0
+-- Events --
+Events:
+  Type     Reason            Age                 From               Message
+  ----     ------            ----                ----               -------
+  Warning  FailedScheduling  14m                 default-scheduler  0/1 nodes are available: 1 Insufficient nvidia.com/gpu. no new claims to deallocate, preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+  Normal   Scheduled         13m                 default-scheduler  Successfully assigned default/vllm-asr-8b848d964-c255d to desktop-a00thlv
+  Normal   Pulled            13m                 kubelet            spec.containers{vllm}: Container image "dsh/vllm-openai-patched:1.1" already present on machine and can be accessed by the pod
+  Normal   Created           13m                 kubelet            spec.containers{vllm}: Container created
+  Normal   Started           13m                 kubelet            spec.containers{vllm}: Container started
+  Warning  Unhealthy         11m (x21 over 13m)  kubelet            spec.containers{vllm}: Startup probe failed: Get "http://10.42.0.22:8000/health": dial tcp 10.42.0.22:8000: connect: connection refused
+======== POD vllm-asr-8b848d964-c6x9t ========
+Status:           Failed
+Reason:           UnexpectedAdmissionError
+Message:          Pod was rejected: Allocate failed due to no healthy devices present; cannot allocate unhealthy devices nvidia.com/gpu, which is unexpected
+IP:               
+-- Last State / Reason --
+Reason:           UnexpectedAdmissionError
+    State:          Terminated
+      Reason:       Error
+      Exit Code:    255
+    Restart Count:  0
+-- Events --
+Events:                      <none>
+======== POD vllm-asr-8b848d964-ls5hr ========
+Status:           Succeeded
+IP:               
+-- Last State / Reason --
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+    Restart Count:  0
+-- Events --
+Events:                      <none>
+======== POD vllm-asr-8b848d964-sscjq ========
+Status:           Succeeded
+IP:               
+-- Last State / Reason --
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+    Restart Count:  0
+-- Events --
+Events:
+  Type     Reason                    Age                From     Message
+  ----     ------                    ----               ----     -------
+  Warning  UnexpectedAdmissionError  14m                kubelet  Allocate failed due to no healthy devices present; cannot allocate unhealthy devices nvidia.com/gpu, which is unexpected
+  Warning  FailedMount               14m (x4 over 14m)  kubelet  MountVolume.SetUp failed for volume "uvicorn-logcfg" : object "default"/"vllm-uvicorn-logcfg" not registered
+======== POD vllm-asr-8b848d964-zlrrn ========
+Status:           Failed
+IP:               
+-- Last State / Reason --
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+    Restart Count:  0
+-- Events --
+Events:                      <none>
+
+############ 4. LOGS (current + previous) ############
+---- vllm-asr-8b848d964-c255d --tail=20 ----
+(APIServer pid=1) INFO:     2026-10-14T01:49:45+0000 10.42.0.1:57154 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:49:56+0000 10.42.0.1:53794 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:50:06+0000 10.42.0.1:46514 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:50:16+0000 10.42.0.1:50660 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:50:27+0000 10.42.0.1:37798 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:50:37+0000 10.42.0.1:51728 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:50:47+0000 10.42.0.1:51274 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:50:57+0000 10.42.0.1:36286 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:51:07+0000 10.42.0.1:43086 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:51:17+0000 10.42.0.1:48702 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:51:27+0000 10.42.0.1:60752 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:51:38+0000 10.42.0.1:54650 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:51:48+0000 10.42.0.1:54048 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:51:58+0000 10.42.0.1:44726 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:52:09+0000 10.42.0.1:41890 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:52:19+0000 10.42.0.1:57470 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:52:29+0000 10.42.0.1:34656 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:52:40+0000 10.42.0.1:42148 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:52:50+0000 10.42.0.1:36614 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-14T01:53:00+0000 10.42.0.1:33132 - "GET /health HTTP/1.1" 200 OK
+---- vllm-asr-8b848d964-c255d --previous --tail=20 ----
+Error from server (BadRequest): previous terminated container "vllm" in pod "vllm-asr-8b848d964-c255d" not found
+---- vllm-asr-8b848d964-c6x9t --tail=20 ----
+(APIServer pid=1) INFO:     2026-10-11T08:00:02+0000 10.42.0.1:60346 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:00:12+0000 10.42.0.1:45414 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:00:22+0000 10.42.0.1:47158 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:00:32+0000 10.42.0.1:33244 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:00:42+0000 10.42.0.1:46928 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:00:51+0000 10.42.0.1:38426 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:01:01+0000 10.42.0.1:41202 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:01:11+0000 10.42.0.1:49600 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:01:21+0000 10.42.0.1:42232 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:01:31+0000 10.42.0.1:39620 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:01:41+0000 10.42.0.1:58200 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:01:50+0000 10.42.0.1:33310 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:02:00+0000 10.42.0.1:55318 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:02:10+0000 10.42.0.1:57240 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:02:20+0000 10.42.0.1:47636 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:02:30+0000 10.42.0.1:42306 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:02:40+0000 10.42.0.1:51912 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:02:50+0000 10.42.0.1:53380 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:02:59+0000 10.42.0.1:53002 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=1) INFO:     2026-10-11T08:03:09+0000 10.42.0.1:47676 - "GET /health HTTP/1.1" 200 OK
+---- vllm-asr-8b848d964-c6x9t --previous --tail=20 ----
+Error from server (BadRequest): previous terminated container "vllm" in pod "vllm-asr-8b848d964-c6x9t" not found
+
+############ 5. DEPLOY 要点 (image/args/resources/probes/gpu) ############
+======== DEPLOY vllm-asr ========
+replicas=1 ready=1
+image: dsh/vllm-openai-patched:1.1
+command: ["python3","-m","vllm.entrypoints.openai.api_server"]
+args: ["--model=/models/qwen3-asr-0.6b-official","--served-model-name=qwen3-asr","--host=0.0.0.0","--port=8000","--max-model-len=4096","--limit-mm-per-prompt={\"audio\": 1}","--trust-remote-code","--log-config-file=/logcfg/uvicorn.json","--gpu-memory-utilization=0.55","--cudagraph-capture-sizes=64"]
+resources: {"limits":{"cpu":"4","memory":"16Gi","nvidia.com/gpu":"1"},"requests":{"cpu":"1","memory":"6Gi","nvidia.com/gpu":"1"}}
+readiness: {"failureThreshold":3,"httpGet":{"path":"/health","port":8000,"scheme":"HTTP"},"periodSeconds":10,"successThreshold":1,"timeoutSeconds":5}
+liveness: 
+nodeSelector= tolerations=
+======== DEPLOY llama-asr ========
+replicas=0 ready=
+image: ghcr.nju.edu.cn/ggml-org/llama.cpp:server
+command: 
+args: ["--model","/models/qwen3-asr-1.7b/Qwen3-ASR-1.7B-Q4_K_M.gguf","--mmproj","/models/qwen3-asr-1.7b/mmproj-Qwen3-ASR-1.7B-Q4_K_M.gguf","--host","0.0.0.0","--port","8000","-c","4096","-t","6","--no-webui"]
+resources: {"limits":{"cpu":"4","memory":"3Gi"},"requests":{"cpu":"500m","memory":"1Gi"}}
+readiness: {"failureThreshold":3,"httpGet":{"path":"/health","port":8000,"scheme":"HTTP"},"periodSeconds":10,"successThreshold":1,"timeoutSeconds":5}
+liveness: 
+nodeSelector= tolerations=
+======== DEPLOY vllm-embed ========
+replicas=1 ready=1
+image: dsh/vllm-openai-patched:1.1
+command: ["python3","-m","vllm.entrypoints.openai.api_server"]
+args: ["--model=/models/dmeta-embedding-zh-small","--served-model-name=dmeta-small","--runner=pooling","--host=0.0.0.0","--port=8000","--max-model-len=512","--dtype=float32","--pooler-config={\"use_activation\":false}","--log-config-file=/logcfg/uvicorn.json","--gpu-memory-utilization=0.15"]
+resources: {"limits":{"cpu":"3","memory":"6Gi","nvidia.com/gpu":"1"},"requests":{"cpu":"1","memory":"2Gi","nvidia.com/gpu":"1"}}
+readiness: {"failureThreshold":3,"httpGet":{"path":"/health","port":8000,"scheme":"HTTP"},"periodSeconds":10,"successThreshold":1,"timeoutSeconds":5}
+liveness: 
+nodeSelector= tolerations=
+======== DEPLOY merged-intent ========
+replicas=1 ready=1
+image: dsh/vllm-openai-patched:1.1
+command: ["python3","/code/service.py"]
+args: ["8000","--model=/models/merged-intent"]
+resources: {"limits":{"cpu":"4","memory":"8Gi"},"requests":{"cpu":"1","memory":"3Gi"}}
+readiness: {"failureThreshold":3,"httpGet":{"path":"/health","port":8000,"scheme":"HTTP"},"periodSeconds":10,"successThreshold":1,"timeoutSeconds":5}
+liveness: {"failureThreshold":6,"httpGet":{"path":"/health","port":8000,"scheme":"HTTP"},"initialDelaySeconds":180,"periodSeconds":30,"successThreshold":1,"timeoutSeconds":1}
+nodeSelector= tolerations=
+
+############ 6. ENDPOINTS + 资源用量 ############
+Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+NAME            ENDPOINTS            AGE
+kubernetes      172.20.71.101:6443   19d
+llama-asr       <none>               5d12h
+merged-intent   10.42.0.15:8000      3d12h
+vllm-asr        10.42.0.22:8000      4d22h
+vllm-embed      10.42.0.21:8000      5d21h
+vllm-march7     <none>               8d
+--- top pods ---
+NAME                            CPU(cores)   MEMORY(bytes)   
+merged-intent-dfd6cfbb5-ts967   1m           4432Mi          
+vllm-asr-8b848d964-c255d        12m          6494Mi          
+vllm-embed-6cf97b7dc5-9bcgv     13m          3800Mi          
+--- top nodes ---
+NAME              CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+desktop-a00thlv   556m         2%       11343Mi         35%         
+
+############ 7. EVENTS (recent) ############
+default       14m         Normal    SuccessfulCreate                 replicaset/vllm-embed-6cf97b7dc5              Created pod: vllm-embed-6cf97b7dc5-9bcgv
+kube-system   14m         Normal    Pulled                           pod/nvidia-device-plugin-daemonset-76czb      Container image "nvcr.io/nvidia/k8s-device-plugin:v0.17.4" already present on machine and can be accessed by the pod
+kube-system   14m         Normal    UpdatedLoadBalancer              service/traefik                               Updated LoadBalancer with new IPs: [] -> [172.20.71.101]
+kube-system   14m         Normal    UpdatedLoadBalancer              service/traefik                               Updated LoadBalancer with new IPs: [172.20.71.101] -> [172.20.71.101]
+kube-system   14m         Normal    AppliedManifest                  addon/traefik                                 Applied manifest at "/var/lib/rancher/k3s/server/manifests/traefik.yaml"
+kube-system   14m         Normal    Created                          pod/nvidia-device-plugin-daemonset-76czb      Container created
+default       14m         Normal    SuccessfulCreate                 replicaset/vllm-asr-8b848d964                 Created pod: vllm-asr-8b848d964-c255d
+kube-system   14m         Normal    Started                          pod/nvidia-device-plugin-daemonset-76czb      Container started
+kube-system   14m         Normal    SandboxChanged                   pod/local-path-provisioner-77b9867795-5t64k   Pod sandbox changed, it will be killed and re-created.
+kube-system   14m         Normal    Pulled                           pod/local-path-provisioner-77b9867795-5t64k   Container image "rancher/local-path-provisioner:v0.0.37" already present on machine and can be accessed by the pod
+kube-system   14m         Normal    Created                          pod/local-path-provisioner-77b9867795-5t64k   Container created
+kube-system   14m         Normal    Started                          pod/local-path-provisioner-77b9867795-5t64k   Container started
+default       14m         Normal    Pulled                           pod/vllm-embed-6cf97b7dc5-9bcgv               Container image "dsh/vllm-openai-patched:1.1" already present on machine and can be accessed by the pod
+default       14m         Normal    Created                          pod/vllm-embed-6cf97b7dc5-9bcgv               Container created
+default       14m         Normal    Created                          pod/vllm-asr-8b848d964-c255d                  Container created
+default       14m         Normal    Pulled                           pod/vllm-asr-8b848d964-c255d                  Container image "dsh/vllm-openai-patched:1.1" already present on machine and can be accessed by the pod
+default       14m         Normal    Started                          pod/vllm-embed-6cf97b7dc5-9bcgv               Container started
+default       14m         Normal    Started                          pod/vllm-asr-8b848d964-c255d                  Container started
+kube-system   13m         Warning   Unhealthy                        pod/metrics-server-6dc596dfb8-q2rxc           Readiness probe failed: HTTP probe failed with statuscode: 500
+default       13m         Warning   Unhealthy                        pod/merged-intent-dfd6cfbb5-ts967             Startup probe failed: Get "http://10.42.0.15:8000/health": dial tcp 10.42.0.15:8000: connect: connection refused
+default       13m         Warning   Unhealthy                        pod/vllm-embed-6cf97b7dc5-9bcgv               Startup probe failed: Get "http://10.42.0.21:8000/health": dial tcp 10.42.0.21:8000: connect: connection refused
+default       12m         Warning   Unhealthy                        pod/vllm-asr-8b848d964-c255d                  Startup probe failed: Get "http://10.42.0.22:8000/health": dial tcp 10.42.0.22:8000: connect: connection refused
+=== DONE ===

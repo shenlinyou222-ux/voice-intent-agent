@@ -1,0 +1,15 @@
+{
+ "rules": 1.0,
+ "model": 0.9885057471264368,
+ "e2e": 0.9885057471264368,
+ "per_intent": {
+  "exact_search": 1.0,
+  "file_search": 1.0,
+  "launch_app": 1.0,
+  "open_file": 1.0,
+  "open_url": 1.0,
+  "open_web": 1.0,
+  "unknown": 0.78125,
+  "web_search": 1.0
+ }
+}

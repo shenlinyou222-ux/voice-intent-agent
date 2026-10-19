@@ -1,0 +1,11 @@
+{
+ "en_intent": 1.0,
+ "en_exact": 0.0,
+ "orig_intent": 0.9885057471264368,
+ "orig_exact": 0.7832512315270936,
+ "K": 6653,
+ "K_ch": 6628,
+ "n_en_words": 25,
+ "target_len_old": 18776,
+ "target_len_new": 14964
+}

@@ -1,0 +1,30 @@
+# 模型与索引（生成物，不进 git）
+model/
+models/
+*.pt
+*.safetensors
+*.gguf
+*.bin
+intent_index.json
+*.faiss
+*.index
+
+# 音频与转写产物
+wavs/
+utt/
+*.wav
+*.m4a
+*.pcm
+*.mp3
+media/
+
+# profile 与截图
+profiles/
+screenshots/
+
+# 临时
+__pycache__/
+*.pyc
+*.log
+.venv/
+tmp/

@@ -1,0 +1,347 @@
+{
+  "generator": "opencode",
+  "session": "ses_eb3637506ffeoeQ5UIVdyl40q4",
+  "version": 1,
+  "ids": {
+    "bu": 0,
+    "long": 1,
+    "min": 2,
+    "cong": 3,
+    "ge": 4,
+    "yi": 5,
+    "jia": 6,
+    "dian": 7,
+    "er": 8,
+    "san": 9,
+    "si": 10,
+    "wu": 11,
+    "liu": 12,
+    "ji": 13,
+    "ba": 14,
+    "jiu": 15,
+    "diao": 16,
+    "zen": 17,
+    "jin": 18,
+    "yin": 19,
+    "pan": 20,
+    "din": 21,
+    "jiao": 22,
+    "zun": 23,
+    "cuan": 24,
+    "zong": 25
+  },
+  "entries": [
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 3,
+      "triggers": [
+        "补农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 3,
+      "triggers": [
+        "补农民"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 3,
+      "triggers": [
+        "补充农民"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 3,
+      "triggers": [
+        "补个农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 3,
+      "triggers": [
+        "补一下农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 3,
+      "triggers": [
+        "补点农民"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 3,
+      "triggers": [
+        "补个农民"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 3,
+      "triggers": [
+        "农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 1,
+      "triggers": [
+        "一农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 2,
+      "triggers": [
+        "二农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 3,
+      "triggers": [
+        "三农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 4,
+      "triggers": [
+        "四农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 5,
+      "triggers": [
+        "五农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 6,
+      "triggers": [
+        "六农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 7,
+      "triggers": [
+        "七农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 8,
+      "triggers": [
+        "八农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 9,
+      "triggers": [
+        "九农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": 10,
+      "triggers": [
+        "十农"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "vad_calibrate",
+      "arg": null,
+      "triggers": [
+        "调整静音判定"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "vad_calibrate",
+      "arg": null,
+      "triggers": [
+        "静音判定"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "vad_calibrate",
+      "arg": null,
+      "triggers": [
+        "校准静音"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "vad_calibrate",
+      "arg": null,
+      "triggers": [
+        "调整静音窗"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "vad_calibrate",
+      "arg": null,
+      "triggers": [
+        "静音窗"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "vad_calibrate",
+      "arg": null,
+      "triggers": [
+        "调整静音"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "vad_calibrate",
+      "arg": null,
+      "triggers": [
+        "静音判定校准"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    },
+    {
+      "intent": "vad_calibrate",
+      "arg": null,
+      "triggers": [
+        "重新校准静音"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "aoe4-profile"
+      }
+    }
+  ]
+}

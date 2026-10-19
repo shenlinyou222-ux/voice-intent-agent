@@ -1,0 +1,384 @@
+{
+  "generator": "opencode",
+  "session": "ses_eb3637506ffeoeQ5UIVdyl40q4",
+  "deployed_at": "2026-10-18 / 2026-10-19",
+  "version": "1.7.4-opencode",
+  "domains": {
+    "labels": [
+      "日常(默认)",
+      "游戏",
+      "运维",
+      "system"
+    ],
+    "switch": "说「切换到游戏 / 切换到运维 / 切换到日常」（或「游戏模式」…）→ 立即换域并热加载",
+    "state": "opencode_fastpath/domain_state.json（按 profile 记，重启仍是那个域）",
+    "default": "日常（可以直接说「打开B站」这类；开局不用先切）"
+  },
+  "product": "语音意图识别（原名：帝国时代4 语音指挥）",
+  "mode": "additive + 33 marked patches + 5 one-file edits + k8s realtime enable (all reversible)",
+  "single_switch": {
+    "file": "voice_agent/intent_config.json → intent_registry（文件第一个 key）",
+    "schema": "{intent, says, pinyin, desc, enabled, tag} —— 意图 / 说法 / 拼音标注 / 具体作用 / 是否开启 / 意图域",
+    "rule": "参与匹配 = enabled(true) 且（tag == 当前域 或 tag == system）；不再用 null",
+    "says": "apps/urls/files 三条留空（says_auto 说明），由加载器按 名字+别名 × 打开类动词 自动展开",
+    "pinyin": "每条说法的拼音标注写进 json，加载时自动校验（不一致打 WARN）",
+    "hot_reload": "每句匹配前检查 mtime+size，改完即生效；也能说「重新加载意图」",
+    "gate": "opencode_fastpath/intents.py 在 ACTIONS 上套门槛：关掉的意图任何路径都不执行",
+    "profiles": "三个 profile 的 behavior.intent_registry_file 都指向同一份；旧 table_*.json 退场",
+    "command_list": "说「命令列表」= 打开这份 json（不再生成 .md）",
+    "system_tag": "dictation_on/off、清空输入、命令列表、调整静音判定、灵敏度/诊断/重载 = tag system（任何域都生效）"
+  },
+  "user_cases_fixed": [
+    "★★ 英文名程序掩码碰撞（2026-10-19 用户实测）：「启动Blender」和「启动PowerShell」掩码完全相同 → 打开/启动任何英文名程序都命中第一个（实测把 Blender 开成了 PowerShell）。根因：ASCII 字母被塞进「剩余位散列字段」，字符一多就饱和 → 现在 ASCII 字母/数字各占一个独立位（[OPENCODE] pinyin.Encoder.mask）",
+    "★ 打开类三件套（launch_app/open_url/open_file）：tag 改 system（任何域可用）+ 闭集从【唯一 json】的 apps/urls/files 取（aoe4 域也能「打开知乎」→ 原来拼音命中了但动作说「网址闭集里没有知乎」）+ registry 里 says 写成「打开X/启动X…」",
+    "★ 假命中（2026-10-19）：「让AI看看」里的 3 字片段 'I看看' 撞上 InfoQ 的【前缀行】→ 把整句当成 open_url。现在整句路由（A 路 + B 路兜底）只认【整条说法】命中（kind=1），前缀行只留给逐字早火，并且命中但不执行会打日志",
+    "★★ 关闭输入/听写关不掉（2026-10-19 用户实测）：dictation_on/off、清空输入、关闭X 被 fastpath 标成 destructive → blocked → A 路整句也拒绝执行 → 掉回主路径 → parse() 不认 → unknown → 被当听写打进输入框。修：registry 里的意图不再受 blocked 影响（执不执行由 enabled 决定）",
+    "intent_config.json 的 intent_registry 统一格式：每条固定 6 字段（intent/says/pinyin/desc/enabled/tag），顺序一致；除已废弃的 dsh_* 外全部写全说法 + 拼音标注",
+    "关闭听写后：不匹配意图的话【不再打进输入框】，并明说「🔇 听写已关闭…忽略、未打进输入框」（[OPENCODE-H2]）",
+    "A 路异常不再静默（[OPENCODE-A] 的 except 会吞异常）；a_path_preempt 包一层 WARN；命中但不执行的情况也打 WARN（原来无声无息）",
+    "★ 裁剪静音【白裁】(2026-10-19 用户实测)：[OPENCODE-S] 补丁把 `chunk = _arr` 那行吃掉了 → 裁剪只写了日志，ASR/handle 收到的还是没裁的原段（用户原话「裁剪了为什么还要报原长度」）→ 已把那行补回（实测 1.60s→1.18s 真的生效）",
+    "听写转写行改成：`VAD 段转写 1.18s（送 ASR）；原段 1.60s − 裁 0.42s → 「…」 129ms`（原来只报原段长度）",
+    "VAD 灵敏度（用户实测漏检）：prob 0.40→0.30、hits 2→1、平滑 3→2、VAD 增益上限 60→80、目标RMS 0.03→0.05（三个 profile 同步）；档案覆盖配置 + 起判回收上限硬编码 0.40 两个坑已修",
+    "`📥 段进入 handle` 里的 `VAD峰0.000` 是假的（seg 没有 peak_prob 属性）→ 加 peak_prob 属性（= last_seg_prob），现在报真实峰值（0.85/0.94/0.98）",
+    "麦克风空窗监测（micwatch）：60s 收到 2003 块 ≈ 60.1s 音频、0 丢块 0 溢出 → 排除「采集空窗」的猜测",
+    "「调整静音。」原来命中后被当听写打进终端 → _record 改为：动作存在但失败=消费本句（不再掉听写），并新增 B 路兜底 b_try()（A 路没跑到也执行）",
+    "「关闭输入」原来不在说法里、且 dictation_on/off 是 office 标签 → aoe4 域关不掉听写 → 补说法 + 改 tag=system",
+    "终端 auto 模式不再自动听写（随便说话被打进 shell）→ 说「开始输入」才往终端打",
+    "新增：听不清/提高灵敏度 → sens_up ｜ 太吵了/降低灵敏度 → sens_down ｜ 灵敏度 → sens_show ｜ 识别不准/总听错 → asr_diag ｜ 重新加载意图 → reload_intents"
+  ],
+  "renamed": [
+    "桌面快捷方式 帝国时代4语音指挥.lnk → 语音意图识别.lnk（目标不变）",
+    "横幅/窗口标题/README/argparse/配置注释 → 语音意图识别（意图域 aoe4/office/ops/openra 保留）"
+  ],
+  "new_modules": {
+    "opencode_fastpath/domains.py": "切换意图域：日常(默认)/游戏/运维（domain_daily/domain_game/domain_ops）",
+    "opencode_fastpath/intents.py": "唯一意图开关（intent_registry）+ mtime 热加载 + ACTIONS 门槛 + 拼音标注校验 + 领域选择落盘",
+    "opencode_fastpath/sens.py": "实战意图：sens_up/sens_down/sens_show/asr_diag/reload_intents",
+    "opencode_fastpath/micwatch.py": "麦克风监控看门狗（块间隔/队列深度/驱动溢出/当时在忙什么）",
+    "opencode_fastpath/cmd_list.py": "system 意图「命令列表」→ 打开唯一意图清单 intent_config.json",
+    "opencode_fastpath/reply.py": "统一返回：保证每意图有 message；一句一个总返回；wait_utterance() 等异步"
+  },
+  "selfcheck": "17/17 PASS",
+  "python": "E:\\voice_agent_build\\Scripts\\python.exe (3.12.10, pypinyin 0.55.0, websockets 17.2)",
+  "log_levels": {
+    "info": "转写 / 耗时 / 动作结果 / 错误",
+    "debug": "VAD 参数 / 拼音 / 裁剪 / 自适应 / 入队",
+    "switch": "VOICE_AGENT_LOG=debug 或 behavior.log_level"
+  },
+  "windows_tuned": {
+    "stop_window": "silero required_misses + segmenter vad_silence_ms（同步）",
+    "preroll": "keep = min(640 − ahead_trim_ms, 总长×ahead_frac)，起点前 onset_margin_ms",
+    "start_trigger": "prob_threshold / required_hits（持续有声未出段 → 放宽；60s 无漏 → 回收）",
+    "asr_gain": "asr_gain_cap（默认 200；实测 60× 在 0.05 音量空转 12%）"
+  },
+  "k8s_change": {
+    "deployment": "default/vllm-asr",
+    "change": "args += --hf-overrides={\"architectures\": [\"Qwen3ASRRealtimeGeneration\"]}",
+    "apply": "bash opencode_fastpath/k8s/apply.sh",
+    "rollback": "bash opencode_fastpath/k8s/rollback.sh"
+  },
+  "entrypoints": {
+    "aoe4_original": "aoe4\\run_voice_aoe4.cmd（桌面快捷方式；常开监听）",
+    "aoe4_opencode": "aoe4\\run_voice_aoe4_opencode.cmd（+拼音识别开关/自适应/语音校准）",
+    "generic": "run_src_voice_agent.cmd / run_opencode_live.cmd",
+    "check": "python -m opencode_fastpath.selfcheck",
+    "patch": "python -m opencode_fastpath.patch --apply|--status|--rollback",
+    "docs": "opencode_fastpath/COMMANDS.md"
+  },
+  "modified": {
+    "voice_agent.py": {
+      "markers": 31,
+      "sha256_current": "02f2d508118549c9ee3cb35c3275ceeb86eea1e9d8c6eac951afc08a33a439cf",
+      "backup": "voice_agent.py.bak-opencode-20261018",
+      "backup_sha256": "1fcdf5d7e21f192d3afcdebe0a55d1791d294b0ffae3632ecae67005d47d1a3f",
+      "rollback": "python -m opencode_fastpath.patch --rollback",
+      "fix_F": "PTT 模式下 self.seg 无 .sm → 原日志行 AttributeError 使 app 启动即崩（已修）",
+      "log_level": "INFO 只留转写/耗时/动作/错误；其余 debug（[OPENCODE-X]）"
+    },
+    "asr_vllm.py": {
+      "changes": "HOTWORD_ENABLED: False → env 驱动（OPENCODE_ASR_BIAS=1）",
+      "sha256_current": "db97c09d3ecd6f78fc50e41b134cf3e947e5dab065ad5a45184877dcd70243d4",
+      "backup": "asr_vllm.py.bak-opencode-20261019",
+      "backup_sha256": "431d91f6a5f1928103ce68e49644892a76832f8df1ac9c0179f5857846ec8038",
+      "rollback": "Copy-Item \".\\asr_vllm.py.bak-opencode-20261019\" \".\\asr_vllm.py\" -Force"
+    },
+    "dlog.py": {
+      "changes": "日志级别 debug<info<warn<error（INFO=转写/耗时/动作/错误）",
+      "sha256_current": "c89d30da5eaaba15a86b0448c8ffae672ae7b9b6cc8920f210e147a0cf145879",
+      "backup": "dlog.py.bak-opencode-20261019",
+      "backup_sha256": "e20e56a87980b4f40a17d7e4564a791327ec3023dd4dc76846c85d9ee86236e6",
+      "rollback": "Copy-Item \".\\dlog.py.bak-opencode-20261019\" \".\\dlog.py\" -Force"
+    },
+    "typein.py": {
+      "changes": "听写验证：固定 sleep 0.15s → 轮询确认（30ms/次，上限 250ms）",
+      "sha256_current": "d09d0c5e3e244b33b9eca40bfb89dbea11718b94b1fe8790a10798b1869340b4",
+      "backup": "typein.py.bak-opencode-20261019",
+      "backup_sha256": "24a348b7b431aeb8a9db2f2c8e3b0ca6c58bc17ce860d9c98c154b0192822f8a",
+      "rollback": "Copy-Item \".\\typein.py.bak-opencode-20261019\" \".\\typein.py\" -Force"
+    },
+    "aoe4/profiles/aoe4-v1/intent_config.aoe4.json": {
+      "changes": "enable_dictation true；dictation_punct_to_space/stitch；vad_required_misses 5→19；asr_gain_cap/onset_margin/ahead_frac；fastpath_mode=off；log_level=info；vad_calibrate 意图",
+      "sha256_current": "89bb83eb3e205f77af54c92c084f2cceb0a1cf5752c367caf92a49c8ec035274",
+      "backup": "intent_config.aoe4.json.bak-opencode-20261019",
+      "backup_sha256": null,
+      "rollback": "Copy-Item \".\\intent_config.aoe4.json.bak-opencode-20261019\" \".\\aoe4/profiles/aoe4-v1/intent_config.aoe4.json\" -Force"
+    },
+    "intent_config.json": {
+      "changes": "fastpath live(table_office)；dictation 参数；vad 键；log_level",
+      "sha256_current": "57fda33fd435629c3cfc07fb4bd618ce88c3a417bf967cb865ec607442731de3",
+      "backup": "intent_config.json.bak-opencode-20261019",
+      "backup_sha256": "69ad2e896e97b0183746d0b8a15764d42eed3199d4ad95b9a08731b358ccb561",
+      "rollback": "Copy-Item \".\\intent_config.json.bak-opencode-20261019\" \".\\intent_config.json\" -Force"
+    },
+    "ops/profiles/ops-v1/intent_config.ops.json": {
+      "changes": "fastpath live(table_ops)；vad_silence_ms/预滚/增益键；vad_calibrate 意图；log_level（无独立备份；改动均为新增键 + 数值，可手工回退）",
+      "sha256_current": "c0b5fbb671c38047117c05b694ea19c87c961f7eabbaaa8fb41d980fe777a01a",
+      "backup": null,
+      "backup_sha256": null,
+      "rollback": null
+    }
+  },
+  "rollback": "1) patch --rollback  2) 还原 asr_vllm.py / dlog.py / 配置备份  3) k8s rollback.sh  4) 删 opencode_fastpath + 新增 cmd/ps1 + 标记",
+  "runtime_artifacts": {
+    "tables": "table_office/ops/system/aoe4.json",
+    "vad_profiles": "vad_profiles.json（按说话人）",
+    "snapshots": "snapshots/（git_HEAD/worktree.diff/aoe4 zip）"
+  },
+  "files": [
+    {
+      "name": "COMMANDS.md",
+      "bytes": 14939,
+      "sha256": "3c0ee645c916e037ebc8e6068d3558128cf1c6be0b1c3c3a6b44aaf399484d73"
+    },
+    {
+      "name": "README.md",
+      "bytes": 6429,
+      "sha256": "bd09643a8a9e0d236b4cad7c139829f1bb851ff63880e420103d6c4fdb6d0e60"
+    },
+    {
+      "name": "ROLLBACK.md",
+      "bytes": 6677,
+      "sha256": "899e262581f8cdc074db2b2a64a36e0cc32a3f15f8d83bcaa8734ff2cbd76933"
+    },
+    {
+      "name": "__init__.py",
+      "bytes": 467,
+      "sha256": "3969a50bb938420434fc39193b8db79a4d1eda1f15f04b5b1cb38bf38e79c1a1"
+    },
+    {
+      "name": "build_table.py",
+      "bytes": 2347,
+      "sha256": "7a17fa3547b9433302359c40af584f8591e8d30099fa0cc2e84cf003f1e50d3d"
+    },
+    {
+      "name": "build_table_aoe4.py",
+      "bytes": 2770,
+      "sha256": "072d79cfbdc015db2a59bd9a2be207ca21bf5927110d5c3bac4747e31ef91cfc"
+    },
+    {
+      "name": "build_table_domain.py",
+      "bytes": 2856,
+      "sha256": "07e10713a903badbf5b831cb493991d4bd33414a35d1a6bd5324d7f412c9d4ce"
+    },
+    {
+      "name": "build_table_system.py",
+      "bytes": 1825,
+      "sha256": "e057d8d9d98fa1220b5efabf1f256dd481db45a1b76ad4470bf1cf4eb57d675a"
+    },
+    {
+      "name": "cmd_list.py",
+      "bytes": 1379,
+      "sha256": "c903b8777c2882ad6f14ec6764954b255aec5ab938408ffcf04f3438897f2fa2"
+    },
+    {
+      "name": "demo.py",
+      "bytes": 2849,
+      "sha256": "af2e765f9af8684630f8b7c00b979ac876314c0015af57ab96c2458e059cc58f"
+    },
+    {
+      "name": "dictate_norm.py",
+      "bytes": 1210,
+      "sha256": "3d6ac34cfefd01c6ab4bea81fd3212099917a6ca8abfda2e5e4367f0189c65b2"
+    },
+    {
+      "name": "domain_state.json",
+      "bytes": 158,
+      "sha256": "547b5ec8d1a20b85e2298d2ff43041abb48d0207e31c42be92a6a2b9bcb8de8c"
+    },
+    {
+      "name": "domains.py",
+      "bytes": 2060,
+      "sha256": "0d9d70691d227b7241e8eb6961ad56297a264b62b632ebf849adb09e26c98af7"
+    },
+    {
+      "name": "fastpath.py",
+      "bytes": 9448,
+      "sha256": "8837858a9f6cfbe58703c828b4fc2dc24d927eec8a31f2f13b7b84e42dc42cf6"
+    },
+    {
+      "name": "favs.py",
+      "bytes": 14329,
+      "sha256": "abae3ec9fd64f2fae4da559f56d560e371dbd4d3304030d98619e935ad43094a"
+    },
+    {
+      "name": "hook.py",
+      "bytes": 5144,
+      "sha256": "34f5d1bc06ae811169645380c927e54abee5ea06816d9dcf17796e516accfad6"
+    },
+    {
+      "name": "hotwords.py",
+      "bytes": 5016,
+      "sha256": "1dc26fa322dc16660708e344dac3acfa716ca05b4fc9ea422dbdef241ca5927b"
+    },
+    {
+      "name": "intents.py",
+      "bytes": 18638,
+      "sha256": "3e13d79a912536aeeb98c8861b951da606c3746724c2ffef82193256b0061c99"
+    },
+    {
+      "name": "learn.py",
+      "bytes": 1831,
+      "sha256": "da365bd1d4256655ec5a1f0244bc48d568f47777068846b5f9dd1cd993ec9023"
+    },
+    {
+      "name": "micwatch.py",
+      "bytes": 5173,
+      "sha256": "2eece8993108bdc3e126ef794ec6e8c2941d9b0ae7c99a72da3ffbb9aee6c9b3"
+    },
+    {
+      "name": "patch.py",
+      "bytes": 34750,
+      "sha256": "e0a3dee3c1de0758f51cf8631ff594a0a4d624829c61007494115fb8aba12943"
+    },
+    {
+      "name": "pinyin.py",
+      "bytes": 4521,
+      "sha256": "fc99ea18e2da1d420752527640c5cfe44c3266ef1f977e707ac3d1da307f0778"
+    },
+    {
+      "name": "reply.py",
+      "bytes": 12101,
+      "sha256": "6047a5b25775d08ed73ba731456d8219478b1abcaabf409d573d65b1f75ab132"
+    },
+    {
+      "name": "report.py",
+      "bytes": 1893,
+      "sha256": "eb36687cad5c645fc23979b1783bc3c3399a819d5a8d1f6b5f90075cc6e7ebbc"
+    },
+    {
+      "name": "run.py",
+      "bytes": 1138,
+      "sha256": "3fede966a133719cefa7d382d663f21200e88bfb2cfea08f7367c083c65f4e70"
+    },
+    {
+      "name": "runtime.py",
+      "bytes": 11553,
+      "sha256": "d81a06cf93e34579303fd23d35432f9a5ca1c9d301f69b85fdb1239ed83be024"
+    },
+    {
+      "name": "selfcheck.py",
+      "bytes": 12622,
+      "sha256": "14d08f99c0850aea5adfbabfc8abf4dc923d9169f5fb796e0202241cfc648c74"
+    },
+    {
+      "name": "sens.py",
+      "bytes": 7974,
+      "sha256": "84157362a2512dea78d6786f483c259129f492faf14fcc8cb57d66ba062f5980"
+    },
+    {
+      "name": "store.py",
+      "bytes": 4302,
+      "sha256": "fc46eb621fa3203a742460d277acb1fdd2fab31b64e39ab94c2734349d57b19b"
+    },
+    {
+      "name": "stream_wire.py",
+      "bytes": 1834,
+      "sha256": "4561e6e5385a744acdb4add3956518a129ef9f74fa04b2c7edb46e04279d3cee"
+    },
+    {
+      "name": "table_registry.json",
+      "bytes": 2358,
+      "sha256": "71d442f3a7ac5383fb552dd67191ef27693a15be9a3573bb43e272110cd0ba48"
+    },
+    {
+      "name": "table_system.json",
+      "bytes": 1471,
+      "sha256": "e4012bf115ed1d094120600931acdb70003fa6f7550714918b7428890c1b3a75"
+    },
+    {
+      "name": "vad_action.py",
+      "bytes": 7924,
+      "sha256": "c9a0aa01c8739065c86f21eff80fa5f8635f82d63172b83981fb9a5750baf013"
+    },
+    {
+      "name": "vad_adapt.py",
+      "bytes": 11592,
+      "sha256": "6218ebf7d70fc0e71a3772d9e8e13fc6a2329a5bbafb13f939141832802cf6b7"
+    },
+    {
+      "name": "vad_calib.py",
+      "bytes": 10760,
+      "sha256": "8c6897bc0b1b025f0d7fffda9b0b3105277d77c892786b1aea740c82edffea10"
+    },
+    {
+      "name": "wininput.py",
+      "bytes": 6575,
+      "sha256": "021d7073fbfcdd42d123fd25daf25c22e579d9fceb55b58bf863ff4c59bc06e6"
+    },
+    {
+      "name": "现状与风险.md",
+      "bytes": 9994,
+      "sha256": "c3a3b803d9bf22d65b8bd1524e752222147cf8d9a6599760f0201d575fa4f076"
+    },
+    {
+      "name": "k8s/README.md",
+      "bytes": 1592,
+      "sha256": "9663e0ba9af50908c9d2da1ba6deca8509ce9c225e9a2f98d445aa29c153d62e"
+    },
+    {
+      "name": "k8s/apply.sh",
+      "bytes": 285,
+      "sha256": "ceca5da0ac72efc2abeb815e1109ed869a5d186c35d3182f5190bb5c0a8ed789"
+    },
+    {
+      "name": "k8s/patch_args.json",
+      "bytes": 475,
+      "sha256": "9015b397da33526f7fca52243fbe62dcbbfa35035898196604e2130dfefbde55"
+    },
+    {
+      "name": "k8s/rollback.sh",
+      "bytes": 310,
+      "sha256": "66424661d4e1aaacc764aab2d03559f9cb95d62f0999cdda230bcbd264db2c91"
+    },
+    {
+      "name": "k8s/rollback_args.json",
+      "bytes": 403,
+      "sha256": "d6b5457c791a432853d463a58b92fb32f2b6740bbca2b6476174c17cf798431e"
+    },
+    {
+      "name": "run_opencode_shadow.cmd",
+      "bytes": 1270,
+      "sha256": "39ca27aa834c436a67cde1ded1790026f18371aedb84fa3f830d473073c63b18"
+    },
+    {
+      "name": "run_opencode_live.cmd",
+      "bytes": 1293,
+      "sha256": "5b4a8aed487d944fc7dfb2064d831e88035cf177c85455cd1db0647d8b124c53"
+    },
+    {
+      "name": "OPENCODE_DEPLOY_20261018.md",
+      "bytes": 1972,
+      "sha256": "b790c9133afc3e7ab9032246ae1a1e50242969534b8070b47aa816e9fcd0c396"
+    },
+    {
+      "name": "aoe4/run_voice_aoe4_opencode.cmd",
+      "bytes": 750,
+      "sha256": "77b86bf88c56442cbf717c55be995a6d012f1c336ebaf1ade9e0f1d758629708"
+    },
+    {
+      "name": "aoe4/run_voice_aoe4_opencode.ps1",
+      "bytes": 4033,
+      "sha256": "426a5a0ea1e50acb32a071ad503514f73085cc41ed933fee2190a6d864426f3d"
+    }
+  ]
+}

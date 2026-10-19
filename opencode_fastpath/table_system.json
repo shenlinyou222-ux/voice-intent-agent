@@ -1,0 +1,77 @@
+{
+  "generator": "opencode",
+  "session": "ses_eb3637506ffeoeQ5UIVdyl40q4",
+  "version": 1,
+  "ids": {
+    "diao": 0,
+    "zen": 1,
+    "jin": 2,
+    "yin": 3,
+    "pan": 4,
+    "din": 5,
+    "jiao": 6,
+    "zun": 7,
+    "cuan": 8,
+    "zong": 9,
+    "min": 10,
+    "lin": 11,
+    "lie": 12,
+    "biao": 13,
+    "dan": 14,
+    "you": 15,
+    "la": 16,
+    "jie": 17,
+    "sen": 18,
+    "me": 19,
+    "len": 20,
+    "zo": 21,
+    "gan": 22,
+    "so": 23,
+    "hua": 24,
+    "gong": 25,
+    "si": 26,
+    "yong": 27
+  },
+  "entries": [
+    {
+      "intent": "vad_calibrate",
+      "arg": null,
+      "triggers": [
+        "调整静音判定",
+        "静音判定",
+        "校准静音",
+        "调整静音窗",
+        "静音窗",
+        "调整静音",
+        "静音判定校准",
+        "重新校准静音"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "system"
+      }
+    },
+    {
+      "intent": "show_commands",
+      "arg": null,
+      "triggers": [
+        "命令列表",
+        "命令清单",
+        "有哪些命令",
+        "有什么命令",
+        "能做什么",
+        "能干什么",
+        "能说哪些话",
+        "有什么功能",
+        "使用说明",
+        "怎么用"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "system"
+      }
+    }
+  ]
+}

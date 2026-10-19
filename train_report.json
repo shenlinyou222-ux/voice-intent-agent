@@ -1,0 +1,25 @@
+{
+ "acc_train": 1.0,
+ "acc_test": 0.986863711001642,
+ "per_intent": {
+  "exact_search": 1.0,
+  "file_search": 1.0,
+  "launch_app": 1.0,
+  "open_file": 1.0,
+  "open_url": 0.987012987012987,
+  "open_web": 1.0,
+  "unknown": 0.78125,
+  "web_search": 1.0
+ },
+ "ctc_exact": 0.7717569786535303,
+ "intents": [
+  "exact_search",
+  "file_search",
+  "launch_app",
+  "open_file",
+  "open_url",
+  "open_web",
+  "unknown",
+  "web_search"
+ ]
+}

@@ -1,0 +1,1824 @@
+{
+  "intent_registry": {
+    "_readme": [
+      "唯一意图开关。每条格式固定 6 个字段（顺序一致）：intent / says / pinyin / desc / enabled / tag",
+      "  intent  = 意图 id    says = 说法（能说的话，匹配用）    pinyin = 说法的拼音标注（加载时自动核对）",
+      "  desc    = 具体干什么    enabled = true 参与 / false 不参与（任何路径都不执行）",
+      "  tag     = 意图域：system(任何域) / 日常(默认) / 游戏 / 运维",
+      "参与匹配 = enabled 且（tag == 当前域 或 tag == system）",
+      "默认领域 = 日常（可以直接说「打开B站」这类）；说「切换到游戏 / 切换到运维 / 切换到日常」随时切",
+      "打开类三件套（launch_app/open_url/open_file）的 says 是「打开X/启动X…」——匹配时按下面",
+      "apps/urls/files 的名字+别名逐条展开（arg=名字），任何域都能用",
+      "改完保存即生效（按 mtime 热加载，不用重启）；也能说「重新加载意图」"
+    ],
+    "tags": {
+      "system": "任何域都生效（切换领域、命令列表、灵敏度、清空输入、打开类…）",
+      "日常": "日常/办公（默认域）：打开网站/网页、启动程序、打开文件、搜索…",
+      "游戏": "游戏（帝国时代4 指令）",
+      "运维": "运维（查磁盘/查集群/重启服务…）"
+    },
+    "destructive": [
+      "clear_input",
+      "dictation_on",
+      "dictation_off",
+      "close_app",
+      "dsh_run",
+      "dsh_new",
+      "ops_restart_service",
+      "ops_restart_pod",
+      "ops_stop_service"
+    ],
+    "intents": [
+      {
+        "intent": "asr_diag",
+        "says": [
+          "识别不准",
+          "转写不准",
+          "总听错",
+          "老是听错",
+          "识别有问题",
+          "听写有问题",
+          "转写有问题",
+          "识别不好",
+          "转写不行"
+        ],
+        "pinyin": [
+          "shi<si> bie bu zhun<zun>",
+          "zhuan<zuan> xie<jie> bu zhun<zun>",
+          "zong ting<tin> cuo<co>",
+          "lao shi<si> ting<tin> cuo<co>",
+          "shi<si> bie you wen ti",
+          "ting<tin> xie<jie> you wen ti",
+          "zhuan<zuan> xie<jie> you wen ti",
+          "shi<si> bie bu hao",
+          "zhuan<zuan> xie<jie> bu xing<jin>"
+        ],
+        "desc": "识别自检：报当前参数 + 下一步建议（转写有问题时说）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "clear_input",
+        "says": [
+          "清空输入",
+          "清空输入框",
+          "清除输入",
+          "清除输入框"
+        ],
+        "pinyin": [
+          "qing<jin> kong<gong> shu<su> ru<lu>",
+          "qing<jin> kong<gong> shu<su> ru<lu> kuang<guan>",
+          "qing<jin> chu<cu> shu<su> ru<lu>",
+          "qing<jin> chu<cu> shu<su> ru<lu> kuang<guan>"
+        ],
+        "desc": "清空当前输入框（Ctrl+A → Delete；终端里不做）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "dictation_off",
+        "says": [
+          "终止输入",
+          "停止输入",
+          "结束输入",
+          "关闭输入",
+          "停止听写",
+          "退出输入",
+          "停止打字",
+          "关闭听写",
+          "关闭转写",
+          "别打了",
+          "别写了"
+        ],
+        "pinyin": [
+          "zhong<zong> zhi<zi> shu<su> ru<lu>",
+          "ting<tin> zhi<zi> shu<su> ru<lu>",
+          "jie shu<su> shu<su> ru<lu>",
+          "guan bi shu<su> ru<lu>",
+          "ting<tin> zhi<zi> ting<tin> xie<jie>",
+          "tui chu<cu> shu<su> ru<lu>",
+          "ting<tin> zhi<zi> da zi",
+          "guan bi ting<tin> xie<jie>",
+          "guan bi zhuan<zuan> xie<jie>",
+          "bie da le",
+          "bie xie<jie> le"
+        ],
+        "desc": "退出听写模式（不再把话打进输入框）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "dictation_on",
+        "says": [
+          "开始输入",
+          "开始听写",
+          "开始打字",
+          "进入输入模式",
+          "开始转写",
+          "语音输入",
+          "打开输入",
+          "开启输入",
+          "打开听写"
+        ],
+        "pinyin": [
+          "kai<gai> shi<si> shu<su> ru<lu>",
+          "kai<gai> shi<si> ting<tin> xie<jie>",
+          "kai<gai> shi<si> da zi",
+          "jin ru<lu> shu<su> ru<lu> mo shi<si>",
+          "kai<gai> shi<si> zhuan<zuan> xie<jie>",
+          "yu yin shu<su> ru<lu>",
+          "da kai<gai> shu<su> ru<lu>",
+          "kai<gai> qi<ji> shu<su> ru<lu>",
+          "da kai<gai> ting<tin> xie<jie>"
+        ],
+        "desc": "进入听写模式（非命令的话打进当前输入框）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "domain_daily",
+        "says": [
+          "切换到日常",
+          "切到日常",
+          "日常模式",
+          "回到日常",
+          "换成日常",
+          "开启日常"
+        ],
+        "pinyin": [
+          "qie<jie> huan dao ri<li> chang<can>",
+          "qie<jie> dao ri<li> chang<can>",
+          "ri<li> chang<can> mo shi<si>",
+          "hui dao ri<li> chang<can>",
+          "huan cheng<cen> ri<li> chang<can>",
+          "kai<gai> qi<ji> ri<li> chang<can>"
+        ],
+        "desc": "切换意图域 → 日常（默认域：打开网站/网页、启动程序、清空输入、命令列表…）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "domain_game",
+        "says": [
+          "切换到游戏",
+          "切到游戏",
+          "游戏模式",
+          "回到游戏",
+          "换成游戏",
+          "开启游戏"
+        ],
+        "pinyin": [
+          "qie<jie> huan dao you xi<ji>",
+          "qie<jie> dao you xi<ji>",
+          "you xi<ji> mo shi<si>",
+          "hui dao you xi<ji>",
+          "huan cheng<cen> you xi<ji>",
+          "kai<gai> qi<ji> you xi<ji>"
+        ],
+        "desc": "切换意图域 → 游戏（帝国时代4 指令：补农 / 一农…）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "domain_ops",
+        "says": [
+          "切换到运维",
+          "切到运维",
+          "运维模式",
+          "回到运维",
+          "换成运维",
+          "开启运维"
+        ],
+        "pinyin": [
+          "qie<jie> huan dao yun wei<wai>",
+          "qie<jie> dao yun wei<wai>",
+          "yun wei<wai> mo shi<si>",
+          "hui dao yun wei<wai>",
+          "huan cheng<cen> yun wei<wai>",
+          "kai<gai> qi<ji> yun wei<wai>"
+        ],
+        "desc": "切换意图域 → 运维（查磁盘 / 查集群 / 重启服务…）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "launch_app",
+        "says": [
+          "打开X",
+          "启动X",
+          "运行X",
+          "开一下X",
+          "上X",
+          "进入X"
+        ],
+        "pinyin": [
+          "da kai<gai> X",
+          "qi<ji> dong X",
+          "yun xing<jin> X",
+          "kai<gai> yi xia<jia> X",
+          "shang<san> X",
+          "jin ru<lu> X"
+        ],
+        "desc": "启动 apps 里的程序（X = 名字/别名，共 16 个，自动展开）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "open_file",
+        "says": [
+          "打开X",
+          "启动X",
+          "运行X",
+          "开一下X",
+          "上X",
+          "进入X"
+        ],
+        "pinyin": [
+          "da kai<gai> X",
+          "qi<ji> dong X",
+          "yun xing<jin> X",
+          "kai<gai> yi xia<jia> X",
+          "shang<san> X",
+          "jin ru<lu> X"
+        ],
+        "desc": "打开 files 里的文件（X = 名字/别名，共 0 个，自动展开）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "open_url",
+        "says": [
+          "打开X",
+          "启动X",
+          "运行X",
+          "开一下X",
+          "上X",
+          "进入X"
+        ],
+        "pinyin": [
+          "da kai<gai> X",
+          "qi<ji> dong X",
+          "yun xing<jin> X",
+          "kai<gai> yi xia<jia> X",
+          "shang<san> X",
+          "jin ru<lu> X"
+        ],
+        "desc": "打开 urls 里的网址（X = 名字/别名，共 26 个，自动展开）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "reload_intents",
+        "says": [
+          "重新加载意图",
+          "重载意图",
+          "重新加载意图清单",
+          "刷新意图",
+          "重载配置",
+          "刷新配置"
+        ],
+        "pinyin": [
+          "zhong<zong> xin<jin> jia zai yi tu",
+          "zhong<zong> zai yi tu",
+          "zhong<zong> xin<jin> jia zai yi tu qing<jin> dan",
+          "shua<sua> xin<jin> yi tu",
+          "zhong<zong> zai pei<pai> zhi<zi>",
+          "shua<sua> xin<jin> pei<pai> zhi<zi>"
+        ],
+        "desc": "重新加载意图清单（改完 json 想立刻生效时说）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "sens_down",
+        "says": [
+          "太吵了",
+          "吵死了",
+          "声音太大",
+          "降低灵敏度",
+          "灵敏度太高",
+          "太灵敏了"
+        ],
+        "pinyin": [
+          "tai chao<cao> le",
+          "chao<cao> si le",
+          "sheng<sen> yin tai da",
+          "jiang<jian> di ling<lin> min du",
+          "ling<lin> min du tai gao",
+          "tai ling<lin> min le"
+        ],
+        "desc": "识别灵敏度↓：ASR 前增益↓ + 起判 prob↑（太吵/误触发时用）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "sens_show",
+        "says": [
+          "灵敏度",
+          "当前灵敏度",
+          "当前增益",
+          "识别参数",
+          "当前参数"
+        ],
+        "pinyin": [
+          "ling<lin> min du",
+          "dang<dan> qian<jian> ling<lin> min du",
+          "dang<dan> qian<jian> zeng<zen> yi",
+          "shi<si> bie can shu<su>",
+          "dang<dan> qian<jian> can shu<su>"
+        ],
+        "desc": "报当前识别参数（增益 / prob / 停止窗 / 域），不改任何值",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "sens_up",
+        "says": [
+          "听不清",
+          "没听清",
+          "听不见",
+          "听不到",
+          "声音小",
+          "声音太小",
+          "太小了",
+          "提高灵敏度",
+          "灵敏度不够",
+          "大声点",
+          "识别灵敏度"
+        ],
+        "pinyin": [
+          "ting<tin> bu qing<jin>",
+          "mei<mai> ting<tin> qing<jin>",
+          "ting<tin> bu jian",
+          "ting<tin> bu dao",
+          "sheng<sen> yin xiao<jiao>",
+          "sheng<sen> yin tai xiao<jiao>",
+          "tai xiao<jiao> le",
+          "ti gao ling<lin> min du",
+          "ling<lin> min du bu gou",
+          "da sheng<sen> dian",
+          "shi<si> bie ling<lin> min du"
+        ],
+        "desc": "识别灵敏度↑：ASR 前增益↑ + 起判 prob↓（小声/听不清时用）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "show_commands",
+        "says": [
+          "命令列表",
+          "命令清单",
+          "有哪些命令",
+          "有什么命令",
+          "能做什么",
+          "能干什么",
+          "能说哪些话",
+          "有什么功能",
+          "使用说明",
+          "怎么用"
+        ],
+        "pinyin": [
+          "ming<min> ling<lin> lie biao",
+          "ming<min> ling<lin> qing<jin> dan",
+          "you na<la> xie<jie> ming<min> ling<lin>",
+          "you shen<sen> me ming<min> ling<lin>",
+          "neng<len> zuo<zo> shen<sen> me",
+          "neng<len> gan shen<sen> me",
+          "neng<len> shuo<so> na<la> xie<jie> hua",
+          "you shen<sen> me gong neng<len>",
+          "shi<si> yong shuo<so> ming<min>",
+          "zen me yong"
+        ],
+        "desc": "打开这份意图清单（intent_config.json）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "vad_calibrate",
+        "says": [
+          "调整静音判定",
+          "静音判定",
+          "校准静音",
+          "调整静音窗",
+          "静音窗",
+          "调整静音",
+          "静音判定校准",
+          "重新校准静音",
+          "语音校准",
+          "校准语音"
+        ],
+        "pinyin": [
+          "diao zheng<zen> jing<jin> yin pan ding<din>",
+          "jing<jin> yin pan ding<din>",
+          "xiao<jiao> zhun<zun> jing<jin> yin",
+          "diao zheng<zen> jing<jin> yin chuang<cuan>",
+          "jing<jin> yin chuang<cuan>",
+          "diao zheng<zen> jing<jin> yin",
+          "jing<jin> yin pan ding<din> xiao<jiao> zhun<zun>",
+          "zhong<zong> xin<jin> xiao<jiao> zhun<zun> jing<jin> yin",
+          "yu yin xiao<jiao> zhun<zun>",
+          "xiao<jiao> zhun<zun> yu yin"
+        ],
+        "desc": "语音校准：随便说一句话就好（按这句的句内停顿自动定停止窗 + 预滚 + ASR 增益）",
+        "enabled": true,
+        "tag": "system"
+      },
+      {
+        "intent": "close_app",
+        "says": [
+          "关闭",
+          "关掉",
+          "关一下",
+          "退出",
+          "结束",
+          "停掉"
+        ],
+        "pinyin": [
+          "guan bi",
+          "guan diao",
+          "guan yi xia<jia>",
+          "tui chu<cu>",
+          "jie shu<su>",
+          "ting<tin> diao"
+        ],
+        "desc": "关闭程序（只认 apps 闭集里的）",
+        "enabled": true,
+        "tag": "日常"
+      },
+      {
+        "intent": "dsh_new",
+        "says": [],
+        "pinyin": [],
+        "desc": "（已废弃：DSH 会话方案关了；要恢复就写回说法并把 enabled 改 true）",
+        "enabled": false,
+        "tag": "日常"
+      },
+      {
+        "intent": "dsh_run",
+        "says": [],
+        "pinyin": [],
+        "desc": "（已废弃：DSH 会话方案关了；要恢复就写回说法并把 enabled 改 true）",
+        "enabled": false,
+        "tag": "日常"
+      },
+      {
+        "intent": "exact_search",
+        "says": [
+          "精确查找",
+          "精确搜索",
+          "精确找",
+          "精确查询"
+        ],
+        "pinyin": [
+          "jing<jin> que<jue> cha<ca> zhao<zao>",
+          "jing<jin> que<jue> sou suo<so>",
+          "jing<jin> que<jue> zhao<zao>",
+          "jing<jin> que<jue> cha<ca> xun<jun>"
+        ],
+        "desc": "精确查找（必须含「精确」，用转写原文，不纠错）",
+        "enabled": true,
+        "tag": "日常"
+      },
+      {
+        "intent": "file_search",
+        "says": [
+          "搜索文件",
+          "查找文件",
+          "搜一下文件",
+          "查一下文件",
+          "搜文件",
+          "找文件"
+        ],
+        "pinyin": [
+          "sou suo<so> wen jian",
+          "cha<ca> zhao<zao> wen jian",
+          "sou yi xia<jia> wen jian",
+          "cha<ca> yi xia<jia> wen jian",
+          "sou wen jian",
+          "zhao<zao> wen jian"
+        ],
+        "desc": "文件管理器搜索文件",
+        "enabled": true,
+        "tag": "日常"
+      },
+      {
+        "intent": "open_web",
+        "says": [
+          "打开网站",
+          "打开这个网址",
+          "上网搜一下",
+          "直接打开这个链接"
+        ],
+        "pinyin": [
+          "da kai<gai> wang<wan> zhan<zan>",
+          "da kai<gai> zhe<ze> ge wang<wan> zhi<zi>",
+          "shang<san> wang<wan> sou yi xia<jia>",
+          "zhi<zi> jie da kai<gai> zhe<ze> ge lian jie"
+        ],
+        "desc": "打开任意网址/关键词（默认关：enable_open_web=false；仍在清单里但 enabled=false）",
+        "enabled": false,
+        "tag": "日常"
+      },
+      {
+        "intent": "site_search",
+        "says": [
+          "站内搜索",
+          "在网站里搜",
+          "在站里搜"
+        ],
+        "pinyin": [
+          "zhan<zan> nei<lai> sou suo<so>",
+          "zai wang<wan> zhan<zan> li sou",
+          "zai zhan<zan> li sou"
+        ],
+        "desc": "站内搜索（在 X 里搜 Y，用该站自己的搜索入口）",
+        "enabled": true,
+        "tag": "日常"
+      },
+      {
+        "intent": "aoe4_train_villager",
+        "says": [
+          "农",
+          "一农",
+          "二农",
+          "三农",
+          "四农",
+          "五农",
+          "六农",
+          "七农",
+          "八农",
+          "九农",
+          "十农",
+          "补农",
+          "补农民",
+          "补充农民",
+          "补个农",
+          "补一下农",
+          "补点农民",
+          "补个农民"
+        ],
+        "pinyin": [
+          "nong<long>",
+          "yi nong<long>",
+          "er nong<long>",
+          "san nong<long>",
+          "si nong<long>",
+          "wu nong<long>",
+          "liu nong<long>",
+          "qi<ji> nong<long>",
+          "ba nong<long>",
+          "jiu nong<long>",
+          "shi<si> nong<long>",
+          "bu nong<long>",
+          "bu nong<long> min",
+          "bu chong<cong> nong<long> min",
+          "bu ge nong<long>",
+          "bu yi xia<jia> nong<long>",
+          "bu dian nong<long> min",
+          "bu ge nong<long> min"
+        ],
+        "desc": "城镇中心训练 n 个农民（闭集：x农）",
+        "enabled": true,
+        "tag": "游戏"
+      },
+      {
+        "intent": "ops_ask_ai",
+        "says": [
+          "让ds",
+          "让DS",
+          "让ai",
+          "让AI",
+          "问ds",
+          "分析",
+          "排查",
+          "怎么挂了",
+          "为什么",
+          "帮我看看"
+        ],
+        "pinyin": [
+          "rang<lan> d s",
+          "rang<lan> D S",
+          "rang<lan> a i",
+          "rang<lan> A I",
+          "wen d s",
+          "fen<hen> xi<ji>",
+          "pai cha<ca>",
+          "zen me gua le",
+          "wei<wai> shen<sen> me",
+          "bang<ban> wo kan<gan> kan<gan>"
+        ],
+        "desc": "开放性排查交给 AI（DSH 会话）",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_cancel",
+        "says": [
+          "取消",
+          "算了",
+          "不执行"
+        ],
+        "pinyin": [
+          "qu<ju> xiao<jiao>",
+          "suan le",
+          "bu zhi<zi> xing<jin>"
+        ],
+        "desc": "取消待确认命令",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_confirm",
+        "says": [
+          "确认",
+          "执行"
+        ],
+        "pinyin": [
+          "que<jue> ren<len>",
+          "zhi<zi> xing<jin>"
+        ],
+        "desc": "确认执行待确认命令",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_cpu",
+        "says": [
+          "查负载",
+          "看负载",
+          "负载",
+          "CPU",
+          "cpu",
+          "load",
+          "uptime"
+        ],
+        "pinyin": [
+          "cha<ca> fu<hu> zai",
+          "kan<gan> fu<hu> zai",
+          "fu<hu> zai",
+          "C P U",
+          "c p u",
+          "l o a d",
+          "u p t i m e"
+        ],
+        "desc": "查 CPU / 系统负载",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_disk",
+        "says": [
+          "查磁盘",
+          "看磁盘",
+          "磁盘",
+          "空间",
+          "df"
+        ],
+        "pinyin": [
+          "cha<ca> ci pan",
+          "kan<gan> ci pan",
+          "ci pan",
+          "kong<gong> jian",
+          "d f"
+        ],
+        "desc": "查磁盘占用",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_gpu",
+        "says": [
+          "查显卡",
+          "看显卡",
+          "显卡",
+          "GPU",
+          "gpu",
+          "显存",
+          "nvidia"
+        ],
+        "pinyin": [
+          "cha<ca> xian<jian> ka<ga>",
+          "kan<gan> xian<jian> ka<ga>",
+          "xian<jian> ka<ga>",
+          "G P U",
+          "g p u",
+          "xian<jian> cun",
+          "n v i d i a"
+        ],
+        "desc": "查 GPU / 显存",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_k8s_describe",
+        "says": [
+          "describe",
+          "详情",
+          "怎么挂了",
+          "为什么挂了",
+          "看事件",
+          "OOM",
+          "CrashLoop"
+        ],
+        "pinyin": [
+          "d e s c r i b e",
+          "xiang<jian> qing<jin>",
+          "zen me gua le",
+          "wei<wai> shen<sen> me gua le",
+          "kan<gan> shi<si> jian",
+          "O O M",
+          "C r a s h L o o p"
+        ],
+        "desc": "看 pod 详情（挂因排查首选）",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_k8s_logs",
+        "says": [
+          "pod日志",
+          "容器日志",
+          "kubectl logs",
+          "上个容器"
+        ],
+        "pinyin": [
+          "p o d ri<li> zhi<zi>",
+          "rong<long> qi<ji> ri<li> zhi<zi>",
+          "k u b e c t l   l o g s",
+          "shang<san> ge rong<long> qi<ji>"
+        ],
+        "desc": "看 pod 日志",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_k8s_nodes",
+        "says": [
+          "查节点",
+          "节点",
+          "node",
+          "nodes"
+        ],
+        "pinyin": [
+          "cha<ca> jie dian",
+          "jie dian",
+          "n o d e",
+          "n o d e s"
+        ],
+        "desc": "查节点",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_k8s_pods",
+        "says": [
+          "查集群",
+          "集群",
+          "pod",
+          "pods",
+          "kubectl",
+          "k8s",
+          "容器"
+        ],
+        "pinyin": [
+          "cha<ca> ji qun<jun>",
+          "ji qun<jun>",
+          "p o d",
+          "p o d s",
+          "k u b e c t l",
+          "k 8 s",
+          "rong<long> qi<ji>"
+        ],
+        "desc": "查 pod",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_k8s_svc",
+        "says": [
+          "查服务列表",
+          "service",
+          "svc",
+          "ingress",
+          "NodePort"
+        ],
+        "pinyin": [
+          "cha<ca> fu<hu> wu lie biao",
+          "s e r v i c e",
+          "s v c",
+          "i n g r e s s",
+          "N o d e P o r t"
+        ],
+        "desc": "查 service / ingress",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_logs",
+        "says": [
+          "看日志",
+          "查日志",
+          "日志",
+          "log",
+          "logs",
+          "journalctl"
+        ],
+        "pinyin": [
+          "kan<gan> ri<li> zhi<zi>",
+          "cha<ca> ri<li> zhi<zi>",
+          "ri<li> zhi<zi>",
+          "l o g",
+          "l o g s",
+          "j o u r n a l c t l"
+        ],
+        "desc": "看日志尾部",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_mem",
+        "says": [
+          "查内存",
+          "看内存",
+          "内存",
+          "mem",
+          "free"
+        ],
+        "pinyin": [
+          "cha<ca> nei<lai> cun",
+          "kan<gan> nei<lai> cun",
+          "nei<lai> cun",
+          "m e m",
+          "f r e e"
+        ],
+        "desc": "查内存",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_metric",
+        "says": [
+          "指标",
+          "prometheus",
+          "promql",
+          "TTFT",
+          "ttft",
+          "TPOT",
+          "tpot",
+          "TTOT",
+          "KV缓存",
+          "前缀缓存",
+          "排队",
+          "吞吐",
+          "QPS"
+        ],
+        "pinyin": [
+          "zhi<zi> biao",
+          "p r o m e t h e u s",
+          "p r o m q l",
+          "T T F T",
+          "t t f t",
+          "T P O T",
+          "t p o t",
+          "T T O T",
+          "K V huan cun",
+          "qian<jian> zhui<zui> huan cun",
+          "pai dui",
+          "tun tu",
+          "Q P S"
+        ],
+        "desc": "查 Prometheus 指标",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_open",
+        "says": [
+          "打开",
+          "open",
+          "面板",
+          "看板",
+          "终端",
+          "terminal"
+        ],
+        "pinyin": [
+          "da kai<gai>",
+          "o p e n",
+          "mian ban",
+          "kan<gan> ban",
+          "zhong<zong> duan",
+          "t e r m i n a l"
+        ],
+        "desc": "打开面板/终端/目录",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_ports",
+        "says": [
+          "查端口",
+          "看端口",
+          "端口",
+          "port",
+          "ss",
+          "netstat"
+        ],
+        "pinyin": [
+          "cha<ca> duan kou<gou>",
+          "kan<gan> duan kou<gou>",
+          "duan kou<gou>",
+          "p o r t",
+          "s s",
+          "n e t s t a t"
+        ],
+        "desc": "查端口占用",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_proc",
+        "says": [
+          "查进程",
+          "看进程",
+          "进程",
+          "process",
+          "ps",
+          "top"
+        ],
+        "pinyin": [
+          "cha<ca> jin cheng<cen>",
+          "kan<gan> jin cheng<cen>",
+          "jin cheng<cen>",
+          "p r o c e s s",
+          "p s",
+          "t o p"
+        ],
+        "desc": "查进程",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_restart_pod",
+        "says": [
+          "重启pod",
+          "滚动重启",
+          "rollout"
+        ],
+        "pinyin": [
+          "zhong<zong> qi<ji> p o d",
+          "gun dong zhong<zong> qi<ji>",
+          "r o l l o u t"
+        ],
+        "desc": "滚动重启 pod（需确认）",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_restart_service",
+        "says": [
+          "重启"
+        ],
+        "pinyin": [
+          "zhong<zong> qi<ji>"
+        ],
+        "desc": "重启 systemd 服务（需确认）",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_service",
+        "says": [
+          "查服务",
+          "服务状态",
+          "systemctl",
+          "service"
+        ],
+        "pinyin": [
+          "cha<ca> fu<hu> wu",
+          "fu<hu> wu zhuang<zuan> tai",
+          "s y s t e m c t l",
+          "s e r v i c e"
+        ],
+        "desc": "查 systemd 服务状态",
+        "enabled": true,
+        "tag": "运维"
+      },
+      {
+        "intent": "ops_stop_service",
+        "says": [
+          "停掉",
+          "停服务"
+        ],
+        "pinyin": [
+          "ting<tin> diao",
+          "ting<tin> fu<hu> wu"
+        ],
+        "desc": "停服务（需确认）",
+        "enabled": true,
+        "tag": "运维"
+      }
+    ]
+  },
+  "_README": [
+    "═══════════════════════════════════════════════════════════════",
+    " 意图识别配置文件 —— 你以后改这个文件就行，不用重训模型",
+    "（除了 intents 段之外，闭集列表改了需要重训，见 README）",
+    "═══════════════════════════════════════════════════════════════",
+    " 改这里不需要重训：",
+    "   · apps / urls / files 里的 path、url、aliases  —— 直接生效",
+    "   · search 引擎、triggers 触发词              —— 直接生效",
+    " 改这里【需要重训】意图模型（因为类别数变了）：",
+    "   · 新增/删除 apps、urls、files 里的条目",
+    "   · 新增/删除 intents 段里的意图",
+    " 重训命令：python build_dataset.py && python train_intent.py",
+    "═══════════════════════════════════════════════════════════════"
+  ],
+  "version": 2,
+  "language": "zh-CN",
+  "intents": [
+    {
+      "id": "launch_app",
+      "desc": "启动一个预设程序",
+      "needs_arg": "app"
+    },
+    {
+      "id": "open_url",
+      "desc": "打开一个预设网址",
+      "needs_arg": "url"
+    },
+    {
+      "id": "open_file",
+      "desc": "打开一个预设文件",
+      "needs_arg": "file"
+    },
+    {
+      "id": "open_web",
+      "desc": "打开任意网址/关键词（不在闭集）",
+      "needs_arg": "freetext"
+    },
+    {
+      "id": "web_search",
+      "desc": "用默认浏览器搜索",
+      "needs_arg": "freetext"
+    },
+    {
+      "id": "file_search",
+      "desc": "用文件管理器搜索文件",
+      "needs_arg": "freetext"
+    },
+    {
+      "id": "exact_search",
+      "desc": "精确查找（必须含精确前缀，用转写文本）",
+      "needs_arg": "freetext",
+      "gate_keyword": "精确"
+    },
+    {
+      "id": "unknown",
+      "desc": "不是命令 / 不认识",
+      "needs_arg": null
+    },
+    {
+      "id": "dsh_run",
+      "desc": "把说的话当任务交给 DSH（默认续同一会话）"
+    },
+    {
+      "id": "dsh_new",
+      "desc": "新建一个 DSH 会话并把任务交给它"
+    },
+    {
+      "id": "vad_calibrate",
+      "desc": "现场校准静音判定（读测试文字两遍）",
+      "needs_arg": null
+    },
+    {
+      "id": "show_commands",
+      "desc": "打开一份文件，列出当前 profile 能执行的所有命令（system 意图，任何领域都生效）",
+      "needs_arg": null
+    }
+  ],
+  "apps": [
+    {
+      "id": "taskmgr",
+      "name": "任务管理器",
+      "aliases": [
+        "任务管理器"
+      ],
+      "path": "C:\\WINDOWS\\system32\\taskmgr.exe"
+    },
+    {
+      "id": "explorer",
+      "name": "文件管理器",
+      "aliases": [
+        "文件管理器",
+        "资源管理器"
+      ],
+      "path": "C:\\WINDOWS\\explorer.exe"
+    },
+    {
+      "id": "cmd",
+      "name": "命令行",
+      "aliases": [
+        "命令行",
+        "cmd",
+        "命令提示符"
+      ],
+      "path": "C:\\WINDOWS\\system32\\cmd.exe"
+    },
+    {
+      "id": "powershell",
+      "name": "PowerShell",
+      "aliases": [
+        "powershell",
+        "终端"
+      ],
+      "path": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    },
+    {
+      "id": "edge",
+      "name": "Edge浏览器",
+      "aliases": [
+        "edge",
+        "edge浏览器"
+      ],
+      "path": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
+    },
+    {
+      "id": "steam",
+      "name": "Steam",
+      "aliases": [
+        "steam"
+      ],
+      "path": "D:\\steam\\Steam.exe"
+    },
+    {
+      "id": "blender",
+      "name": "Blender",
+      "aliases": [
+        "blender"
+      ],
+      "path": "D:\\Blender\\blender-launcher.exe"
+    },
+    {
+      "id": "ollama",
+      "name": "Ollama",
+      "aliases": [
+        "ollama"
+      ],
+      "path": "C:\\Users\\user\\AppData\\Local\\Programs\\Ollama\\ollama app.exe"
+    },
+    {
+      "id": "harness",
+      "name": "DeepSeek",
+      "aliases": [
+        "deepseek",
+        "harness",
+        "dsh"
+      ],
+      "path": "C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\DeepSeek Harness.exe"
+    },
+    {
+      "id": "trae",
+      "name": "Trae",
+      "aliases": [
+        "trae"
+      ],
+      "path": "D:\\trae\\Trae CN\\Trae CN.exe"
+    },
+    {
+      "id": "clash",
+      "name": "Clash",
+      "aliases": [
+        "clash"
+      ],
+      "path": "D:\\Clash Verge\\clash-verge.exe"
+    },
+    {
+      "id": "python",
+      "name": "Python",
+      "aliases": [
+        "python"
+      ],
+      "path": "E:\\py312\\python.exe"
+    },
+    {
+      "id": "wmplayer",
+      "name": "媒体播放器",
+      "aliases": [
+        "媒体播放器"
+      ],
+      "path": "C:\\Program Files (x86)\\Windows Media Player\\wmplayer.exe"
+    },
+    {
+      "name": "WorkBuddy",
+      "aliases": [
+        "workbuddy",
+        "work buddy",
+        "工作伙伴",
+        "wb"
+      ],
+      "path": "E:\\workbuddy\\WorkBuddyAI\\WorkBuddyAI.exe",
+      "aumid": "WorkBuddy.WorkBuddyAI",
+      "id": "workbuddy"
+    },
+    {
+      "name": "千问",
+      "aliases": [
+        "千问",
+        "通义",
+        "通义千问",
+        "qwen"
+      ],
+      "path": "E:\\qwen\\QianwenApp\\qianwen.exe",
+      "aumid": "Qianwen",
+      "id": "qwen"
+    },
+    {
+      "name": "千问办公",
+      "aliases": [
+        "千问办公",
+        "通义办公",
+        "qwen办公",
+        "办公助手"
+      ],
+      "path": "",
+      "aumid": "com.qwen.work.cn",
+      "id": "qwenwork"
+    },
+    {
+      "id": "aoe4_game",
+      "name": "帝国时代四",
+      "aliases": [
+        "帝国时代4",
+        "帝国四",
+        "帝国4",
+        "aoe4",
+        "AoE4",
+        "帝国时代"
+      ],
+      "path": "D:\\steam\\Steam.exe",
+      "_note": "Steam 版：由 Steam 带 DRM 上下文起；直接跑 RelicCardinal.exe 会缺上下文退出",
+      "_watch": [
+        "RelicCardinal.exe"
+      ],
+      "_require_process": "steam.exe",
+      "_require_path": "D:\\steam\\Steam.exe",
+      "_require_wait_s": 40,
+      "args": [
+        "steam://rungameid/1466860"
+      ],
+      "_watch_alive_s": 10
+    },
+    {
+      "id": "hearthstone",
+      "name": "炉石传说",
+      "aliases": [
+        "炉石",
+        "hearthstone",
+        "HearthStone"
+      ],
+      "path": "E:\\battlenet\\Battle.net\\Battle.net.exe",
+      "_note": "实测：Battle.net.exe --exec=launch WTCG → 本体参数 '-launch -uid hs_beta WTCG://' → 日志到 LaunchGame ✓。直接跑 Hearthstone.exe 会崩（参数为空）。",
+      "_watch": [
+        "Hearthstone.exe"
+      ],
+      "_require_process": "battle.net.exe",
+      "_require_path": "E:\\battlenet\\Battle.net\\Battle.net.exe",
+      "_require_wait_s": 40,
+      "args": [
+        "--exec=launch WTCG"
+      ],
+      "_watch_alive_s": 8
+    }
+  ],
+  "urls": [
+    {
+      "id": "bilibili",
+      "name": "B站",
+      "aliases": [
+        "b站",
+        "哔哩哔哩"
+      ],
+      "url": "https://www.bilibili.com",
+      "search_url": "https://search.bilibili.com/all?keyword={q}"
+    },
+    {
+      "id": "zhihu",
+      "name": "知乎",
+      "aliases": [
+        "知乎"
+      ],
+      "url": "https://www.zhihu.com",
+      "search_url": "https://www.zhihu.com/search?q={q}"
+    },
+    {
+      "id": "github",
+      "name": "GitHub",
+      "aliases": [
+        "github"
+      ],
+      "url": "https://github.com",
+      "search_url": "https://github.com/search?q={q}&type=repositories"
+    },
+    {
+      "id": "juejin",
+      "name": "掘金",
+      "aliases": [
+        "掘金"
+      ],
+      "url": "https://juejin.cn",
+      "search_url": "https://juejin.cn/search?query={q}"
+    },
+    {
+      "id": "csdn",
+      "name": "CSDN",
+      "aliases": [
+        "csdn"
+      ],
+      "url": "https://www.csdn.net",
+      "search_url": "https://so.csdn.net/so/search?q={q}"
+    },
+    {
+      "id": "huggingface",
+      "name": "HuggingFace",
+      "aliases": [
+        "huggingface",
+        "hf"
+      ],
+      "url": "https://huggingface.co",
+      "search_url": "https://huggingface.co/models?search={q}"
+    },
+    {
+      "id": "modelscope",
+      "name": "ModelScope",
+      "aliases": [
+        "modelscope"
+      ],
+      "url": "https://www.modelscope.cn",
+      "search_url": "https://www.modelscope.cn/models?name={q}"
+    },
+    {
+      "name": "DeepSeek网页",
+      "aliases": [
+        "deepseek网址",
+        "deepseek官网",
+        "deepseek网页"
+      ],
+      "url": "https://chat.deepseek.com",
+      "search_url": "https://chat.deepseek.com/?q={q}",
+      "id": "deepseek"
+    },
+    {
+      "name": "豆包",
+      "aliases": [
+        "豆包",
+        "doubao",
+        "豆包ai",
+        "字节豆包"
+      ],
+      "url": "https://www.doubao.com",
+      "search_url": "https://www.doubao.com/chat/?q={q}",
+      "id": "doubao"
+    },
+    {
+      "name": "Stack Overflow",
+      "aliases": [
+        "stackoverflow"
+      ],
+      "url": "https://stackoverflow.com",
+      "search_url": "https://stackoverflow.com/search?q={q}",
+      "id": "stackoverflow"
+    },
+    {
+      "name": "arXiv",
+      "aliases": [
+        "arxiv",
+        "论文库"
+      ],
+      "url": "https://arxiv.org",
+      "search_url": "https://arxiv.org/abs/list?searchtype=all&query={q}",
+      "id": "arxiv"
+    },
+    {
+      "name": "PapersWithCode",
+      "aliases": [
+        "paperswithcode",
+        "论文代码"
+      ],
+      "url": "https://paperswithcode.com",
+      "id": "paperswithcode"
+    },
+    {
+      "name": "Kaggle",
+      "aliases": [
+        "kaggle"
+      ],
+      "url": "https://www.kaggle.com",
+      "search_url": "https://www.kaggle.com/search?q={q}",
+      "id": "kaggle"
+    },
+    {
+      "name": "HackerNews",
+      "aliases": [
+        "hackernews",
+        "hn",
+        "黑客新闻"
+      ],
+      "url": "https://news.ycombinator.com",
+      "id": "hackernews"
+    },
+    {
+      "name": "GoogleScholar",
+      "aliases": [
+        "googlescholar",
+        "谷歌学术"
+      ],
+      "url": "https://scholar.google.com",
+      "id": "googlescholar"
+    },
+    {
+      "name": "PyPI",
+      "aliases": [
+        "pypi"
+      ],
+      "url": "https://pypi.org",
+      "id": "pypi"
+    },
+    {
+      "name": "DockerHub",
+      "aliases": [
+        "dockerhub",
+        "docker"
+      ],
+      "url": "https://hub.docker.com",
+      "id": "dockerhub"
+    },
+    {
+      "name": "Claude",
+      "aliases": [
+        "claude",
+        "anthropic"
+      ],
+      "url": "https://claude.ai",
+      "id": "claude"
+    },
+    {
+      "name": "OpenAI",
+      "aliases": [
+        "openai",
+        "chatgpt",
+        "gpt"
+      ],
+      "url": "https://chatgpt.com",
+      "id": "openai"
+    },
+    {
+      "name": "YouTube",
+      "aliases": [
+        "youtube",
+        "油管"
+      ],
+      "url": "https://www.youtube.com",
+      "search_url": "https://www.youtube.com/results?search_query={q}",
+      "id": "youtube"
+    },
+    {
+      "name": "维基百科",
+      "aliases": [
+        "wikipedia",
+        "wiki",
+        "维基"
+      ],
+      "url": "https://en.wikipedia.org",
+      "id": "wikipedia"
+    },
+    {
+      "name": "开源中国",
+      "aliases": [
+        "开源中国",
+        "oschina"
+      ],
+      "url": "https://www.oschina.net",
+      "id": "oschina"
+    },
+    {
+      "name": "博客园",
+      "aliases": [
+        "博客园",
+        "cnblogs"
+      ],
+      "url": "https://www.cnblogs.com",
+      "id": "cnblogs"
+    },
+    {
+      "name": "Gitee",
+      "aliases": [
+        "gitee",
+        "码云"
+      ],
+      "url": "https://gitee.com",
+      "id": "gitee"
+    },
+    {
+      "name": "机器之心",
+      "aliases": [
+        "机器之心",
+        "jiqizhixin"
+      ],
+      "url": "https://www.jiqizhixin.com",
+      "id": "jiqizhixin"
+    },
+    {
+      "name": "InfoQ",
+      "aliases": [
+        "infoq"
+      ],
+      "url": "https://www.infoq.cn",
+      "id": "infoq"
+    }
+  ],
+  "files": [],
+  "search": {
+    "_comment": "搜索用的引擎，{q} 会被替换成 URL 编码后的关键词",
+    "web_engine": "https://www.bing.com/search?q={q}",
+    "web_engine_name": "Bing",
+    "file_manager_root": "C:\\Users\\user",
+    "_file_comment": "文件管理器搜索用 Windows Search 协议，从 file_manager_root 开始搜"
+  },
+  "triggers": {
+    "_comment": "触发词表 —— 用来把转写文本切成【意图】+【参数】。长的优先匹配。改完不用重训。",
+    "open": [
+      "打开",
+      "启动",
+      "开一下",
+      "开个",
+      "给我开",
+      "帮我打开",
+      "帮我启动",
+      "来一下",
+      "我要用",
+      "把",
+      "上",
+      "访问",
+      "看看",
+      "看",
+      "去",
+      "进入",
+      "运行"
+    ],
+    "url_suffix": [
+      "网页",
+      "网站",
+      "页面",
+      "官网",
+      "网址"
+    ],
+    "file_suffix": [
+      "文件",
+      "文档"
+    ],
+    "file_search": [
+      "搜索文件",
+      "查找文件",
+      "搜一下文件",
+      "查一下文件",
+      "搜文件",
+      "找文件"
+    ],
+    "exact_prefix": [
+      "精确查找",
+      "精确搜索",
+      "精确搜",
+      "精确"
+    ],
+    "dsh_new": [],
+    "dsh_run": [],
+    "close": [
+      "关闭",
+      "关掉",
+      "关一下",
+      "退出",
+      "结束",
+      "停掉",
+      "把"
+    ],
+    "clear_input": [
+      "清空输入",
+      "清空输入框",
+      "清除输入",
+      "清除输入框"
+    ],
+    "dictation_on": [
+      "开始输入",
+      "开始听写",
+      "进入输入模式",
+      "开始转写",
+      "开始打字",
+      "语音输入"
+    ],
+    "dictation_off": [
+      "终止输入",
+      "停止输入",
+      "结束输入",
+      "停止听写",
+      "退出输入",
+      "停止打字",
+      "别打了"
+    ],
+    "vad_calibrate": [
+      "调整静音判定",
+      "静音判定",
+      "校准静音",
+      "调整静音窗",
+      "静音窗",
+      "调整静音",
+      "静音判定校准",
+      "重新校准静音"
+    ]
+  },
+  "behavior": {
+    "vad_silence_ms": 500,
+    "asr_gain_cap": 200,
+    "ahead_frac": 0.46,
+    "ahead_cap_ms": 640,
+    "onset_margin_ms": 400,
+    "vad_min_speech_ms": 200,
+    "vad_energy_threshold": 0.0025,
+    "stream_chunk_ms": 1000,
+    "stream_window_s": 5.0,
+    "conf_threshold": 0.0,
+    "rule_direct": true,
+    "enable_open_web": false,
+    "_comment_rule_direct": "⭐ 规则直通：规则能精确命中（触发词 + 闭集条目/精确关键词都在）时，直接执行，不让模型置信度否决。血债：置信度门原来排在规则优先【之前】，纯文本头置信度均值 0.794（concat 头 0.983），导致「打开矩阵乘优化文件」这类规则能精确解的指令被低置信枪毙 —— 端到端 79.15%，127 个错例里 113 个是「→ unknown」。规则命中是确定性的，比模型置信度可靠。仍然后置在 plausible()（要求句中有已知词）之后，噪声过不来。",
+    "dry_run": false,
+    "log_actions": true,
+    "_comment": "阈值都是实测调出来的。2026-10-12 重做分段判据：门槛改为「噪声跟踪(快降慢升 0.25/0.002) + 双向夹紧 [噪声底×vad_floor_mult, 噪声底×vad_ceil_mult]」，结构照抄 DSH 语音插件 client.js:32-43（旧的 max(0.008, floor×3) 硬地板比本机语音帧 0.0015~0.004 还高 5~10 倍，能量判据从不因说话触发；而纯分位/纯相对量会塌到 4.6e-5 —— 实测门槛 0.00005 时噪声全被算作发声）；新增 vad_min_run_ms 连续发声判据（噪声随机误判给不出连续 240ms，这是唯一能分开 6 秒噪声段与被噪声框住的一句话的判据）；use_webrtcvad=false（它在数字静音上随机判 16% 帧为语音，正是 9 分钟切出 63 段纯噪声的来源）；snr_floor_mult=0.0 关闭整段平均门限（实测对好坏不可分：正确的两句 0.00055/0.00039 反而低于噪声乱码段 0.0014~0.0058）",
+    "vad_max_speech_ms": 12000,
+    "vad_aggressiveness": 1,
+    "vad_floor_mult": 1.5,
+    "vad_ceil_mult": 8.0,
+    "vad_voice_margin": 2.0,
+    "vad_noise_floor": 0.0008,
+    "vad_noise_down": 0.25,
+    "vad_noise_up": 0.002,
+    "use_webrtcvad": false,
+    "vad_backend": "silero",
+    "vad_target_rms": 0.05,
+    "vad_max_gain": 80.0,
+    "vad_prob_threshold": 0.3,
+    "vad_db_threshold": 40,
+    "_comment_vad_silero": "AGC→神经VAD→状态机（业界标准链路）。vad_max_gain=30：本机说话约 0.0015 RMS，×30→0.045 正落在 Silero 的语音区间（实测 prob 0.956~0.999）；×100 时增益顶上限、电平漂到 0.13~0.22（离线实测该麦克风合适区间是 ×10~30），所以上限收到 30，另加抗削波 limiter（削波率实测 0.00%，是防御不是修故障）。vad_db_threshold=40：状态机判据是 hit = 平滑prob>=0.4 AND 平滑db>=门限，db 按 int16 量纲 20log10(RMS(chunk*32767))，门限 60 等于要求 RMS>=0.0305 —— 而 AGC 把【p95 块】归一化到 0.03，于是正常语音块只有 0.01~0.03、db≈50~55，被门限整个拦掉：实测同一段音频 prob=0.999 却切出 0 段（这是「常开监听听不到人说话」的真凶，不是削波）。降到 40 后只剩「排除数字静音」的作用，判据交给神经概率（前置 AGC 后电平已被归一化，再做硬电平门限只会自伤）；反向验证：同电平纯噪声仍是 0 段、峰概率 0.000。",
+    "vad_required_hits": 1,
+    "vad_required_misses": 16,
+    "_comment_vad_misses": "校准(153条真实录音): 句中停顿 p90=512/p95=640ms; 本值预计切碎 2.6%",
+    "asr_backend": "http",
+    "asr_language": "Chinese",
+    "asr_threads": 14,
+    "asr_n_ctx": 4096,
+    "asr_hotwords": true,
+    "asr_hotword_ascii_only": true,
+    "asr_hotword_chars": 160,
+    "asr_audio_tags": false,
+    "_comment_asr_hotwords": "热词上下文 = Qwen3-ASR 的 system 消息（官方 chat_template.json 里的 ns.system_text 通道）。现场实测「启动DeepSeek」→「启动DVC Harness的。」「G.M的。」「骑士版。」：专有名词没有上下文偏置就只能硬猜汉字。对照实验（40 条含英文名的干净 TTS 语料，exp_asr_hotword.py）：无上下文 完全一致 67.5%/相似度 0.900/273ms；加热词 70.0%/0.928/484ms；Q8_0+热词 72.5%/0.916/802ms（不值那 1.65× 耗时）。asr_hotword_ascii_only=true 只喂含拉丁字母的名字（174 字 vs 全表 320 字），因为中文名本来就转得对，喂全表只会拖长 prefill。⚠️ 连干净 TTS 上英文名也错 ~30%，说明瓶颈在 ASR 本身，不在麦克风/AGC。",
+    "save_utterances": true,
+    "save_utterances_file": false,
+    "utt_dir": "utt",
+    "_comment_save_utterances": "把每句话的【AGC 之前的原始音频】+ 转写/判定结果存到 utt/（wav + index.jsonl），并带 src=mic|file 来源标记。为什么必须存：现场「启动DeepSeek」被转烂，但那段真实音频没留下来，只能拿 TTS 语料猜、修不动。save_utterances_file=false：--wav 跑语料时【不入档】——实测跑一次 609 条 val 复测就往 utt/ 灌 609 个 TTS 文件（一次实验 1833 条 / 153 MB），把真实麦克风的错例全淹了；那些已挪到 utt/_corpus_runs/。",
+    "trim_after_load": true,
+    "lazy_load": true,
+    "idle_unload_s": 30000,
+    "preload_on_onset": true,
+    "quantize_int8": false,
+    "intent_int8": true,
+    "intent_text_only": true,
+    "intent_from": "text",
+    "_comment_intent_cut": "⭐ 砍掉音频塔（用户指令：'embedding 是从输入文本进行 embedding 匹配意图的，现在只走这条道，音频塔砍掉，只留一个'）。产物 model/intent_text.pt = B(dmeta int8 85.5MB) + word_emb(64.9MB) + head_text(768→8) ≈ 153.7MB，原 intent_int8b.pt 375.7MB（省 221.9MB）；砍掉 A 音频塔 198MB、ctc_head 23.8MB、E_PAD 20MB。音频塔全进程只留 ASR mmproj 里那一个。实测代价（609 条 val）：纯文本路 94.58% vs 音频+文本 concat 98.52%（-3.94pp），弱在 unknown 65.6% —— 线上还有规则层/门控兜底。回滚：intent_text_only=false + intent_from=audio。",
+    "vad_min_run_ms": 150,
+    "plausible_max_len": 30,
+    "plausible_max_repeat": 0.45,
+    "plausible_max_flip": 0.4,
+    "agc_target_rms": 0.06,
+    "agc_max_gain": 8.0,
+    "snr_floor_mult": 0.0,
+    "enable_dsh": false,
+    "dsh_cli": "C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd",
+    "dsh_workspace": "C:\\Users\\user\\Desktop\\ds harness",
+    "dsh_patch": "C:\\Users\\user\\Desktop\\ds harness\\voice_agent\\dsh_model_patch.yml",
+    "dsh_state_file": "dsh_session.json",
+    "dsh_timeout_s": 1800,
+    "_comment_dsh": "DSH 会话（语音）：默认一直用同一个会话（dsh_run 会带 --session-id 续），只有明确说「新建会话」才走 dsh_new 建新的。⚠️ 必须带 --patch dsh_model_patch.yml：headless 的 cordis.patch.yml 是空的 []，会落到 bundle 默认的 llm-deepseek(api.deepseek.com)，那个 key 余额 0 → 任务立刻 402 QUOTA；desktop profile（也就是当前会话）用的是 provider=opencode-go / model=deepseek-v4.1-flash，这个 patch 就是从它抽出来的模型层。任务在后台跑（可能几分钟），日志写到 dsh_logs/*.jsonl。",
+    "asr_hotwords_extra": [
+      "启动",
+      "打开",
+      "搜索",
+      "精确查找",
+      "文件",
+      "网址"
+    ],
+    "_comment_asr_hotwords2": "实测（14 条真实麦克风录音，exp_hotword_cmdwords.py）：只喂英文名时「新建会话」一律被转成「新建绘画」（huihua 完全同音，音频无法区分，只能靠上下文）；把【命令词 + 全部中文闭集名】也喂进去后，「新建DSH会话」「DeepSeek新建会话」都被纠回来了（新建D S M去绘画 → 新建DSH会话）。代价：个别条目被带偏（Edge新建会话 → DSH新建会话）。另外 A/B 实测 1.7B：14 条里赢 2 输 4、慢 2.3×（10s vs 5s），所以不换。",
+    "asr_gguf": "C:\\Users\\user\\Desktop\\ds harness\\aigc_demo_framework\\models\\qwen3-asr-gguf-1.7b\\Qwen3-ASR-1.7B-Q4_K_M.gguf",
+    "asr_mmproj": "C:\\Users\\user\\Desktop\\ds harness\\aigc_demo_framework\\models\\qwen3-asr-gguf-1.7b\\mmproj-Qwen3-ASR-1.7B-Q4_K_M.gguf",
+    "_comment_asr_model": "ASR 权重（用户指定换 1.7B）。实测代价：比 0.6B 慢 1.6~2 倍（单句 625~1138ms vs 281~660ms），内存 +768MB（1223+211MB vs 462+204MB）。回滚：把 asr_gguf/asr_mmproj 指回 qwen3-asr-gguf 目录里的 0.6B 两个文件即可。",
+    "_comment_dsh_disabled": "用户决定废弃 DSH 会话方案，语音 agent 只做基础命令（打开应用 / 打开网址 / 搜索）。触发词已清空 + enable_dsh=false；dsh_session.py 与 act_dsh_* 代码保留未删，恢复只需把触发词和开关加回来。",
+    "asr_use_raw": true,
+    "_comment_asr_final": "最终形态（用户指令）：ASR = Qwen3-ASR-1.7B-Q4_K_M 在【本进程 CPU】跑（asr_backend=gguf，替换掉原来的模型）；参数对标 app 的 llama-server（-c 4096）；送 ASR 的音频【不做 AGC】（asr_use_raw=true，AGC 只留给 VAD）；热词上下文保留（asr_hotwords=true）。app 的 8124 服务保持不动。",
+    "_comment_hotwords_off": "prompt 热词已关（用户指令）。实测 382 字 prompt：延迟 x2.3（455->1359ms）、这三条零改善，且 app 那条路根本没用 prompt 反而更好。热词改走【logits 偏置（前缀 shallow fusion）】——在 asr_gguf.transcribe 里自己读 logits 加分，不动 prompt。",
+    "_comment_pruned": "删掉用户明确用不上的条目：计算器、记事本（别名 notepad/calc 一并消失）。用户原话：「把这个傻逼notepad删掉我他妈根本用不上」。热词表已改成【只跟随闭集】，所以删条目 = 热词里同时去掉，不会再从 meta.json 的静态英文词表漏回来。",
+    "_comment_pruned2": "apps 按用户点名的 13 个收敛（删掉 注册表/磁盘清理/资源监视器/系统信息/远程桌面/屏幕键盘/放大镜/Vulkan测试/Node 等）。新增 urls:DeepSeek网页 → https://chat.deepseek.com；与应用 DeepSeek 同别名，靠触发词后缀区分：「打开DeepSeek」=启动应用，「打开DeepSeek网页/官网/网址」=开网页。热词表只跟随闭集，所以条目增减会自动同步到热词。",
+    "_comment_urlsuffix": "url_suffix 改成【包含】判定 + 必须命中 urls 闭集（原来 endswith：\\「打开DeepSeek网页版」以「版」结尾匹配不上，掉进应用分支去开了应用）。files 清空（用户的热词表里没有文档类条目）。",
+    "hotwords_score": 2.0,
+    "_comment_hotwords_on": "asr_hotwords 现在只管【token 前缀树偏置】（gguf 分支的 prompt 已固定传 context=None，不会复活成文本 prompt）。之前砍 prompt 时把这个开关一起关了，导致前缀树一次都没生效（日志 16:58：DeepSeek 被听成 DPS/creative）。",
+    "_comment_urls_profile": "按用户画像（科技技术宅）重排 urls：删淘宝/京东/小红书/微博/腾讯视频/爱奇艺/网易云/百度；补技术站（外网标 needs_proxy，打开前自动确保 Clash 在跑：Stack Overflow/arXiv/PapersWithCode/Kaggle/HackerNews/GoogleScholar/PyPI/DockerHub/Claude/OpenAI/YouTube/维基 + 国内 开源中国/博客园/Gitee/机器之心/InfoQ）。系统代理由 Clash Verge 自己设置，浏览器走系统代理即可。",
+    "_comment_proxy": "外网条目不设 needs_proxy、不做任何代理前置检查；代理由用户自己在 Clash 里统一管理系统代理。新增 close 触发词 → close_app 动作（只在 apps 闭集里关，绝不乱杀进程）。",
+    "enable_dictation": true,
+    "dictation_add_space": true,
+    "dictation_punct_to_space": true,
+    "dictation_stitch": true,
+    "dictation_stitch_gap_s": 1.5,
+    "_comment_dictation_stitch": "听写段是否允许按时间间隔与上一段拼接；false=每段独立（不再把下一句粘到上一句）",
+    "_comment_dictation_punct": "写进聊天框时把标点换成空格，连续空白并成一个（缺省 false）",
+    "_comment_dictation": "听写：不是命令时，若 UIA 判定光标在可编辑控件里（EditControl/DocumentControl/TextControl/ComboBoxControl 或支持 Value/TextPattern），就用 SendInput+KEYEVENTF_UNICODE 把转写打进该输入框（不动剪贴板）。命令优先——只有判成非命令/unknown 才走听写。实测：Chromium 窗口 caret=0x0，Win32 判定会误报，必须用 UIA（uiautomation 轮子已装）。",
+    "enable_clear_input": true,
+    "_comment_clear_input": "清空输入：只认完整短语（都含『输入』二字），删掉『清空/全删/清空一下/清除全部/全部删掉』这些过短或泛化的触发词 —— 用户要求：清空这个太短了。动作 = Ctrl+A → Delete（跨应用通用）；护栏 = UIA 判定焦点必须在可编辑控件里。误清可按 Ctrl+Z 撤销。",
+    "_comment_threads": "asr_threads 对齐 app 的 llama-server（它没传 -t → 用默认=物理核数）。之前我固定 4/8，偏保守。",
+    "dictation_priority": "high",
+    "dictation_bypass_prefix": "命令",
+    "_comment_dictation_priority": "听写优先（用户要求）：光标在可编辑控件里时，说话优先【打进输入框】，不再执行命令（否则「在GitHub里搜X」会弹到浏览器）。逃生口：句首说「命令」→ 跳过听写按命令执行。站内搜索：命中 urls 站点名+搜索动词+查询词 → site_search（用 search_url，缺省用 site: 兜底）。",
+    "_comment_apps2": "加 WorkBuddy(E:\\workbuddy\\WorkBuddyAI\\WorkBuddyAI.exe) 与 千问(E:\\qwen\\QianwenApp\\qianwen.exe，含别名千问办公/通义)。删掉 Stack Overflow 的超短别名 so（它把「Work Buddy」吸成了 Stack Overflow）。",
+    "_comment_aumid": "WorkBuddy/千问/千问办公 都是 Start 菜单注册应用：直接跑 exe 会立刻退出且无窗口（实测退出码 0），必须用 explorer.exe shell:AppsFolder\\<AUMID> 激活。千问办公是独立应用（com.qwen.work.cn），不是千问的别名。",
+    "asr_http_url": "http://172.20.71.101:30805/v1/audio/transcriptions",
+    "asr_http_model": "qwen3-asr",
+    "_comment_gpu_asr": "ASR = WSL k3s llama-asr (GPU, 1.7B Q4_K_M, -ngl 99) via netsh portproxy 127.0.0.1:30803. 82ms/句 vs CPU 702ms。三个坑：① _make_asr 门控只认 own/gguf -> http 永不生效；② .get(k,default) 对值为 None 的键失效；③ sub=True 日志被隐藏。",
+    "asr_http_resolve_wsl_ip": false,
+    "wsl_distro": "Ubuntu-24.04",
+    "asr_http_timeout": 120,
+    "asr_http_language": "zh",
+    "stitch_gap_s": 0.0,
+    "stitch_enable": true,
+    "_comment_stitch": "停顿切段修复：① vad_required_misses 24->40（768ms->1280ms，配置里的 vad_silence_ms 在 Silero 路里没被使用，实际由 required_misses 决定）；② stitch：相邻段 <1.5s 且上段不以句末标点结尾 -> 拼接；上段若已听写进输入框，先用退格撤回再打整句。",
+    "intent_backend": "embed",
+    "intent_index": "intent_index.json",
+    "intent_embed_url": "http://172.20.71.101:30802/v1/embeddings",
+    "intent_embed_thr": 0.3,
+    "intent_embed_margin": 0.0,
+    "intent_drop": [
+      "web_search"
+    ],
+    "_comment_intent_backend": "意图分类换成句向量 kNN（semantic-router 等价物，零训练）：加意图=加示例+重建索引；unknown 用阈值(0.30)判定；web_search 已按用户要求砍掉。回退：intent_backend=torch。",
+    "entity_link_thr": 0.75,
+    "_comment_entity_link": "L3 实体链接（entity_link.py 四路融合：归一化精确/拼音相同/拼音差1(名字>=3字)/编辑距离(>=3字或后缀字)/经验误听表/可选语义余弦）。接在 resolve_closed 兜底：原来命中优先，未命中才走链接，分数<阈值仍拒识。",
+    "_comment_hotword_english_only": "ASR 热词 prompt 只放少量英文专有名词（DeepSeek/Ollama/Trae/Clash/Steam/Blender/Python/GitHub/HuggingFace/ModelScope/harness/dsh…），中文名不再进 prompt —— 中文名由 L2/L3 处理。",
+    "search_mid_verbs": [
+      "搜索一下",
+      "搜索",
+      "搜一下",
+      "查询",
+      "检索",
+      "查找",
+      "查一下",
+      "找一下"
+    ],
+    "_comment_triggers": "触发词收紧：只砍动作类/泛化词（运行/使用/搜个/查查/搜搜），结构性组合（搜文件/找文件/搜索一下…）保留——实测砍掉它们会让 file_search->site_search 误判 2->5。",
+    "dictation_mode_default": "auto",
+    "_comment_dictation_mode": "听写模式：auto(光标在输入框才听写) / on(强制，由「开始输入」触发并自动聚焦输入框) / off(由「终止输入」触发)。「开始输入」会用 UIA 在当前前台窗口里找第一个可编辑控件并 SetFocus。",
+    "intent_embed_conf_gate": 0.0,
+    "_comment_conf_gate": "conf_threshold=0.55 只适用旧 torch 模型的 softmax；句向量分类器的 conf 是余弦相似度，开集判定由 intent_embed_thr=0.30 负责，故设 0.0（否则自由说话会被误拒，且到不了听写兜底）。",
+    "_comment_latency": "感知延迟 = 静音判定 + ASR + 意图 + 动作。静音判定曾是 1280ms（主因 ✗），现降到 704ms；被切开的话由 stitch(<2s, 听写类退格重打) 兜住。",
+    "_comment_stitch_off": "用户要『边说边打』：关掉 2s 段拼接 -> 每段(704ms 静音判定)一完成就立刻打进输入框，感知延迟 ~0.8s。代价：停顿处会切成两段分别打字。要更接近真流式，见 STREAMING_PLAN.md。",
+    "_comment_vad_relax": "切断/VAD 排查：放宽起始判据（hits 3->2、min_speech 400->200ms、min_run 240->150ms），并在 handle() 里为每个段打印 时长/VAD峰概率/RMS，让'没生成段'与'段被丢'都能被观测。",
+    "_comment_gain_cap": "丢音频真因：AGC 上限 60/30 会把低电平输入(含噪声底 0.0007)放大到削波(峰值 1.0)，Silero 于是判非语音 -> 段丢失/乱码。真语音本就有 0.02~0.08，只需 <8 倍增益；噪声 ×8 仍是噪声，不会被放大成削波。",
+    "trigger_mode": "ptt",
+    "fastpath_mode": "off",
+    "fastpath_min_prefix": 3,
+    "_comment_fastpath": "办公：意图识别走拼音标注（表由 apps/urls 别名生成）",
+    "ptt_key": "RCTRL",
+    "ptt_preroll_ms": 1000,
+    "ptt_min_ms": 250,
+    "ptt_min_speech_ms": 120,
+    "ptt_head_keep_ms": 150,
+    "ptt_tail_keep_ms": 300,
+    "_comment_ptt": "按住说话（2026-10-14 用户指定）。为什么换掉常开 VAD：VAD 的段起点是【概率检测】的结果，必须靠预滚动去兜；而 StateMachine 收段时把 pre_buffer 清空、之后每块只补 1 块 —— 上一段刚收完、紧接着又说话时预滚动只剩几块，触发又要等「5 块平滑 + hits」≈200~300ms → 段起点落到起音【之后】= 从说话中间切进来。血债实测（同一句话两条路）：utt/162207_mic_dictation_就好像可以了.wav 段头 = 段内 RMS ×2.35（整段最响就在开头），转写「就好像可以了。」吃掉「感」；而 162212 那条转写完整「感觉好像可以了吧。」→ 用户输入框里得到「就好像可以了。感觉好像可以了吧。」= 断头残句 + 完整重复。按键是【已知事件】，段起点 = 按下 − preroll，起音不需要被检测出来，结构上不存在这条路。顺带收益：①不按就不听（噪声/对话不再切段、不再往输入框打字）；②松手即送 ASR，省掉 704ms 静音等待（实测 142~155ms 出字，STREAMING_PLAN §5 目标 <0.3s 达成，不用起 vLLM realtime、不用腾显存、不用写 WS 回退链）；③段尾裁静音（Qwen3-ASR 会在静音上编词，实测 30s 近静音被转成「《中国好声音》第二季…」）。代价：拿不到「边说边出字」，要那个才需要流式。回滚：trigger_mode 改回 \"vad\"。VAD 那条路本身也修了 pre_buffer.clear()（改成一直在滚的环形缓冲），前后对照：旧代码第 2 段预滚动 0~1 块、段首 0.67× 段内 RMS；新代码满 19~20 块、段首 0.00×。",
+    "_comment_asr_http_switch": "2026-10-14 切到 vLLM(1.7B fp8, k8s vllm-asr NodePort 30805) 的离线转写端点。原因：为跑真流式把 llama-asr 缩到 0 了（8GB 显存只能容一个 ASR）。vllm-asr 用 --hf-overrides 指到 Qwen3ASRRealtimeGeneration，同时支持 /v1/audio/transcriptions（离线）与 /v1/realtime（WS 流式）—— 一个引擎两用。回滚：把 asr_http_url 改回 http://127.0.0.1:30803/v1/audio/transcriptions 并把 llama-asr 扩回 1（但需先缩 vllm-asr，显存放不下两个）。注：目前用 WSL IP 直连，因为 netsh portproxy 加 30805 需要管理员；加了 portproxy 后可改回 127.0.0.1:30805。",
+    "stream_enable": true,
+    "stream_exec": false,
+    "stream_url": "ws://172.20.71.101:30805/v1/realtime",
+    "stream_model": "qwen3-asr",
+    "stream_start_ms": 300,
+    "_comment_stream": "流式抢跑（A 路，2026-10-14）。协议与坑见 STREAMING_ENGINE_NOTES.md：① 必须先发 session.update 校验模型（否则每条消息回 model_not_validated）；② append 不触发解码，commit 才触发；且生成进行中重复 commit 会被忽略 → 所以只发一次【启动】commit，之后靠 final=True 收尾（客户端已按此实现）；③ 模型侧按【固定 5 秒】一段解码（qwen3_asr_realtime.segment_duration_s=5.0），所以 delta 的节奏是 5 秒而不是几百毫秒 —— 对 15 秒长句能在第 5、10 秒各抢跑一次；④ 每次窗口输出带 language X[/<asr_text>] 前缀（形态两种都有）必须剥，且必须【在拼接后的文本上剥】（模型会把标记拆在多个 delta 里）；⑤ 收尾会把最后几秒重解一遍 → 消费侧必须段去重 + 动作去重（stream_consume.py 已做）。A 路只做确定性的：规则层直通 + 只留可撤销动作；B 路（松手整段 ASR）永远权威。回滚：stream_enable=false（或不重启就用旧逻辑）。",
+    "vad_calib_seconds": 8,
+    "log_level": "info",
+    "_comment_log_level": "info=只打印转写/耗时/动作结果；debug=加 VAD 参数/拼音/裁剪/自适应细节（env VOICE_AGENT_LOG=debug 可临时覆盖）",
+    "intent_registry_file": "intent_config.json",
+    "intent_domain": "日常",
+    "_comment_intent_registry": "唯一开关：intent_config.json → intent_registry（默认域 日常）；说「切换到游戏/运维/日常」会在运行期覆盖（记在 opencode_fastpath/domain_state.json）",
+    "vad_smoothing_window": 2,
+    "vad_calib_min_ms": 500,
+    "vad_calib_factor": 1.35,
+    "_comment_vad_calib": "语音校准（单句版）：说一句话 → 按句内最大停顿×1.35 定停止窗（下限 512 / 上限 864ms），同一段音频顺带校准预滚 + ASR 增益",
+    "_comment_stopwin": "停止窗 500ms（16 帧，用户指定）；语音校准下限同为 500ms",
+    "launch_verify_s": 30,
+    "launch_require_wait_s": 35,
+    "_comment_launch": "游戏类应用的 前提（先起 Steam/Battle.net）与 验证（本体进程出现才算成功）见 apps 里的 _require_*/_watch",
+    "launch_alive_s": 6,
+    "ahead_trim_ms": 0
+  }
+}

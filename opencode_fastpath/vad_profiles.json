@@ -1,0 +1,13 @@
+{
+  "default": {
+    "misses": 16,
+    "prob": 0.3,
+    "hits": 1,
+    "ahead_trim_ms": 0,
+    "onset_margin_ms": 400,
+    "ahead_frac": 0.46,
+    "asr_gain_cap": 200,
+    "source": "user",
+    "why": "定稿：500ms 停止窗 + 起音余量 400ms"
+  }
+}

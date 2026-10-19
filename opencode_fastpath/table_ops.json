@@ -1,0 +1,555 @@
+{
+  "generator": "opencode",
+  "session": "ses_eb3637506ffeoeQ5UIVdyl40q4",
+  "version": 1,
+  "ids": {
+    "da": 0,
+    "gai": 1,
+    "ji": 2,
+    "dong": 3,
+    "yi": 4,
+    "jia": 5,
+    "yun": 6,
+    "jin": 7,
+    "san": 8,
+    "lu": 9,
+    "gan": 10,
+    "mian": 11,
+    "ban": 12,
+    "jian": 13,
+    "gong": 14,
+    "pu": 15,
+    "lo": 16,
+    "mi": 17,
+    "jiu": 18,
+    "si": 19,
+    "zi": 20,
+    "biao": 21,
+    "ca": 22,
+    "jun": 23,
+    "ci": 24,
+    "pan": 25,
+    "lai": 26,
+    "cun": 27,
+    "hu": 28,
+    "zai": 29,
+    "ga": 30,
+    "duan": 31,
+    "gou": 32,
+    "cen": 33,
+    "wu": 34,
+    "zuan": 35,
+    "tai": 36,
+    "li": 37,
+    "long": 38,
+    "jie": 39,
+    "dian": 40,
+    "lie": 41,
+    "zen": 42,
+    "me": 43,
+    "gua": 44,
+    "le": 45,
+    "wai": 46,
+    "sen": 47,
+    "ge": 48,
+    "huan": 49,
+    "zui": 50,
+    "pai": 51,
+    "dui": 52,
+    "tun": 53,
+    "tu": 54,
+    "zong": 55,
+    "gun": 56,
+    "tin": 57,
+    "diao": 58,
+    "jue": 59,
+    "len": 60,
+    "ju": 61,
+    "jiao": 62,
+    "suan": 63,
+    "bu": 64,
+    "lan": 65,
+    "wen": 66,
+    "hen": 67,
+    "wo": 68,
+    "yin": 69,
+    "din": 70,
+    "zun": 71,
+    "cuan": 72
+  },
+  "entries": [
+    {
+      "intent": "open_url",
+      "arg": "Grafana",
+      "triggers": [
+        "打开Grafana",
+        "启动Grafana",
+        "开一下Grafana",
+        "运行Grafana",
+        "上Grafana",
+        "进入Grafana",
+        "看看Grafana",
+        "看Grafana",
+        "打开grafana",
+        "启动grafana",
+        "开一下grafana",
+        "运行grafana",
+        "上grafana",
+        "进入grafana",
+        "看看grafana",
+        "看grafana",
+        "打开Grafana",
+        "启动Grafana",
+        "开一下Grafana",
+        "运行Grafana",
+        "上Grafana",
+        "进入Grafana",
+        "看看Grafana",
+        "看Grafana",
+        "打开面板",
+        "启动面板",
+        "开一下面板",
+        "运行面板",
+        "上面板",
+        "进入面板",
+        "看看面板",
+        "看面板",
+        "打开看板",
+        "启动看板",
+        "开一下看板",
+        "运行看板",
+        "上看板",
+        "进入看板",
+        "看看看板",
+        "看看板",
+        "打开监控面板",
+        "启动监控面板",
+        "开一下监控面板",
+        "运行监控面板",
+        "上监控面板",
+        "进入监控面板",
+        "看看监控面板",
+        "看监控面板"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "Prometheus",
+      "triggers": [
+        "打开Prometheus",
+        "启动Prometheus",
+        "开一下Prometheus",
+        "运行Prometheus",
+        "上Prometheus",
+        "进入Prometheus",
+        "看看Prometheus",
+        "看Prometheus",
+        "打开prometheus",
+        "启动prometheus",
+        "开一下prometheus",
+        "运行prometheus",
+        "上prometheus",
+        "进入prometheus",
+        "看看prometheus",
+        "看prometheus",
+        "打开Prometheus",
+        "启动Prometheus",
+        "开一下Prometheus",
+        "运行Prometheus",
+        "上Prometheus",
+        "进入Prometheus",
+        "看看Prometheus",
+        "看Prometheus",
+        "打开普罗米修斯",
+        "启动普罗米修斯",
+        "开一下普罗米修斯",
+        "运行普罗米修斯",
+        "上普罗米修斯",
+        "进入普罗米修斯",
+        "看看普罗米修斯",
+        "看普罗米修斯",
+        "打开指标查询",
+        "启动指标查询",
+        "开一下指标查询",
+        "运行指标查询",
+        "上指标查询",
+        "进入指标查询",
+        "看看指标查询",
+        "看指标查询"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_disk",
+      "arg": null,
+      "triggers": [
+        "查磁盘",
+        "看磁盘",
+        "磁盘",
+        "空间",
+        "df"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_mem",
+      "arg": null,
+      "triggers": [
+        "查内存",
+        "看内存",
+        "内存",
+        "mem",
+        "free"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_cpu",
+      "arg": null,
+      "triggers": [
+        "查负载",
+        "看负载",
+        "负载",
+        "CPU",
+        "cpu",
+        "load",
+        "uptime"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_gpu",
+      "arg": null,
+      "triggers": [
+        "查显卡",
+        "看显卡",
+        "显卡",
+        "GPU",
+        "gpu",
+        "显存",
+        "nvidia"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_ports",
+      "arg": null,
+      "triggers": [
+        "查端口",
+        "看端口",
+        "端口",
+        "port",
+        "ss",
+        "netstat"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_proc",
+      "arg": null,
+      "triggers": [
+        "查进程",
+        "看进程",
+        "进程",
+        "process",
+        "ps",
+        "top"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_service",
+      "arg": null,
+      "triggers": [
+        "查服务",
+        "服务状态",
+        "systemctl",
+        "service"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_logs",
+      "arg": null,
+      "triggers": [
+        "看日志",
+        "查日志",
+        "日志",
+        "log",
+        "logs",
+        "journalctl"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_k8s_pods",
+      "arg": null,
+      "triggers": [
+        "查集群",
+        "集群",
+        "pod",
+        "pods",
+        "kubectl",
+        "k8s",
+        "容器"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_k8s_nodes",
+      "arg": null,
+      "triggers": [
+        "查节点",
+        "节点",
+        "node",
+        "nodes"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_k8s_svc",
+      "arg": null,
+      "triggers": [
+        "查服务列表",
+        "service",
+        "svc",
+        "ingress",
+        "NodePort"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_k8s_describe",
+      "arg": null,
+      "triggers": [
+        "describe",
+        "详情",
+        "怎么挂了",
+        "为什么挂了",
+        "看事件",
+        "OOM",
+        "CrashLoop"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_k8s_logs",
+      "arg": null,
+      "triggers": [
+        "pod日志",
+        "容器日志",
+        "kubectl logs",
+        "上个容器"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_metric",
+      "arg": null,
+      "triggers": [
+        "指标",
+        "prometheus",
+        "promql",
+        "TTFT",
+        "ttft",
+        "TPOT",
+        "tpot",
+        "TTOT",
+        "KV缓存",
+        "前缀缓存",
+        "排队",
+        "吞吐",
+        "QPS"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_open",
+      "arg": null,
+      "triggers": [
+        "打开",
+        "open",
+        "面板",
+        "看板",
+        "终端",
+        "terminal"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_restart_service",
+      "arg": null,
+      "triggers": [
+        "重启"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_restart_pod",
+      "arg": null,
+      "triggers": [
+        "重启pod",
+        "滚动重启",
+        "rollout"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_stop_service",
+      "arg": null,
+      "triggers": [
+        "停掉",
+        "停服务"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_confirm",
+      "arg": null,
+      "triggers": [
+        "确认",
+        "执行"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_cancel",
+      "arg": null,
+      "triggers": [
+        "取消",
+        "算了",
+        "不执行"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "ops_ask_ai",
+      "arg": null,
+      "triggers": [
+        "让ds",
+        "让DS",
+        "让ai",
+        "让AI",
+        "问ds",
+        "分析",
+        "排查",
+        "怎么挂了",
+        "为什么",
+        "帮我看看"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    },
+    {
+      "intent": "vad_calibrate",
+      "arg": null,
+      "triggers": [
+        "调整静音判定",
+        "静音判定",
+        "校准静音",
+        "调整静音窗",
+        "静音窗",
+        "调整静音",
+        "静音判定校准",
+        "重新校准静音"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "ops\\profiles\\ops-v1\\intent_config.ops.json"
+      }
+    }
+  ]
+}

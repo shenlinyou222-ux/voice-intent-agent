@@ -1,0 +1,123 @@
+{
+  "generator": "opencode",
+  "session": "ses_eb3637506ffeoeQ5UIVdyl40q4",
+  "version": 1,
+  "ids": {
+    "min": 0,
+    "lin": 1,
+    "lie": 2,
+    "biao": 3,
+    "jin": 4,
+    "dan": 5,
+    "you": 6,
+    "la": 7,
+    "jie": 8,
+    "sen": 9,
+    "me": 10,
+    "len": 11,
+    "zo": 12,
+    "gan": 13,
+    "so": 14,
+    "hua": 15,
+    "gong": 16,
+    "si": 17,
+    "yong": 18,
+    "zen": 19,
+    "diao": 20,
+    "yin": 21,
+    "pan": 22,
+    "din": 23,
+    "jiao": 24,
+    "zun": 25,
+    "cuan": 26,
+    "zong": 27,
+    "long": 28,
+    "yi": 29,
+    "er": 30,
+    "san": 31,
+    "wu": 32,
+    "liu": 33,
+    "ji": 34,
+    "ba": 35,
+    "jiu": 36,
+    "bu": 37,
+    "cong": 38,
+    "ge": 39,
+    "jia": 40,
+    "dian": 41
+  },
+  "entries": [
+    {
+      "intent": "show_commands",
+      "arg": null,
+      "triggers": [
+        "命令列表",
+        "命令清单",
+        "有哪些命令",
+        "有什么命令",
+        "能做什么",
+        "能干什么",
+        "能说哪些话",
+        "有什么功能",
+        "使用说明",
+        "怎么用"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "registry",
+        "tag": "system"
+      }
+    },
+    {
+      "intent": "vad_calibrate",
+      "arg": null,
+      "triggers": [
+        "调整静音判定",
+        "静音判定",
+        "校准静音",
+        "调整静音窗",
+        "静音窗",
+        "调整静音",
+        "静音判定校准",
+        "重新校准静音"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "registry",
+        "tag": "system"
+      }
+    },
+    {
+      "intent": "aoe4_train_villager",
+      "arg": null,
+      "triggers": [
+        "农",
+        "一农",
+        "二农",
+        "三农",
+        "四农",
+        "五农",
+        "六农",
+        "七农",
+        "八农",
+        "九农",
+        "十农",
+        "补农",
+        "补农民",
+        "补充农民",
+        "补个农",
+        "补一下农",
+        "补点农民",
+        "补个农民"
+      ],
+      "additive": true,
+      "destructive": false,
+      "markers": {
+        "source": "registry",
+        "tag": "aoe4"
+      }
+    }
+  ]
+}

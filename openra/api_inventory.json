@@ -1,0 +1,2058 @@
+{
+ "openra_root": "E:\\OpenRA",
+ "scripting": {
+  "global": [
+   {
+    "class": "ScriptActorInterface",
+    "file": "OpenRA.Game\\Scripting\\ScriptActorInterface.cs",
+    "methods": [
+     {
+      "name": "OnActorDestroyed",
+      "argc": 0,
+      "desc": ""
+     }
+    ]
+   },
+   {
+    "class": "ScriptPropertyGroupAttribute",
+    "file": "OpenRA.Game\\Scripting\\ScriptContext.cs",
+    "methods": [
+     {
+      "name": "ScriptPropertyGroupAttribute",
+      "argc": 1,
+      "desc": ""
+     },
+     {
+      "name": "ScriptActorProperties",
+      "argc": 2,
+      "desc": ""
+     },
+     {
+      "name": "ScriptPlayerProperties",
+      "argc": 2,
+      "desc": ""
+     },
+     {
+      "name": "ScriptGlobalAttribute",
+      "argc": 1,
+      "desc": ""
+     },
+     {
+      "name": "FatalError",
+      "argc": 1,
+      "desc": ""
+     },
+     {
+      "name": "RegisterMapActor",
+      "argc": 2,
+      "desc": ""
+     },
+     {
+      "name": "WorldLoaded",
+      "argc": 0,
+      "desc": ""
+     },
+     {
+      "name": "Tick",
+      "argc": 0,
+      "desc": ""
+     },
+     {
+      "name": "Dispose",
+      "argc": 0,
+      "desc": ""
+     },
+     {
+      "name": "CreateTable",
+      "argc": 1,
+      "desc": ""
+     }
+    ]
+   },
+   {
+    "class": "ScriptMemberExts",
+    "file": "OpenRA.Game\\Scripting\\ScriptMemberExts.cs",
+    "methods": [
+     {
+      "name": "LuaDocString",
+      "argc": 1,
+      "desc": ""
+     },
+     {
+      "name": "LuaDocString",
+      "argc": 1,
+      "desc": ""
+     },
+     {
+      "name": "LuaDocString",
+      "argc": 1,
+      "desc": ""
+     }
+    ]
+   },
+   {
+    "class": "ScriptMemberWrapper",
+    "file": "OpenRA.Game\\Scripting\\ScriptMemberWrapper.cs",
+    "methods": [
+     {
+      "name": "Get",
+      "argc": 1,
+      "desc": ""
+     },
+     {
+      "name": "Set",
+      "argc": 1,
+      "desc": ""
+     },
+     {
+      "name": "WrappableMembers",
+      "argc": 1,
+      "desc": ""
+     },
+     {
+      "name": "RequiredTraitNames",
+      "argc": 1,
+      "desc": ""
+     }
+    ]
+   },
+   {
+    "class": "ScriptObjectWrapper",
+    "file": "OpenRA.Game\\Scripting\\ScriptObjectWrapper.cs",
+    "methods": [
+     {
+      "name": "ContainsKey",
+      "argc": 1,
+      "desc": ""
+     }
+    ]
+   },
+   {
+    "class": "LuaValueExts",
+    "file": "OpenRA.Game\\Scripting\\ScriptTypes.cs",
+    "methods": [
+     {
+      "name": "WrappedClrType",
+      "argc": 1,
+      "desc": ""
+     },
+     {
+      "name": "TryGetClrValue",
+      "argc": 3,
+      "desc": ""
+     },
+     {
+      "name": "ToLuaValue",
+      "argc": 2,
+      "desc": ""
+     }
+    ]
+   },
+   {
+    "class": "ActorGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\ActorGlobal.cs",
+    "methods": [
+     {
+      "name": "Create",
+      "argc": 3,
+      "desc": "Create a new actor. initTable specifies a list of key-value pairs that defines the initial parameters for the actor's traits."
+     },
+     {
+      "name": "BuildTime",
+      "argc": 2,
+      "desc": "Returns the build time (in ticks) of the requested unit type."
+     },
+     {
+      "name": "CruiseAltitude",
+      "argc": 1,
+      "desc": "Returns the cruise altitude of the requested unit type (zero if it is ground-based)."
+     },
+     {
+      "name": "Cost",
+      "argc": 1,
+      "desc": "Returns the cost of the requested unit given by the Valued trait."
+     }
+    ]
+   },
+   {
+    "class": "AngleGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\AngleGlobal.cs",
+    "methods": [
+     {
+      "name": "New",
+      "argc": 1,
+      "desc": "Create an arbitrary angle. 1024 units = 360 degrees. North is 0. "
+     }
+    ]
+   },
+   {
+    "class": "BeaconGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\BeaconGlobal.cs",
+    "methods": [
+     {
+      "name": "New",
+      "argc": 4,
+      "desc": "Creates a new beacon that stays for the specified time at the specified WPos. "
+     }
+    ]
+   },
+   {
+    "class": "ColorGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\ColorGlobal.cs",
+    "methods": [
+     {
+      "name": "New",
+      "argc": 3,
+      "desc": "Create a new color with the specified hue/saturation/luminosity."
+     },
+     {
+      "name": "FromRGB",
+      "argc": 4,
+      "desc": "Create a new color with the specified red/green/blue/[alpha] values."
+     },
+     {
+      "name": "FromHex",
+      "argc": 1,
+      "desc": "Create a new color with the specified red/green/blue/[alpha] hex string (rrggbb[aa])."
+     }
+    ]
+   },
+   {
+    "class": "CPosGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\CoordinateGlobals.cs",
+    "methods": [
+     {
+      "name": "New",
+      "argc": 3,
+      "desc": "Create a new CPos with the specified coordinates on the ground (layer = 0)."
+     },
+     {
+      "name": "NewWithLayer",
+      "argc": 3,
+      "desc": "Create a new CPos with the specified coordinates on the specified layer. "
+     },
+     {
+      "name": "New",
+      "argc": 3,
+      "desc": "Create a new CPos with the specified coordinates on the ground (layer = 0)."
+     },
+     {
+      "name": "New",
+      "argc": 5,
+      "desc": "Create a new CPos with the specified coordinates on the ground (layer = 0)."
+     },
+     {
+      "name": "New",
+      "argc": 5,
+      "desc": "Create a new CPos with the specified coordinates on the ground (layer = 0)."
+     },
+     {
+      "name": "New",
+      "argc": 1,
+      "desc": "Create a new CPos with the specified coordinates on the ground (layer = 0)."
+     },
+     {
+      "name": "FromCells",
+      "argc": 1,
+      "desc": "Create a new WDist by cell distance."
+     }
+    ]
+   },
+   {
+    "class": "DateGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\DateTimeGlobal.cs",
+    "methods": [
+     {
+      "name": "Seconds",
+      "argc": 1,
+      "desc": "Converts the number of seconds into game time (ticks)."
+     },
+     {
+      "name": "Minutes",
+      "argc": 1,
+      "desc": "Converts the number of minutes into game time (ticks)."
+     }
+    ]
+   },
+   {
+    "class": "LightingGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\LightingGlobal.cs",
+    "methods": [
+     {
+      "name": "Flash",
+      "argc": 2,
+      "desc": "Controls the `"
+     }
+    ]
+   },
+   {
+    "class": "MapGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\MapGlobal.cs",
+    "methods": [
+     {
+      "name": "ActorsInCircle",
+      "argc": 3,
+      "desc": "Returns a table of all actors within the requested region, filtered using the specified function."
+     },
+     {
+      "name": "ActorsInBox",
+      "argc": 3,
+      "desc": "Returns a table of all actors within the requested rectangle, filtered using the specified function."
+     },
+     {
+      "name": "RandomCell",
+      "argc": 0,
+      "desc": "Returns a random cell inside the visible region of the map."
+     },
+     {
+      "name": "RandomEdgeCell",
+      "argc": 0,
+      "desc": "Returns a random cell on the visible border of the map."
+     },
+     {
+      "name": "ClosestEdgeCell",
+      "argc": 1,
+      "desc": "Returns the closest cell on the visible border of the map from the given cell."
+     },
+     {
+      "name": "ClosestMatchingEdgeCell",
+      "argc": 2,
+      "desc": "Returns the first cell on the visible border of the map from the given cell,"
+     },
+     {
+      "name": "CenterOfCell",
+      "argc": 1,
+      "desc": "Returns the center of a cell in world coordinates."
+     },
+     {
+      "name": "TerrainType",
+      "argc": 1,
+      "desc": "Returns the type of the terrain at the target cell."
+     },
+     {
+      "name": "LobbyOption",
+      "argc": 1,
+      "desc": "Returns the value of a `"
+     },
+     {
+      "name": "LobbyOptionOrDefault",
+      "argc": 2,
+      "desc": "Returns the value of a `"
+     },
+     {
+      "name": "NamedActor",
+      "argc": 1,
+      "desc": "Returns the actor that was specified with a given name in "
+     },
+     {
+      "name": "IsNamedActor",
+      "argc": 1,
+      "desc": "Returns true if actor was originally specified in the map file."
+     },
+     {
+      "name": "ActorsWithTag",
+      "argc": 1,
+      "desc": "Returns a table of all actors tagged with the given string."
+     }
+    ]
+   },
+   {
+    "class": "MediaGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\MediaGlobal.cs",
+    "methods": [
+     {
+      "name": "PlaySpeechNotification",
+      "argc": 2,
+      "desc": "Play an announcer voice listed in notifications.yaml"
+     },
+     {
+      "name": "PlaySoundNotification",
+      "argc": 2,
+      "desc": "Play a sound listed in notifications.yaml"
+     },
+     {
+      "name": "PlaySound",
+      "argc": 1,
+      "desc": "Play a sound file"
+     },
+     {
+      "name": "PlayMusic",
+      "argc": 2,
+      "desc": "Play track defined in music.yaml or map.yaml, or keep track empty for playing a random song."
+     },
+     {
+      "name": "SetBackgroundMusic",
+      "argc": 1,
+      "desc": "Play track defined in music.yaml or map.yaml as background music."
+     },
+     {
+      "name": "StopMusic",
+      "argc": 0,
+      "desc": "Play track defined in music.yaml or map.yaml as background music."
+     },
+     {
+      "name": "PlayMovieFullscreen",
+      "argc": 2,
+      "desc": "Play a video fullscreen. File name has to include the file extension."
+     },
+     {
+      "name": "PlayMovieInRadar",
+      "argc": 2,
+      "desc": "Play a video in the radar window. File name has to include the file extension."
+     },
+     {
+      "name": "DisplayMessage",
+      "argc": 3,
+      "desc": "Display a text message to all players."
+     },
+     {
+      "name": "DisplayMessageToPlayer",
+      "argc": 4,
+      "desc": "Display a text message only to this player."
+     },
+     {
+      "name": "DisplaySystemMessage",
+      "argc": 2,
+      "desc": "Display a system message to the player. If 'prefix' is nil the default system prefix is used."
+     },
+     {
+      "name": "Debug",
+      "argc": 1,
+      "desc": "Displays a debug message to the player, if \\"
+     },
+     {
+      "name": "FloatingText",
+      "argc": 4,
+      "desc": "Display a text message at the specified location."
+     }
+    ]
+   },
+   {
+    "class": "PlayerGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\PlayerGlobal.cs",
+    "methods": [
+     {
+      "name": "GetPlayer",
+      "argc": 1,
+      "desc": "Returns the player with the specified internal name, or nil if a match is not found."
+     },
+     {
+      "name": "GetPlayers",
+      "argc": 1,
+      "desc": "Returns a table of players filtered by the specified function."
+     }
+    ]
+   },
+   {
+    "class": "RadarGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\RadarGlobal.cs",
+    "methods": [
+     {
+      "name": "Ping",
+      "argc": 4,
+      "desc": "Creates a new radar ping that stays for the specified time at the specified WPos."
+     }
+    ]
+   },
+   {
+    "class": "ReinforcementsGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\ReinforcementsGlobal.cs",
+    "methods": [
+     {
+      "name": "Reinforce",
+      "argc": 5,
+      "desc": ""
+     },
+     {
+      "name": "ReinforceWithTransport",
+      "argc": 9,
+      "desc": ""
+     }
+    ]
+   },
+   {
+    "class": "TriggerGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\TriggerGlobal.cs",
+    "methods": [
+     {
+      "name": "GetScriptTriggers",
+      "argc": 1,
+      "desc": ""
+     },
+     {
+      "name": "AfterDelay",
+      "argc": 2,
+      "desc": "Call a function after a specified delay. The callback function will be called as func()."
+     },
+     {
+      "name": "OnPassengerEntered",
+      "argc": 3,
+      "desc": "Call a function for each passenger when it enters a transport. "
+     },
+     {
+      "name": "OnPassengerExited",
+      "argc": 3,
+      "desc": "Call a function for each passenger when it exits a transport. "
+     },
+     {
+      "name": "OnIdle",
+      "argc": 2,
+      "desc": "Call a function each tick that the actor is idle. "
+     },
+     {
+      "name": "OnDamaged",
+      "argc": 4,
+      "desc": "Call a function when the actor is damaged. "
+     },
+     {
+      "name": "OnKilled",
+      "argc": 3,
+      "desc": "Call a function when the actor is killed. The callback "
+     },
+     {
+      "name": "OnAllKilled",
+      "argc": 2,
+      "desc": "Call a function when all of the actors in a group are killed. The callback "
+     },
+     {
+      "name": "OnAnyKilled",
+      "argc": 2,
+      "desc": "Call a function when one of the actors in a group is killed. "
+     },
+     {
+      "name": "OnProduction",
+      "argc": 3,
+      "desc": "Call a function when this actor produces another actor. "
+     },
+     {
+      "name": "OnAnyProduction",
+      "argc": 3,
+      "desc": "Call a function when any actor produces another actor. The callback "
+     },
+     {
+      "name": "OnPlayerWon",
+      "argc": 2,
+      "desc": "Call a function when this player completes all primary objectives. "
+     },
+     {
+      "name": "OnPlayerLost",
+      "argc": 2,
+      "desc": "Call a function when this player fails any primary objective. "
+     },
+     {
+      "name": "OnObjectiveAdded",
+      "argc": 3,
+      "desc": "Call a function when this player is assigned a new objective. "
+     },
+     {
+      "name": "OnObjectiveCompleted",
+      "argc": 3,
+      "desc": "Call a function when this player completes an objective. "
+     },
+     {
+      "name": "OnObjectiveFailed",
+      "argc": 3,
+      "desc": "Call a function when this player fails an objective. "
+     },
+     {
+      "name": "OnBuildingPlaced",
+      "argc": 3,
+      "desc": "Call a function when this player places a building. "
+     },
+     {
+      "name": "OnAddedToWorld",
+      "argc": 2,
+      "desc": "Call a function when this actor is added to the world. "
+     },
+     {
+      "name": "OnRemovedFromWorld",
+      "argc": 2,
+      "desc": "Call a function when this actor is removed from the world. "
+     },
+     {
+      "name": "OnAllRemovedFromWorld",
+      "argc": 2,
+      "desc": "Call a function when all of the actors in a group have been removed from the world. "
+     },
+     {
+      "name": "OnCapture",
+      "argc": 5,
+      "desc": "Call a function when this actor is captured. The callback function "
+     },
+     {
+      "name": "OnKilledOrCaptured",
+      "argc": 2,
+      "desc": "Call a function when this actor is killed or captured. "
+     },
+     {
+      "name": "OnAllKilledOrCaptured",
+      "argc": 2,
+      "desc": "Call a function when all of the actors in a group have been killed or captured. "
+     },
+     {
+      "name": "OnEnteredFootprint",
+      "argc": 3,
+      "desc": "Call a function when a ground-based actor enters this cell footprint. "
+     },
+     {
+      "name": "OnExitedFootprint",
+      "argc": 3,
+      "desc": "Call a function when a ground-based actor leaves this cell footprint. "
+     },
+     {
+      "name": "RemoveFootprintTrigger",
+      "argc": 1,
+      "desc": "Call a function when a ground-based actor enters this cell footprint. "
+     },
+     {
+      "name": "OnEnteredProximityTrigger",
+      "argc": 4,
+      "desc": "Call a function when an actor enters this range. "
+     },
+     {
+      "name": "OnExitedProximityTrigger",
+      "argc": 4,
+      "desc": "Call a function when an actor leaves this range. "
+     },
+     {
+      "name": "RemoveProximityTrigger",
+      "argc": 1,
+      "desc": "Call a function when an actor enters this range. "
+     },
+     {
+      "name": "OnInfiltrated",
+      "argc": 3,
+      "desc": "Call a function when this actor is infiltrated. The callback function "
+     },
+     {
+      "name": "OnDiscovered",
+      "argc": 3,
+      "desc": "Call a function when this actor is discovered by an enemy or a player with a Neutral stance. "
+     },
+     {
+      "name": "OnPlayerDiscovered",
+      "argc": 4,
+      "desc": "Call a function when this player is discovered by an enemy or neutral player. "
+     },
+     {
+      "name": "OnSold",
+      "argc": 2,
+      "desc": "Call a function when this actor is sold. The callback function "
+     },
+     {
+      "name": "OnSupportPowerActivated",
+      "argc": 3,
+      "desc": "Call a function when a Support Power is activated by this actor. The callback function will be called as func(self: actor, orderName: string)."
+     },
+     {
+      "name": "OnTimerExpired",
+      "argc": 1,
+      "desc": "Call a function when the game timer expires. The callback function will be called as func()."
+     },
+     {
+      "name": "ClearAll",
+      "argc": 1,
+      "desc": "Removes all triggers from this actor. "
+     },
+     {
+      "name": "Clear",
+      "argc": 2,
+      "desc": "Removes the specified trigger from this actor. "
+     }
+    ]
+   },
+   {
+    "class": "UserInterfaceGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\UserInterfaceGlobal.cs",
+    "methods": [
+     {
+      "name": "SetMissionText",
+      "argc": 2,
+      "desc": "Displays a text message at the top center of the screen."
+     },
+     {
+      "name": "GetFluentMessage",
+      "argc": 2,
+      "desc": "Formats a language string for a given string key defined in the language files (*.ftl). "
+     }
+    ]
+   },
+   {
+    "class": "UtilsGlobal",
+    "file": "OpenRA.Mods.Common\\Scripting\\Global\\UtilsGlobal.cs",
+    "methods": [
+     {
+      "name": "Do",
+      "argc": 4,
+      "desc": "Calls a function on every element in a collection."
+     },
+     {
+      "name": "Any",
+      "argc": 4,
+      "desc": "Returns true if func returns true for any element in a collection."
+     },
+     {
+      "name": "All",
+      "argc": 4,
+      "desc": "Returns true if func returns true for all elements in a collection."
+     },
+     {
+      "name": "Where",
+      "argc": 4,
+      "desc": "Returns the original collection filtered with the func."
+     },
+     {
+      "name": "Take",
+      "argc": 3,
+      "desc": "Returns the first n values from a collection."
+     },
+     {
+      "name": "Skip",
+      "argc": 3,
+      "desc": "Skips over the first numElements members of a table and return the rest."
+     },
+     {
+      "name": "Concat",
+      "argc": 4,
+      "desc": "Concatenates two Lua tables into a single table."
+     },
+     {
+      "name": "Random",
+      "argc": 2,
+      "desc": "Returns a random value from a collection."
+     },
+     {
+      "name": "Shuffle",
+      "argc": 2,
+      "desc": "Returns the collection in a random order."
+     },
+     {
+      "name": "ExpandFootprint",
+      "argc": 2,
+      "desc": "Expands the given footprint one step along the coordinate axes, and (if requested) diagonals."
+     },
+     {
+      "name": "RandomInteger",
+      "argc": 2,
+      "desc": "Returns a random integer x in the range low &lt;= x &lt; high."
+     },
+     {
+      "name": "FormatTime",
+      "argc": 2,
+      "desc": "Returns the ticks formatted to HH:MM:SS."
+     }
+    ]
+   }
+  ],
+  "actor": [
+   {
+    "class": "AircraftProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\AircraftProperties.cs",
+    "methods": [
+     {
+      "name": "Move",
+      "argc": 1,
+      "desc": "Fly within the cell grid."
+     },
+     {
+      "name": "ReturnToBase",
+      "argc": 1,
+      "desc": "Return to the base, which is either the destination given, or an auto-selected one otherwise."
+     },
+     {
+      "name": "Land",
+      "argc": 1,
+      "desc": "Queues a landing activity on the specified actor."
+     },
+     {
+      "name": "Resupply",
+      "argc": 0,
+      "desc": "Starts the resupplying activity when being on a host building."
+     }
+    ]
+   },
+   {
+    "class": "AirstrikeProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\AirstrikeProperties.cs",
+    "methods": [
+     {
+      "name": "TargetAirstrike",
+      "argc": 2,
+      "desc": "Activate the actor's Airstrike Power. Returns the aircraft that will attack."
+     }
+    ]
+   },
+   {
+    "class": "AmmoPoolProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\AmmoPoolProperties.cs",
+    "methods": [
+     {
+      "name": "AmmoCount",
+      "argc": 1,
+      "desc": "Returns the count of the actor's specified ammopool."
+     },
+     {
+      "name": "MaximumAmmoCount",
+      "argc": 1,
+      "desc": "Returns the maximum count of ammo the actor can load."
+     },
+     {
+      "name": "Reload",
+      "argc": 2,
+      "desc": "Adds the specified amount of ammo to the specified ammopool."
+     }
+    ]
+   },
+   {
+    "class": "CaptureProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\CaptureProperties.cs",
+    "methods": [
+     {
+      "name": "Capture",
+      "argc": 1,
+      "desc": "Captures the target actor."
+     },
+     {
+      "name": "CanCapture",
+      "argc": 1,
+      "desc": "Captures the target actor."
+     }
+    ]
+   },
+   {
+    "class": "CarryallProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\CarryallProperties.cs",
+    "methods": [
+     {
+      "name": "PickupCarryable",
+      "argc": 1,
+      "desc": "Pick up the target actor."
+     },
+     {
+      "name": "DeliverCarryable",
+      "argc": 1,
+      "desc": "Drop the actor being carried at the target location."
+     }
+    ]
+   },
+   {
+    "class": "CombatProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\CombatProperties.cs",
+    "methods": [
+     {
+      "name": "Hunt",
+      "argc": 0,
+      "desc": "Ignoring visibility, find the closest hostile target and attack move to within 2 cells of it."
+     },
+     {
+      "name": "AttackMove",
+      "argc": 2,
+      "desc": "Move to a cell, but stop and attack anything within range on the way. "
+     },
+     {
+      "name": "Patrol",
+      "argc": 3,
+      "desc": "Patrol along a set of given waypoints. The action is repeated by default, "
+     },
+     {
+      "name": "PatrolUntil",
+      "argc": 3,
+      "desc": "Patrol along a set of given waypoints until a condition becomes true. "
+     },
+     {
+      "name": "Attack",
+      "argc": 3,
+      "desc": "Attack the target actor. The target actor needs to be visible."
+     },
+     {
+      "name": "CanTarget",
+      "argc": 1,
+      "desc": "Checks if the targeted actor is a valid target for this actor."
+     }
+    ]
+   },
+   {
+    "class": "ConditionProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\ConditionProperties.cs",
+    "methods": [
+     {
+      "name": "GrantCondition",
+      "argc": 2,
+      "desc": "Grant an external condition on this actor and return the revocation token."
+     },
+     {
+      "name": "RevokeCondition",
+      "argc": 1,
+      "desc": "Revoke a condition using the token returned by GrantCondition."
+     },
+     {
+      "name": "AcceptsCondition",
+      "argc": 1,
+      "desc": "Check whether this actor accepts a specific external condition."
+     }
+    ]
+   },
+   {
+    "class": "DeliversCashProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\DeliveryProperties.cs",
+    "methods": [
+     {
+      "name": "DeliverCash",
+      "argc": 1,
+      "desc": "Deliver cash to the target actor."
+     },
+     {
+      "name": "DeliverExperience",
+      "argc": 1,
+      "desc": "Deliver experience to the target actor."
+     }
+    ]
+   },
+   {
+    "class": "DemolitionProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\DemolitionProperties.cs",
+    "methods": [
+     {
+      "name": "Demolish",
+      "argc": 1,
+      "desc": "Demolish the target actor."
+     }
+    ]
+   },
+   {
+    "class": "DiplomacyProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\DiplomacyProperties.cs",
+    "methods": [
+     {
+      "name": "IsAlliedWith",
+      "argc": 1,
+      "desc": "Returns true if the player is allied with the other player."
+     }
+    ]
+   },
+   {
+    "class": "GainsExperienceProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\GainsExperienceProperties.cs",
+    "methods": [
+     {
+      "name": "GiveExperience",
+      "argc": 2,
+      "desc": "Gives the actor experience. If 'silent' is true, no animation or sound will be played if the actor levels up."
+     },
+     {
+      "name": "GiveLevels",
+      "argc": 2,
+      "desc": "Gives the actor level(s). If 'silent' is true, no animation or sound will be played."
+     }
+    ]
+   },
+   {
+    "class": "BaseActorProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\GeneralProperties.cs",
+    "methods": [
+     {
+      "name": "HasProperty",
+      "argc": 1,
+      "desc": "Test whether an actor has a specific property."
+     },
+     {
+      "name": "Flash",
+      "argc": 4,
+      "desc": "Render a target flash on the actor."
+     },
+     {
+      "name": "Teleport",
+      "argc": 1,
+      "desc": "Instantly moves the actor to the specified cell."
+     },
+     {
+      "name": "CallFunc",
+      "argc": 1,
+      "desc": "Run an arbitrary Lua function."
+     },
+     {
+      "name": "Wait",
+      "argc": 1,
+      "desc": "Wait for a specified number of game ticks (25 ticks = 1 second)."
+     },
+     {
+      "name": "Destroy",
+      "argc": 0,
+      "desc": "Remove the actor from the game, without triggering any death notification."
+     },
+     {
+      "name": "Stop",
+      "argc": 0,
+      "desc": "Attempt to cancel any active activities."
+     },
+     {
+      "name": "AddTag",
+      "argc": 1,
+      "desc": "Add a tag to the actor. Returns true on success, false otherwise (for example the actor may already have the given tag)."
+     },
+     {
+      "name": "RemoveTag",
+      "argc": 1,
+      "desc": "Remove a tag from the actor. Returns true on success, false otherwise (tag was not present)."
+     },
+     {
+      "name": "HasTag",
+      "argc": 1,
+      "desc": "Specifies whether or not the actor has a particular tag."
+     }
+    ]
+   },
+   {
+    "class": "GuardProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\GuardProperties.cs",
+    "methods": [
+     {
+      "name": "Guard",
+      "argc": 1,
+      "desc": "Guard the target actor."
+     }
+    ]
+   },
+   {
+    "class": "HarvesterProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\HarvesterProperties.cs",
+    "methods": [
+     {
+      "name": "FindResources",
+      "argc": 0,
+      "desc": "Search for nearby resources and begin harvesting."
+     }
+    ]
+   },
+   {
+    "class": "HealthProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\HealthProperties.cs",
+    "methods": [
+     {
+      "name": "Kill",
+      "argc": 1,
+      "desc": "Kill the actor. damageTypes may be omitted, specified as a string, or as table of strings."
+     }
+    ]
+   },
+   {
+    "class": "InstantlyRepairsProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\InstantlyRepairsProperties.cs",
+    "methods": [
+     {
+      "name": "InstantlyRepair",
+      "argc": 1,
+      "desc": "Enter the target actor to repair it instantly."
+     }
+    ]
+   },
+   {
+    "class": "MissionObjectiveProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\MissionObjectiveProperties.cs",
+    "methods": [
+     {
+      "name": "AddObjective",
+      "argc": 3,
+      "desc": "Add a mission objective for this player. The function returns the "
+     },
+     {
+      "name": "AddPrimaryObjective",
+      "argc": 1,
+      "desc": "Add a primary mission objective for this player. The function returns the "
+     },
+     {
+      "name": "AddSecondaryObjective",
+      "argc": 1,
+      "desc": "Add a secondary mission objective for this player. The function returns the "
+     },
+     {
+      "name": "MarkCompletedObjective",
+      "argc": 1,
+      "desc": "Mark an objective as completed.  This needs the objective ID returned "
+     },
+     {
+      "name": "MarkFailedObjective",
+      "argc": 1,
+      "desc": "Mark an objective as failed.  This needs the objective ID returned "
+     },
+     {
+      "name": "IsObjectiveCompleted",
+      "argc": 1,
+      "desc": "Returns true if the objective has been successfully completed, false otherwise."
+     },
+     {
+      "name": "IsObjectiveFailed",
+      "argc": 1,
+      "desc": "Returns true if the objective has been failed, false otherwise."
+     },
+     {
+      "name": "GetObjectiveDescription",
+      "argc": 1,
+      "desc": "Returns the description of an objective."
+     },
+     {
+      "name": "GetObjectiveType",
+      "argc": 1,
+      "desc": "Returns the type of an objective."
+     },
+     {
+      "name": "HasNoRequiredUnits",
+      "argc": 0,
+      "desc": "Returns true if this player has lost all units/actors that have "
+     }
+    ]
+   },
+   {
+    "class": "MobileProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\MobileProperties.cs",
+    "methods": [
+     {
+      "name": "Move",
+      "argc": 2,
+      "desc": "Moves within the cell grid. closeEnough defines an optional range "
+     },
+     {
+      "name": "ScriptedMove",
+      "argc": 1,
+      "desc": "Moves within the cell grid, ignoring lane biases."
+     },
+     {
+      "name": "MoveIntoWorld",
+      "argc": 1,
+      "desc": "Moves from outside the world into the cell grid."
+     },
+     {
+      "name": "Scatter",
+      "argc": 0,
+      "desc": "Leave the current position in a random direction."
+     },
+     {
+      "name": "EnterTransport",
+      "argc": 1,
+      "desc": "Move to and enter the transport."
+     }
+    ]
+   },
+   {
+    "class": "NukeProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\NukeProperties.cs",
+    "methods": [
+     {
+      "name": "ActivateNukePower",
+      "argc": 1,
+      "desc": "Activate the actor's NukePower."
+     }
+    ]
+   },
+   {
+    "class": "ParadropProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\ParadropProperties.cs",
+    "methods": [
+     {
+      "name": "Paradrop",
+      "argc": 1,
+      "desc": "Command transport to paradrop passengers near the target cell."
+     }
+    ]
+   },
+   {
+    "class": "ParatroopersProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\ParatroopersProperties.cs",
+    "methods": [
+     {
+      "name": "TargetParatroopers",
+      "argc": 2,
+      "desc": "Activate the actor's Paratroopers Power. Returns the aircraft that will drop the reinforcements."
+     }
+    ]
+   },
+   {
+    "class": "PlayerConditionProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\PlayerConditionProperties.cs",
+    "methods": [
+     {
+      "name": "GrantCondition",
+      "argc": 2,
+      "desc": "Grant an external condition on the player actor and return the revocation token."
+     },
+     {
+      "name": "RevokeCondition",
+      "argc": 1,
+      "desc": "Revoke a condition using the token returned by GrantCondition."
+     },
+     {
+      "name": "AcceptsCondition",
+      "argc": 1,
+      "desc": "Check whether this player actor accepts a specific external condition."
+     }
+    ]
+   },
+   {
+    "class": "PlayerProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\PlayerProperties.cs",
+    "methods": [
+     {
+      "name": "GetActors",
+      "argc": 0,
+      "desc": "Returns all living actors staying inside the world for this player."
+     },
+     {
+      "name": "GetGroundAttackers",
+      "argc": 0,
+      "desc": "Returns an array of actors representing all ground attack units of this player."
+     },
+     {
+      "name": "GetActorsByType",
+      "argc": 1,
+      "desc": "Returns all living actors of the specified type of this player."
+     },
+     {
+      "name": "GetActorsByTypes",
+      "argc": 1,
+      "desc": "Returns all living actors of the specified types of this player."
+     },
+     {
+      "name": "HasPrerequisites",
+      "argc": 1,
+      "desc": "Check if the player has these prerequisites available."
+     }
+    ]
+   },
+   {
+    "class": "PlayerPowerProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\PowerProperties.cs",
+    "methods": [
+     {
+      "name": "TriggerPowerOutage",
+      "argc": 1,
+      "desc": "Triggers an outage for the chosen amount of ticks. "
+     }
+    ]
+   },
+   {
+    "class": "ProductionProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\ProductionProperties.cs",
+    "methods": [
+     {
+      "name": "Produce",
+      "argc": 3,
+      "desc": "Build a unit, ignoring the production queue. The activity will wait if the exit is blocked."
+     },
+     {
+      "name": "Build",
+      "argc": 2,
+      "desc": ""
+     },
+     {
+      "name": "IsProducing",
+      "argc": 1,
+      "desc": "Check whether the factory's production queue that builds this type of actor is currently busy. "
+     },
+     {
+      "name": "Build",
+      "argc": 2,
+      "desc": ""
+     },
+     {
+      "name": "IsProducing",
+      "argc": 1,
+      "desc": "Check whether the factory's production queue that builds this type of actor is currently busy. "
+     }
+    ]
+   },
+   {
+    "class": "RepairableBuildingProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\RepairableBuildingProperties.cs",
+    "methods": [
+     {
+      "name": "StartBuildingRepairs",
+      "argc": 1,
+      "desc": "Start repairs on this building. `repairer` can be an allied player."
+     },
+     {
+      "name": "StopBuildingRepairs",
+      "argc": 1,
+      "desc": "Stop repairs on this building. `repairer` can be an allied player."
+     }
+    ]
+   },
+   {
+    "class": "ScaredCatProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\ScaredCatProperties.cs",
+    "methods": [
+     {
+      "name": "Panic",
+      "argc": 0,
+      "desc": "Makes the unit automatically run around and become faster."
+     }
+    ]
+   },
+   {
+    "class": "SellableProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\SellableProperties.cs",
+    "methods": [
+     {
+      "name": "Sell",
+      "argc": 0,
+      "desc": "Start selling the actor."
+     }
+    ]
+   },
+   {
+    "class": "TransformProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\TransformProperties.cs",
+    "methods": [
+     {
+      "name": "Deploy",
+      "argc": 0,
+      "desc": "Queue a new transformation."
+     }
+    ]
+   },
+   {
+    "class": "TransportProperties",
+    "file": "OpenRA.Mods.Common\\Scripting\\Properties\\TransportProperties.cs",
+    "methods": [
+     {
+      "name": "LoadPassenger",
+      "argc": 1,
+      "desc": "Teleport an existing actor inside this transport."
+     },
+     {
+      "name": "UnloadPassenger",
+      "argc": 2,
+      "desc": "Remove an existing actor (or first actor if none specified) from the transport.  This actor is not added to the world."
+     },
+     {
+      "name": "UnloadPassengers",
+      "argc": 2,
+      "desc": "Command transport to unload passengers."
+     }
+    ]
+   }
+  ],
+  "cnc": [
+   {
+    "class": "ChronosphereProperties",
+    "file": "OpenRA.Mods.Cnc\\Scripting\\Properties\\ChronosphereProperties.cs",
+    "methods": [
+     {
+      "name": "Chronoshift",
+      "argc": 3,
+      "desc": "Chronoshift a group of actors. A duration of 0 will teleport the actors permanently. "
+     }
+    ]
+   },
+   {
+    "class": "DisguiseProperties",
+    "file": "OpenRA.Mods.Cnc\\Scripting\\Properties\\DisguiseProperties.cs",
+    "methods": [
+     {
+      "name": "DisguiseAs",
+      "argc": 1,
+      "desc": "Disguises as the target actor."
+     },
+     {
+      "name": "DisguiseAsType",
+      "argc": 2,
+      "desc": "Disguises as the target type with the specified owner."
+     }
+    ]
+   },
+   {
+    "class": "InfiltrateProperties",
+    "file": "OpenRA.Mods.Cnc\\Scripting\\Properties\\InfiltrateProperties.cs",
+    "methods": [
+     {
+      "name": "Infiltrate",
+      "argc": 1,
+      "desc": "Infiltrate the target actor."
+     }
+    ]
+   },
+   {
+    "class": "IonCannonProperties",
+    "file": "OpenRA.Mods.Cnc\\Scripting\\Properties\\IonCannonProperties.cs",
+    "methods": [
+     {
+      "name": "ActivateIonCannon",
+      "argc": 1,
+      "desc": "Activate the actor's IonCannonPower."
+     }
+    ]
+   }
+  ]
+ },
+ "orders": {
+  "handled": {
+   "ActivateCondition": [
+    "GrantChargedConditionOnToggleInfo"
+   ],
+   "AfterDeployTransform": [
+    "TransformsIntoTransformsInfo"
+   ],
+   "AssaultMove": [
+    "AttackMoveInfo"
+   ],
+   "AttackMove": [
+    "AttackMoveInfo"
+   ],
+   "BeginMinefield": [
+    "MinelayerInfo"
+   ],
+   "C4": [
+    "DemolitionInfo"
+   ],
+   "CancelProduction": [
+    "ProductionQueueInfo"
+   ],
+   "CaptureActor": [
+    "CapturesInfo"
+   ],
+   "DeliverCash": [
+    "DeliversCashInfo"
+   ],
+   "DeliverExperience": [
+    "DeliversExperienceInfo"
+   ],
+   "DeliverUnit": [
+    "CarryallInfo"
+   ],
+   "DeployTransform": [
+    "TransformsInfo",
+    "TransformsIntoTransformsInfo"
+   ],
+   "Detonate": [
+    "MadTankInfo"
+   ],
+   "DetonateAttack": [
+    "MadTankInfo"
+   ],
+   "Disguise": [
+    "DisguiseTooltipInfo"
+   ],
+   "Dock": [
+    "DockClientManagerInfo",
+    "TransformsIntoDockClientInfo"
+   ],
+   "Enter": [
+    "AircraftInfo",
+    "TransformsIntoAircraftInfo"
+   ],
+   "EnterTransport": [
+    "PassengerInfo",
+    "TransformsIntoPassengerInfo"
+   ],
+   "EnterTunnel": [
+    "EntersTunnelsInfo",
+    "TransformsIntoEntersTunnelsInfo"
+   ],
+   "ForceDock": [
+    "DockClientManagerInfo",
+    "TransformsIntoDockClientInfo"
+   ],
+   "ForceEnter": [
+    "AircraftInfo"
+   ],
+   "GrantConditionOnDeploy": [
+    "GrantConditionOnDeployInfo"
+   ],
+   "Guard": [
+    "GuardInfo"
+   ],
+   "Harvest": [
+    "HarvesterInfo"
+   ],
+   "Infiltrate": [
+    "InfiltratesInfo"
+   ],
+   "InstantRepair": [
+    "InstantlyRepairsInfo"
+   ],
+   "Land": [
+    "AircraftInfo"
+   ],
+   "Move": [
+    "AircraftInfo",
+    "MobileInfo",
+    "TransformsIntoAircraftInfo",
+    "TransformsIntoMobileInfo"
+   ],
+   "PauseProduction": [
+    "ProductionQueueInfo"
+   ],
+   "PickupUnit": [
+    "CarryallInfo"
+   ],
+   "PlaceBeacon": [
+    "PlaceBeaconInfo"
+   ],
+   "PlaceMine": [
+    "MinelayerInfo"
+   ],
+   "PlaceMinefield": [
+    "MinelayerInfo"
+   ],
+   "PortableChronoTeleport": [
+    "PortableChronoInfo"
+   ],
+   "Repair": [
+    "RepairableInfo",
+    "TransformsIntoRepairableInfo"
+   ],
+   "RepairBridge": [
+    "RepairsBridgesInfo"
+   ],
+   "RepairBuilding": [
+    "AllyRepairInfo"
+   ],
+   "RepairNear": [
+    "RepairableNearInfo"
+   ],
+   "ReturnToBase": [
+    "AircraftInfo"
+   ],
+   "Scatter": [
+    "AircraftInfo",
+    "MobileInfo"
+   ],
+   "Sell": [
+    "SellableInfo"
+   ],
+   "SetUnitStance": [
+    "AutoTargetInfo"
+   ],
+   "StartProduction": [
+    "ProductionQueueInfo"
+   ],
+   "Stop": [
+    "AircraftInfo",
+    "AttackBaseInfo",
+    "MobileInfo",
+    "RallyPointInfo",
+    "TransformsIntoMobileInfo"
+   ],
+   "Surrender": [
+    "MissionObjective"
+   ],
+   "Unload": [
+    "CargoInfo",
+    "CarryallInfo"
+   ]
+  },
+  "issued": {
+   "ActivateCondition": [
+    "GrantChargedConditionOnToggleInfo"
+   ],
+   "AfterDeployTransform": [
+    "TransformsIntoTransformsInfo"
+   ],
+   "Attack": [
+    "AirStateBase"
+   ],
+   "AttackMove": [
+    "GroundStateBase",
+    "UnitsForProtectionIdleState"
+   ],
+   "BeginMinefield": [
+    "MinelayerInfo"
+   ],
+   "CancelProduction": [
+    "OrderFieldsExts"
+   ],
+   "CaptureActor": [
+    "CaptureManagerBotModuleInfo"
+   ],
+   "Chat": [
+    "OrderFieldsExts"
+   ],
+   "Command": [
+    "OrderFieldsExts"
+   ],
+   "CreateGroup": [
+    "UnitOrderGenerator"
+   ],
+   "DeployTransform": [
+    "McvExpansionManagerBotModuleInfo",
+    "McvManagerBotModuleInfo",
+    "TransformsInfo"
+   ],
+   "Detonate": [
+    "MadTankInfo"
+   ],
+   "DisableChatEntry": [
+    "PlayerMessageTracker"
+   ],
+   "Dock": [
+    "HarvesterBotModuleInfo"
+   ],
+   "EndKickVote": [
+    "VoteKickTracker"
+   ],
+   "GrantConditionOnDeploy": [
+    "GrantConditionOnDeployInfo"
+   ],
+   "HandshakeRequest": [
+    "Server"
+   ],
+   "HandshakeResponse": [
+    "Server",
+    "UnitOrders"
+   ],
+   "Harvest": [
+    "HarvesterBotModuleInfo"
+   ],
+   "Move": [
+    "AIUtils",
+    "AirStateBase",
+    "McvExpansionManagerBotModuleInfo",
+    "McvManagerBotModuleInfo",
+    "MinelayerBotModuleInfo",
+    "MobileInfo",
+    "StateBase",
+    "TransformsIntoMobileInfo"
+   ],
+   "PauseProduction": [
+    "OrderFieldsExts"
+   ],
+   "PlaceBeacon": [
+    "BeaconOrderGenerator"
+   ],
+   "PlaceMine": [
+    "MinelayerInfo"
+   ],
+   "PlaceMinefield": [
+    "MinelayerBotModuleInfo",
+    "MinelayerInfo"
+   ],
+   "PortableChronoTeleport": [
+    "PortableChronoInfo"
+   ],
+   "PurchaseOrder": [
+    "PurchaseWidgetLogic"
+   ],
+   "RepairBuilding": [
+    "BuildingRepairBotModuleInfo",
+    "RepairOrderGenerator"
+   ],
+   "ReturnOrder": [
+    "ProductionIcon"
+   ],
+   "ReturnToBase": [
+    "AirStateBase",
+    "AircraftInfo"
+   ],
+   "Scatter": [
+    "CommandBarLogic"
+   ],
+   "Sell": [
+    "BaseBuilderBotModuleInfo"
+   ],
+   "SetRallyPoint": [
+    "BaseBuilderBotModuleInfo"
+   ],
+   "SetUnitStance": [
+    "StanceSelectorLogic"
+   ],
+   "StartKickVote": [
+    "VoteKickTracker"
+   ],
+   "StartProduction": [
+    "OrderFieldsExts"
+   ],
+   "Stop": [
+    "AttackOrderPowerInfo",
+    "CommandBarLogic",
+    "GroundStateBase"
+   ],
+   "Surrender": [
+    "IngameMenuLogic",
+    "PlayerCommandsInfo"
+   ],
+   "Unload": [
+    "CargoInfo",
+    "CarryallInfo"
+   ]
+  }
+ },
+ "chat_commands": [
+  {
+   "file": "OpenRA.Mods.Common\\Commands\\DebugVisualizationCommands.cs",
+   "class": "DebugVisualizationCommandsInfo",
+   "commands": [
+    "DevActorTags",
+    "DevCombatGeometry",
+    "DevDepthBuffer",
+    "DevRenderGeometry",
+    "DevScreenMap",
+    "actor-tags",
+    "combat-geometry",
+    "depth-buffer",
+    "render-geometry",
+    "screen-map"
+   ],
+   "desc": "Enables visualization commands via the chatbox. Attach this to the world actor."
+  },
+  {
+   "file": "OpenRA.Mods.Common\\Commands\\DevCommands.cs",
+   "class": "DevCommandsInfo",
+   "commands": [
+    "all",
+    "build-anywhere",
+    "clear-shroud",
+    "crash",
+    "dispose",
+    "enable-tech",
+    "fast-charge",
+    "give-cash",
+    "give-cash-all",
+    "grow-resources",
+    "heal",
+    "instant-build",
+    "kill",
+    "player-experience",
+    "reset-shroud",
+    "unlimited-power",
+    "visibility"
+   ],
+   "desc": "Enables developer cheats via the chatbox. Attach this to the world actor."
+  },
+  {
+   "file": "OpenRA.Mods.Common\\Commands\\HelpCommand.cs",
+   "class": "HelpCommandInfo",
+   "commands": [
+    "help"
+   ],
+   "desc": "Shows a list of available commands in the chatbox. Attach this to the world actor."
+  },
+  {
+   "file": "OpenRA.Mods.Common\\Commands\\PlayerCommands.cs",
+   "class": "PlayerCommandsInfo",
+   "commands": [
+    "pause",
+    "surrender"
+   ],
+   "desc": "Allows the player to pause or surrender the game via the chatbox. Attach this to the world actor."
+  }
+ ],
+ "bots": [
+  {
+   "class": "BaseBuilderBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\BaseBuilderBotModule.cs",
+   "desc": "Manages AI base construction.",
+   "issues_orders": [
+    "Sell",
+    "SetRallyPoint"
+   ]
+  },
+  {
+   "class": "BaseBuilderBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\BaseBuilderBotModule.cs",
+   "desc": "Manages AI base construction.",
+   "issues_orders": [
+    "Sell",
+    "SetRallyPoint"
+   ]
+  },
+  {
+   "class": "BaseBuilderQueueManager",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\BotModuleLogic\\BaseBuilderQueueManager.cs",
+   "desc": "",
+   "issues_orders": []
+  },
+  {
+   "class": "BaseBuilderQueueManager",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\BotModuleLogic\\BaseBuilderQueueManager.cs",
+   "desc": "",
+   "issues_orders": []
+  },
+  {
+   "class": "MinelayerBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\BotModuleLogic\\MinelayerBotModule.cs",
+   "desc": "Manages AI minelayer unit related with ",
+   "issues_orders": [
+    "Move",
+    "PlaceMinefield"
+   ]
+  },
+  {
+   "class": "MinelayerBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\BotModuleLogic\\MinelayerBotModule.cs",
+   "desc": "Manages AI minelayer unit related with ",
+   "issues_orders": [
+    "Move",
+    "PlaceMinefield"
+   ]
+  },
+  {
+   "class": "SupportPowerDecision",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\BotModuleLogic\\SupportPowerDecision.cs",
+   "desc": "Adds metadata for the AI bots.",
+   "issues_orders": []
+  },
+  {
+   "class": "SupportPowerDecision",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\BotModuleLogic\\SupportPowerDecision.cs",
+   "desc": "Adds metadata for the AI bots.",
+   "issues_orders": []
+  },
+  {
+   "class": "BuildingRepairBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\BuildingRepairBotModule.cs",
+   "desc": "Manages AI repairing base buildings.",
+   "issues_orders": [
+    "RepairBuilding"
+   ]
+  },
+  {
+   "class": "BuildingRepairBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\BuildingRepairBotModule.cs",
+   "desc": "Manages AI repairing base buildings.",
+   "issues_orders": [
+    "RepairBuilding"
+   ]
+  },
+  {
+   "class": "CaptureManagerBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\CaptureManagerBotModule.cs",
+   "desc": "Manages AI capturing logic.",
+   "issues_orders": [
+    "CaptureActor"
+   ]
+  },
+  {
+   "class": "CaptureManagerBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\CaptureManagerBotModule.cs",
+   "desc": "Manages AI capturing logic.",
+   "issues_orders": [
+    "CaptureActor"
+   ]
+  },
+  {
+   "class": "HarvesterBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\HarvesterBotModule.cs",
+   "desc": "Put this on the Player actor. Manages bot harvesters to ensure they always continue harvesting as long as there are resources on the map.",
+   "issues_orders": [
+    "Dock",
+    "Harvest"
+   ]
+  },
+  {
+   "class": "HarvesterBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\HarvesterBotModule.cs",
+   "desc": "Put this on the Player actor. Manages bot harvesters to ensure they always continue harvesting as long as there are resources on the map.",
+   "issues_orders": [
+    "Dock",
+    "Harvest"
+   ]
+  },
+  {
+   "class": "McvExpansionManagerBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\McvExpansionManagerBotModule.cs",
+   "desc": "Manages AI MCVs and expansion.",
+   "issues_orders": [
+    "DeployTransform",
+    "Move"
+   ]
+  },
+  {
+   "class": "McvExpansionManagerBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\McvExpansionManagerBotModule.cs",
+   "desc": "Manages AI MCVs and expansion.",
+   "issues_orders": [
+    "DeployTransform",
+    "Move"
+   ]
+  },
+  {
+   "class": "McvManagerBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\McvManagerBotModule.cs",
+   "desc": "Manages AI MCVs.",
+   "issues_orders": [
+    "DeployTransform",
+    "Move"
+   ]
+  },
+  {
+   "class": "McvManagerBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\McvManagerBotModule.cs",
+   "desc": "Manages AI MCVs.",
+   "issues_orders": [
+    "DeployTransform",
+    "Move"
+   ]
+  },
+  {
+   "class": "PowerDownBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\PowerDownBotManager.cs",
+   "desc": "Manages AI powerdown.",
+   "issues_orders": []
+  },
+  {
+   "class": "PowerDownBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\PowerDownBotManager.cs",
+   "desc": "Manages AI powerdown.",
+   "issues_orders": []
+  },
+  {
+   "class": "ResourceMapBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\ResourceMapBotModule.cs",
+   "desc": "Harvestable and valuable resource types.",
+   "issues_orders": []
+  },
+  {
+   "class": "ResourceMapBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\ResourceMapBotModule.cs",
+   "desc": "Harvestable and valuable resource types.",
+   "issues_orders": []
+  },
+  {
+   "class": "SquadManagerBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\SquadManagerBotModule.cs",
+   "desc": "Manages AI squads.",
+   "issues_orders": []
+  },
+  {
+   "class": "SquadManagerBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\SquadManagerBotModule.cs",
+   "desc": "Manages AI squads.",
+   "issues_orders": []
+  },
+  {
+   "class": "AttackOrFleeFuzzy",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\AttackOrFleeFuzzy.cs",
+   "desc": "",
+   "issues_orders": []
+  },
+  {
+   "class": "AttackOrFleeFuzzy",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\AttackOrFleeFuzzy.cs",
+   "desc": "",
+   "issues_orders": []
+  },
+  {
+   "class": "Squad",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\Squad.cs",
+   "desc": "",
+   "issues_orders": []
+  },
+  {
+   "class": "Squad",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\Squad.cs",
+   "desc": "",
+   "issues_orders": []
+  },
+  {
+   "class": "StateMachine",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\StateMachine.cs",
+   "desc": "",
+   "issues_orders": []
+  },
+  {
+   "class": "StateMachine",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\StateMachine.cs",
+   "desc": "",
+   "issues_orders": []
+  },
+  {
+   "class": "AirStateBase",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\States\\AirStates.cs",
+   "desc": "",
+   "issues_orders": [
+    "Attack",
+    "Move",
+    "ReturnToBase"
+   ]
+  },
+  {
+   "class": "AirStateBase",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\States\\AirStates.cs",
+   "desc": "",
+   "issues_orders": [
+    "Attack",
+    "Move",
+    "ReturnToBase"
+   ]
+  },
+  {
+   "class": "GroundStateBase",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\States\\GroundStates.cs",
+   "desc": "",
+   "issues_orders": [
+    "AttackMove",
+    "Stop"
+   ]
+  },
+  {
+   "class": "GroundStateBase",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\States\\GroundStates.cs",
+   "desc": "",
+   "issues_orders": [
+    "AttackMove",
+    "Stop"
+   ]
+  },
+  {
+   "class": "UnitsForProtectionIdleState",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\States\\ProtectionStates.cs",
+   "desc": "",
+   "issues_orders": [
+    "AttackMove"
+   ]
+  },
+  {
+   "class": "UnitsForProtectionIdleState",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\States\\ProtectionStates.cs",
+   "desc": "",
+   "issues_orders": [
+    "AttackMove"
+   ]
+  },
+  {
+   "class": "StateBase",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\States\\StateBase.cs",
+   "desc": "",
+   "issues_orders": [
+    "Move"
+   ]
+  },
+  {
+   "class": "StateBase",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\Squads\\States\\StateBase.cs",
+   "desc": "",
+   "issues_orders": [
+    "Move"
+   ]
+  },
+  {
+   "class": "SupportPowerBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\SupportPowerBotModule.cs",
+   "desc": "Manages bot support power handling.",
+   "issues_orders": []
+  },
+  {
+   "class": "SupportPowerBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\SupportPowerBotModule.cs",
+   "desc": "Manages bot support power handling.",
+   "issues_orders": []
+  },
+  {
+   "class": "UnitBuilderBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\UnitBuilderBotModule.cs",
+   "desc": "Controls AI unit production.",
+   "issues_orders": []
+  },
+  {
+   "class": "UnitBuilderBotModuleInfo",
+   "file": "OpenRA.Mods.Common\\Traits\\BotModules\\UnitBuilderBotModule.cs",
+   "desc": "Controls AI unit production.",
+   "issues_orders": []
+  }
+ ],
+ "trait_counts": {
+  "OpenRA.Mods.Cnc": 72,
+  "OpenRA.Mods.Common": 508,
+  "OpenRA.Mods.D2k": 14
+ },
+ "trait_total": 594
+}

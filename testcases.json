@@ -1,0 +1,190 @@
+{
+  "_comment": "规则分句回归用例。每条断言【意图 + 参数】。被行为开关有意禁用/删除的能力（记事本已删 / files 空 / enable_open_web=false / web_search 已 drop）显式断言成 unknown —— 谁把它改回来这里会立刻红。site_search 的参数是「站点\\t剩余文本」。",
+  "cases": [
+    {
+      "text": "启动Steam",
+      "intent": "launch_app",
+      "arg": "Steam"
+    },
+    {
+      "text": "打开任务管理器",
+      "intent": "launch_app",
+      "arg": "任务管理器"
+    },
+    {
+      "text": "运行Blender",
+      "intent": "launch_app",
+      "arg": "Blender"
+    },
+    {
+      "text": "帮我打开Ollama",
+      "intent": "launch_app",
+      "arg": "Ollama"
+    },
+    {
+      "text": "开一下Ollama",
+      "intent": "launch_app",
+      "arg": "Ollama"
+    },
+    {
+      "text": "打开Trae",
+      "intent": "launch_app",
+      "arg": "Trae"
+    },
+    {
+      "text": "打开B站",
+      "intent": "open_url",
+      "arg": "B站"
+    },
+    {
+      "text": "打开B站网页",
+      "intent": "open_url",
+      "arg": "B站"
+    },
+    {
+      "text": "上知乎",
+      "intent": "open_url",
+      "arg": "知乎"
+    },
+    {
+      "text": "访问GitHub",
+      "intent": "open_url",
+      "arg": "GitHub"
+    },
+    {
+      "text": "去GitHub",
+      "intent": "open_url",
+      "arg": "GitHub"
+    },
+    {
+      "text": "打开github.com",
+      "intent": "open_url",
+      "arg": "github"
+    },
+    {
+      "text": "打开arxiv.org",
+      "intent": "open_url",
+      "arg": "arxiv"
+    },
+    {
+      "text": "打开CUDA编程指南文件",
+      "intent": "open_file",
+      "arg": "CUDA编程指南"
+    },
+    {
+      "text": "看看矩阵乘优化文件",
+      "intent": "open_file",
+      "arg": "矩阵乘优化"
+    },
+    {
+      "text": "在B站里搜python",
+      "intent": "site_search",
+      "arg": "B站\t在python"
+    },
+    {
+      "text": "在知乎里搜transformer",
+      "intent": "site_search",
+      "arg": "知乎\t在transformer"
+    },
+    {
+      "text": "在GitHub里搜vllm",
+      "intent": "site_search",
+      "arg": "GitHub\t在vllm"
+    },
+    {
+      "text": "B站搜python",
+      "intent": "site_search",
+      "arg": "B站\tpython"
+    },
+    {
+      "text": "搜索文件季度报告",
+      "intent": "file_search",
+      "arg": "季度报告"
+    },
+    {
+      "text": "找文件实验数据",
+      "intent": "file_search",
+      "arg": "实验数据"
+    },
+    {
+      "text": "帮我查找文件训练脚本",
+      "intent": "file_search",
+      "arg": "训练脚本"
+    },
+    {
+      "text": "精确查找resnet50",
+      "intent": "exact_search",
+      "arg": "resnet50"
+    },
+    {
+      "text": "精确搜索bert模型",
+      "intent": "exact_search",
+      "arg": "bert模型"
+    },
+    {
+      "text": "帮我精确查找lora微调",
+      "intent": "exact_search",
+      "arg": "lora微调"
+    },
+    {
+      "text": "关闭Blender",
+      "intent": "close_app",
+      "arg": "Blender"
+    },
+    {
+      "text": "关掉Steam",
+      "intent": "close_app",
+      "arg": "Steam"
+    },
+    {
+      "text": "启动记事本",
+      "intent": "unknown",
+      "arg": "启动记事本"
+    },
+    {
+      "text": "打开并行规约",
+      "intent": "unknown",
+      "arg": "打开并行规约"
+    },
+    {
+      "text": "打开一个不存在的东西",
+      "intent": "unknown",
+      "arg": "打开一个不存在的东西"
+    },
+    {
+      "text": "搜索python教程",
+      "intent": "unknown",
+      "arg": "搜索python教程"
+    },
+    {
+      "text": "搜一下resnet50",
+      "intent": "unknown",
+      "arg": "搜一下resnet50"
+    },
+    {
+      "text": "帮我查一下量化方法",
+      "intent": "unknown",
+      "arg": "帮我查一下量化方法"
+    },
+    {
+      "text": "今天天气怎么样",
+      "intent": "unknown",
+      "arg": "今天天气怎么样"
+    },
+    {
+      "text": "讲个笑话",
+      "intent": "unknown",
+      "arg": "讲个笑话"
+    },
+    {
+      "text": "我想搜索一下",
+      "intent": "unknown",
+      "arg": "我想搜索一下"
+    },
+    {
+      "text": "为什么打不开",
+      "intent": "unknown",
+      "arg": "为什么打不开"
+    }
+  ]
+}

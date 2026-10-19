@@ -1,0 +1,122 @@
+=== whoami/host ===
+root
+DESKTOP-A00THLV
+6.18.33.2-microsoft-standard-WSL2
+=== k3s present? ===
+/usr/local/bin/k3s
+/usr/local/bin/kubectl
+total 12
+drwxr-xr-x 2 root root 4096 Sep 24 15:55 .
+drwxr-xr-x 4 root root 4096 Sep 24 15:55 ..
+-rw-r--r-- 1 root root 2945 Oct 14 09:38 k3s.yaml
+=== systemd? ===
+systemd
+active
+=== k3s kubectl pods ===
+NAMESPACE     NAME                                      READY   STATUS      RESTARTS       AGE
+cicd          jenkins-5cf8f4fc75-ckgdj                  0/1     Running     7 (9h ago)     5d23h
+default       merged-intent-dfd6cfbb5-ts967             1/1     Running     3 (61s ago)    2d23h
+default       vllm-asr-8b848d964-c255d                  0/1     Running     0              49s
+default       vllm-asr-8b848d964-c6x9t                  0/1     Error       0              2d23h
+default       vllm-asr-8b848d964-ls5hr                  0/1     Completed   0              2d16h
+default       vllm-asr-8b848d964-sscjq                  0/1     Completed   0              23h
+default       vllm-asr-8b848d964-zlrrn                  0/1     Completed   0              4d21h
+default       vllm-embed-56fd85fc47-wqnxq               0/1     Completed   0              5d16h
+default       vllm-embed-6cf97b7dc5-8vt86               0/1     Error       0              2d23h
+default       vllm-embed-6cf97b7dc5-9bcgv               0/1     Running     0              49s
+default       vllm-embed-6cf97b7dc5-fr5hn               0/1     Completed   0              2d16h
+default       vllm-embed-6cf97b7dc5-t498d               0/1     Completed   0              4d21h
+default       vllm-embed-6cf97b7dc5-z9fxp               0/1     Completed   0              23h
+kube-system   coredns-54996dc9b4-d499m                  1/1     Running     88 (9h ago)    19d
+kube-system   helm-install-traefik-56kpg                0/1     Completed   1 (19d ago)    19d
+kube-system   helm-install-traefik-crd-thkp8            0/1     Completed   0              19d
+kube-system   local-path-provisioner-77b9867795-5t64k   1/1     Running     88 (9h ago)    19d
+kube-system   metrics-server-6dc596dfb8-q2rxc           1/1     Running     88 (9h ago)    19d
+kube-system   nvidia-device-plugin-daemonset-76czb      1/1     Running     5 (9h ago)     5d13h
+kube-system   svclb-traefik-e88d3209-clqxw              2/2     Running     176 (9h ago)   19d
+kube-system   traefik-59b7647586-7cd87                  1/1     Running     88 (9h ago)    19d
+monitoring    grafana-6f7866b665-c9tv5                  1/1     Running     4 (9h ago)     4d20h
+monitoring    prometheus-6bbf796fcb-sdmwq               1/1     Running     13 (9h ago)    18d
+=== k3s kubectl svc ===
+NAMESPACE     NAME             TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)                          AGE
+cicd          jenkins          NodePort       10.43.62.23     <none>          8080:30080/TCP,50000:30500/TCP   6d20h
+default       kubernetes       ClusterIP      10.43.0.1       <none>          443/TCP                          19d
+default       llama-asr        NodePort       10.43.127.22    <none>          8000:30803/TCP                   5d12h
+default       merged-intent    NodePort       10.43.87.27     <none>          8000:30806/TCP                   3d12h
+default       vllm-asr         NodePort       10.43.159.111   <none>          8000:30805/TCP                   4d22h
+default       vllm-embed       NodePort       10.43.131.184   <none>          8000:30802/TCP                   5d21h
+default       vllm-march7      NodePort       10.43.133.130   <none>          8001:30800/TCP,8000:30801/TCP    8d
+kube-system   kube-dns         ClusterIP      10.43.0.10      <none>          53/UDP,53/TCP,9153/TCP           19d
+kube-system   metrics-server   ClusterIP      10.43.199.232   <none>          443/TCP                          19d
+kube-system   traefik          LoadBalancer   10.43.64.89     172.20.71.101   80:30871/TCP,443:30097/TCP       19d
+monitoring    grafana          NodePort       10.43.140.247   <none>          3000:30030/TCP                   18d
+monitoring    prometheus       NodePort       10.43.136.44    <none>          9090:30090/TCP                   18d
+=== k3s kubectl deploy ===
+NAMESPACE     NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
+cicd          jenkins                  0/1     1            0           6d20h
+default       llama-asr                0/0     0            0           5d12h
+default       merged-intent            1/1     1            1           3d12h
+default       vllm-asr                 0/1     1            0           4d22h
+default       vllm-embed               0/1     1            0           5d21h
+default       vllm-march7              0/0     0            0           8d
+default       zero-replica-test        0/0     0            0           5d13h
+default       zero-replica-test-2      0/0     0            0           5d13h
+kube-system   coredns                  1/1     1            1           19d
+kube-system   local-path-provisioner   1/1     1            1           19d
+kube-system   metrics-server           1/1     1            1           19d
+kube-system   traefik                  1/1     1            1           19d
+monitoring    grafana                  1/1     1            1           18d
+monitoring    prometheus               1/1     1            1           18d
+=== manifests ===
+total 40
+drwx------ 3 root root 4096 Sep 24 15:55 .
+drwx------ 8 root root 4096 Oct 14 09:38 ..
+-rw------- 1 root root 1914 Oct 14 09:38 ccm.yaml
+-rw------- 1 root root 5176 Oct 14 09:38 coredns.yaml
+-rw------- 1 root root 3236 Oct 14 09:38 local-storage.yaml
+drwx------ 2 root root 4096 Sep 24 15:55 metrics-server
+-rw------- 1 root root 1737 Oct 14 09:38 rolebindings.yaml
+-rw------- 1 root root  927 Oct 14 09:38 runtimes.yaml
+-rw------- 1 root root 1110 Oct 14 09:38 traefik.yaml
+=== images (containerd) ===
+=== model files (qwen/asr/gguf/mmproj/safetensors) ===
+1282435168	/home/user/npc-models/qwen3-asr-1.7b/Qwen3-ASR-1.7B-Q4_K_M.gguf
+397808192	/models/Qwen2.5-0.5B-Instruct-Q4_K_M.gguf
+221032992	/home/user/npc-models/qwen3-asr-1.7b/mmproj-Qwen3-ASR-1.7B-Q4_K_M.gguf
+26284	/home/user/vllm_src/vllm/model_executor/models/qwen3_asr.py
+8615	/home/user/vllm_src/vllm/model_executor/models/qwen3_asr_realtime.py
+4283	/home/user/vllm_src/vllm/model_executor/models/qwen3_asr_forced_aligner.py
+4096	/home/user/npc-models/qwen3-asr-1.7b-official
+4096	/home/user/npc-models/qwen3-asr-1.7b
+4096	/home/user/npc-models/qwen3-asr-0.6b-official
+=== candidate model dirs (size) ===
+1.7G	/models
+2.3G	/home/user/models
+15G	/mnt/e/models
+=== servers installed ===
+vllm           -
+llama-server   -
+llama-cli      -
+python3        /usr/bin/python3
+docker         /usr/bin/docker
+nerdctl        -
+=== listening ports ===
+State  Recv-Q Send-Q  Local Address:Port  Peer Address:PortProcess                                   
+LISTEN 0      4096        127.0.0.1:6444       0.0.0.0:*    users:(("k3s-server",pid=206,fd=22))     
+LISTEN 0      4096       127.0.0.54:53         0.0.0.0:*    users:(("systemd-resolve",pid=173,fd=17))
+LISTEN 0      1000   10.255.255.254:53         0.0.0.0:*                                             
+LISTEN 0      5             0.0.0.0:9400       0.0.0.0:*    users:(("python3",pid=190,fd=3))         
+LISTEN 0      4096        127.0.0.1:10257      0.0.0.0:*    users:(("k3s-server",pid=206,fd=239))    
+LISTEN 0      4096        127.0.0.1:10256      0.0.0.0:*    users:(("k3s-server",pid=206,fd=273))    
+LISTEN 0      4096        127.0.0.1:10259      0.0.0.0:*    users:(("k3s-server",pid=206,fd=260))    
+LISTEN 0      4096        127.0.0.1:10258      0.0.0.0:*    users:(("k3s-server",pid=206,fd=257))    
+LISTEN 0      4096        127.0.0.1:10249      0.0.0.0:*    users:(("k3s-server",pid=206,fd=275))    
+LISTEN 0      4096        127.0.0.1:10248      0.0.0.0:*    users:(("k3s-server",pid=206,fd=279))    
+LISTEN 0      4096        127.0.0.1:10010      0.0.0.0:*    users:(("k3s-server",pid=206,fd=215))    
+LISTEN 0      4096    127.0.0.53%lo:53         0.0.0.0:*    users:(("systemd-resolve",pid=173,fd=15))
+LISTEN 0      4096                *:6443             *:*    users:(("k3s-server",pid=206,fd=12))     
+LISTEN 0      4096                *:10250            *:*    users:(("k3s-server",pid=206,fd=296))    
+=== GPU in wsl? ===
+crw-rw-rw- 1 root root 10, 258 Oct 14 09:38 /dev/dxg
+GPU 0: NVIDIA GeForce RTX 5060 (UUID: GPU-4058f132-6eda-eec6-98d3-8ef08bde432d)
+=== DONE ===

@@ -1,0 +1,450 @@
+[
+  {
+    "id": "ch01-q1",
+    "kind": "概念题",
+    "q": "A 路和 B 路分别接在哪里？各自在什么条件下才会被调用？",
+    "answer": "A 路接在段转写之后（voice_agent.py 的 _a_worker 里，转写完 self._a_text 后调用 opencode_fastpath.runtime.a_path_preempt）；B 路接在 handle() 内部、final_intent == \"unknown\" 分支的最前面（调用 runtime.b_try）。A 路是段级/流式快路径，命中就执行并 return True 跳过本段 handle；B 路是主路径判 unknown 之前的整句兜底，命中就执行，不再掉进听写。",
+    "evidence": "讲解 chapters/01_arch.tex §1.1 路由表：「A 路 | voice_agent.py 的 _a_worker 转写后 | 先 match_pattern，再 route_prefix(tail_only=True)」；「B 路 | handle() 里 if final_intent == \"unknown\"」",
+    "difficulty": 1
+  },
+  {
+    "id": "ch01-q2",
+    "kind": "概念题",
+    "q": "为什么整句路由（A 路和 B 路兜底）只接受 kind=1 的命中？kind=2 是给谁用的？",
+    "answer": "kind=1 是整条说法行（full row），kind=2 是前缀行（prefix row）。route_prefix(tail_only=True) 只要求匹配结束在句尾，配上前缀行后，普通句子里末尾几个字撞上某个前缀键就会命中（实测「让AI看看」里的片段撞上 InfoQ 前缀行被当成 open_url）。所以整句路由遇到 kind==2 一律 return False（不执行），前缀行只留给 partial_preempt 逐字早火使用。",
+    "evidence": "讲解 chapters/01_arch.tex §1.3：「A 路和 B 路都可能收到带口语填充词的整句……前缀行无法区分，整条说法可以」；chapters/04_route.tex §4.6「整句兜底只认【整条说法】命中（kind=1）」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch01-q3",
+    "kind": "反例题",
+    "q": "有人把 A 路「命中但 dispatch 返回失败」也当成 unknown 交回主路径，理由是没有执行成功就不该消费这句话。这错在哪？",
+    "answer": "错在会把命令当听写内容处理。runtime._record 把失败分两类：msg 含「未知意图」（动作没注册）才交回主路径；其它失败（动作存在但执行失败）必须消费本句（写 _a_executed/_a_actions 并返回 True），否则整句掉回主路径，parse() 又不认这些意图，最终被打进输入框——血债就是「调整静音。」被当听写打进终端。用户说的是命令，不是听写内容。",
+    "evidence": "讲解 chapters/01_arch.tex §1.4 表：「ok=False 其它 | 动作存在但失败 | 消费本句（写已执行、记动作、返回 True），不再掉进听写」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch01-q4",
+    "kind": "概念题",
+    "q": "intents._install_gate() 为什么不只包 actions.dispatch，而要给 ACTIONS 里每个动作套一层？",
+    "answer": "因为有些模块在导入期就执行了 from actions import dispatch，拿到的是原始函数，之后再包 dispatch 也拦不到这些调用。把门槛套在 ACTIONS 字典上，任何调用路径（A 路、B 路、主路径、第三方桥）都绕不过 enabled 检查。门槛返回 (False, \"意图 … 已关闭 …\", None)，并顺带给打开类意图套闭集代理（_wrap_entity）。",
+    "evidence": "讲解 chapters/01_arch.tex §1.6：「有些模块 from actions import dispatch 在导入期就拿到了原函数（包装不到）—— 套在 ACTIONS 上则任何调用路径都过这道关」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch02-q5",
+    "kind": "概念题",
+    "q": "一条意图要「参与匹配」需要同时满足哪两个条件？enabled 与 tag 之间是与还是或？",
+    "answer": "可执行 = enabled 为 true 且（tag == system 或 tag == 当前域）。是 AND 合取：enabled 是用户总开关，tag 决定作用范围。缺省 enabled 视为 true，null 也被当 true（历史兼容，规范写法只用 true/false）；tag 缺省为 system。当前 45 条里 enabled=false 的 3 条是 dsh_new、dsh_run、open_web。",
+    "evidence": "讲解 chapters/02_registry.tex §2.4 真值表与 §2.1 字段表：「参与 = enabled 且（tag==当前域 或 tag==system）」「enabled 为 false | 3 | dsh_new, dsh_run, open_web」",
+    "difficulty": 1
+  },
+  {
+    "id": "ch02-q6",
+    "kind": "数值题",
+    "q": "intents.load() 的热加载缓存键是哪五元组？为什么不能只用文件 mtime？",
+    "answer": "key = (str(p), st.st_mtime_ns, st.st_size, domain, minp)。五个都要：文件内容变了靠 (mtime_ns, size)；域切了靠 domain；profile 的 fastpath_min_prefix 改了靠 minp。只用 mtime 会漏掉「域切换但文件没动」；只用文件名会漏掉「保存但时间戳精度不够」。set_domain() 写盘后清 _STATE_CACHE[\"key\"] 并 load(cfg, force=True)。",
+    "evidence": "讲解 chapters/02_registry.tex §2.5：「key = (str(p), st.st_mtime_ns, st.st_size, domain, minp)……文件内容变了（mtime/size）、域切了（domain）、profile 的 fastpath_min_prefix 改了（minp），三者任一都必须重建表」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch02-q7",
+    "kind": "概念题",
+    "q": "闭集代理 _CfgProxy(cfg, reg) 在什么条件下启用？它解决的实际问题是什么？",
+    "answer": "当当前 profile 的 apps/urls/files 三个都为空、而唯一 json（intent_config.json）的闭集非空时启用。它把实体字段（apps/urls/files/app_by_alias/…/raw/intents）取自唯一 json，behavior/path 等仍取自当前 profile。解决的是 aoe4 域闭集为空时「拼音命中了 打开知乎，动作却说网址闭集里没有知乎」——即命中与执行用了两份不同的闭集。",
+    "evidence": "讲解 chapters/02_registry.tex §2.7：「若当前 profile 的 apps/urls/files 全空，就用唯一 json 的闭集（_CfgProxy）。这解决了『拼音命中了 打开知乎，动作却说网址闭集里没有知乎』的实测问题」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch03-q8",
+    "kind": "概念题",
+    "q": "掩码为什么是「集合」而不是字符串哈希？写出它的三条集合性质，并说明代价。",
+    "answer": "m = 所有字符折叠音节位号 2^{b(σ(c))} 的按位或。性质：①交换律 => 顺序无关（「打开B站」与「B站打开」同键）；②幂等律 => 重复字/同音节不改变键；③位号相同则不可区分 => 同音字自动合并（站/战），但不同音节的排列无法区分。代价：折叠音节集合相同的两句话掩码必然相同（补农=捕农={bu,long}），所以必须靠「整条说法 + tail_only + kind=1」三重约束防假命中。",
+    "evidence": "讲解 chapters/03_mask.tex §3.2：「m1∨m2=m2∨m1……交换律 => 顺序无关」「m∨m=m……幂等律」「b(σ(c1))=b(σ(c2)) => 两者不可区分……碰撞的根源」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch03-q9",
+    "kind": "反例题",
+    "q": "旧实现把 ASCII 字母数字的散列 OR 进「剩余位字段」。请说明它为什么会让「启动Blender」和「启动PowerShell」得到同一个掩码，以及新实现怎么改。",
+    "answer": "旧实现 res_bits = max(128 − W, 8)；当已登记音节数 W=133 时 128−133 被夹到 8，残余字段只有 8 位（256 种值），每个非汉字字符的哈希都往同一组 8 位里 OR，字母一多就饱和；实测 Blender / PowerShell / Steam / Hearthstone 的残余值都等于 0xff，于是掩码相同，表里先登记的先胜出（说「启动Blender」开了 PowerShell）。新实现把 ASCII 字母数字当成独立 token（每个字符一个位，前缀 A:），掩码可区分。",
+    "evidence": "讲解 chapters/03_mask.tex §3.4 表：「Blender | 0xff | 独立位…| 旧：饱和」「PowerShell | 0xff | …| 旧：与 Blender 同值」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch03-q10",
+    "kind": "数值题",
+    "q": "「打开B站」的掩码 m 等于多少？写出按位或的逐步算式（位号 da=13, gai=14, A:b=2, zan=15）。",
+    "answer": "m = 2^13 ∨ 2^14 ∨ 2^2 ∨ 2^15 = 8192 + 16384 + 4 + 32768 = 57348 = 0xE004。任何含且仅含 {da,gai,A:b,zan} 这四类折叠音节的句子都得到同一键。",
+    "evidence": "讲解 chapters/03_mask.tex 图 2 与算例：「m=2^13+2^14+2^2+2^15=8192+16384+4+32768=57348，即 hex(57348)=='0xe004'」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch03-q11",
+    "kind": "数值题",
+    "q": "用 P_collide(L)≈F/N_s^L 估算两字命令撞键的粗概率（N_s=133, F=851），并说明它为什么支持「通用域 min_prefix=3」。",
+    "answer": "L=2：133^2=17689，851/17689≈4.8%（每 20 句左右就可能撞键）；L=3：133^3≈2.35M，851/2.35M≈0.036%。两字命令太容易撞键，所以通用域把前缀行下限取 3；而 AoE4 的两字命令（补农）必须把 min_prefix 降到 2 才会有前缀行、才可能逐字早火。",
+    "evidence": "讲解 chapters/03_mask.tex §3.6 表：「2 | 17 689 | 4.8% | 两字命令：每 20 句就可能撞键 => 不可靠」「3 | 2.35 M | 0.036% | 通用下限取 3 的量化理由」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch03-q12",
+    "kind": "数值题",
+    "q": "MatchStore 一条记录为什么是 20 字节？日常域 min_prefix=3 时，FastPath 默认会给它多少行容量、多少字节？插入 851+2207 行后的负载是多少？",
+    "answer": "记录 = k1(8B) + k2(8B) + act(1B) + kind(1B) + hits(2B) = 20B。日常域：need=max(4096, 3×2724)=8172 ⇒ cap=8192 行 ⇒ 8192×20=163840B≈160KB；实际插入 851+2207=3058 行，负载 3058/8192=0.373（远低于 0.70 裁剪阈值）。",
+    "evidence": "讲解 chapters/03_mask.tex §3.7：「8(k1)+8(k2)+1(act)+1(kind)+2(hits)=20B」「need=max(4096,3×2724)=8172 ⇒ cap=8192，即 160KB、8192 行；实际插入 851+2207=3058 行，负载 3058/8192=0.373」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch03-q13",
+    "kind": "概念题",
+    "q": "MatchStore 的裁剪（prune）为什么可以丢 kind=2 的行、绝不能丢 kind=1 的行？",
+    "answer": "kind=1 是整条说法行，是路由正确性的依据，丢了就让命令无法命中；kind=2 只是给逐字早火用的前缀行，丢失只影响提前触发时机。prune 先丢 kind=2 且 hits=0 的行，再丢 kind=2 里 hits 最小的，目标裁到 0.60×cap；自检第 7 项验证插入 2000 条全串行 + 3000 条前缀后 lost==0。",
+    "evidence": "讲解 chapters/03_mask.tex §3.7 表：「裁剪顺序 | 先丢 kind=2 且 hits=0，再丢 kind=2 里 hits 最小 | 全串行是正确性依赖，绝不能丢」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch04-q14",
+    "kind": "概念题",
+    "q": "为什么带变量的命令（「打开第5条」）走不了掩码表，必须走模式匹配？模式匹配在两条路由里的位置是什么？",
+    "answer": "掩码表是固定说法的精确键，数字是变量，掩码会把「打开第5条」和「打开第6条」编成不同键、无法穷举。所以 runtime._pattern_hit 放在 A 路和 B 路的最前面：先 intents.match_pattern（4 条 regex + 中文数字），命中返回 kind=1 的伪 fr，再走 _record。模式命中天然是整条说法，不会被假命中护栏挡掉。",
+    "evidence": "讲解 chapters/04_route.tex §4.2：「带变量的命令（“打开第 5 条”…）无法进掩码表……因此 runtime._pattern_hit() 被放在两条路的最前面」",
+    "difficulty": 1
+  },
+  {
+    "id": "ch04-q15",
+    "kind": "数值题",
+    "q": "favs.cn2int 逐步算出「二十三」和「一百零五」。再说明它对「万」是否支持。",
+    "answer": "「二十三」：二→num=2；十→total += 2×10 = 20，num=0；三→num=3；返回 20+3=23。「一百零五」：一→num=1；百→total += 1×100 = 100，num=0；零→num=0；五→num=5；返回 100+5=105。算法只有 {十,百,千} 三个单位，不处理「万」，对收藏夹序号（≤几百）足够。",
+    "evidence": "讲解 chapters/04_route.tex §4.3 逐步算例：「「二十三」: 20; 三=>num=3 ⇒ 20+3=23」「「一百零五」: 一=>1; 百=>total=100; 零=>0; 五=>5 ⇒ 100+5=105」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch04-q16",
+    "kind": "概念题",
+    "q": "route_prefix 的 tail_only=True 到底限制了哪个下标？为什么它既允许口语填充词、又会造成假命中？",
+    "answer": "tail_only=True 只把结束下标 j 固定为 len(text)（结束在句尾），起点 s 仍可任意（s ≤ j−minp）。所以前面可以有口语填充词（「现在打开远程桌面」也能命中尾部子串），同时末尾任意位置的子串都可能命中——这正是必须用 kind=1 护栏的原因；tail_only=False 时 j 全扫，整段上下文里的旧命令也会命中，整句路由不用它。返回 fr 带 fire_at=j、start=s、span=t[s:j]。",
+    "evidence": "讲解 chapters/04_route.tex §4.4：「tail_only=True：j 只能是 |t|（结束在句尾），但起点 s 仍可以是任意位置」「tail_only=False：j 扫过所有 ≥minp 的位置……整段上下文里的旧命令也会被命中」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch04-q17",
+    "kind": "反例题",
+    "q": "有人看到 profile 里 fastpath_mode = off，就断言「拼音路由没开、唯一开关没生效」。这错在哪？",
+    "answer": "fastpath_mode 只管旧表机制（table_*.json）；唯一开关走的是 hook.get_system_fp() → intents.get_fp()，与 fastpath_mode 无关。共享 json 和 aoe4 的 fastpath_mode 都是 off，但拼音路由仍在工作（有 A 路/B 路调用链时）。off 只让 get_fp() 对旧表返回 None。",
+    "evidence": "讲解 chapters/15_risks.tex §15.2 第 5 条：「fastpath_mode=off 不等于拼音路由关闭：唯一开关走 get_system_fp()，不受 fastpath_mode 影响；off 只关旧表 table_*.json」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch04-q18",
+    "kind": "概念题",
+    "q": "mode / additive / blocked 三条门各自的语义是什么？registry 建的表为什么把意图从 DESTRUCTIVE_INTENTS 里 discard？",
+    "answer": "mode（off/shadow/live）：shadow 只记录，live 才可能执行，off 时旧表不介入。additive：只有 additive 条目才在 A 路被接管执行（registry 建的表恒为 true）。blocked：破坏性意图且未设 OPENCODE_FASTPATH_DESTRUCTIVE=1。registry 建表时 discard 的原因：dictation_on/off、清空输入、关闭X 曾被标成 destructive→blocked→A 路整句拒绝执行→掉回主路径→parse() 不认→被打进输入框；现在执行权完全交给 enabled，destructive 只作标注。",
+    "evidence": "讲解 chapters/04_route.tex §4.5 与 chapters/12_patch_selfcheck.tex 补丁 O 注：「registry 建的表会把每个意图从 DESTRUCTIVE_INTENTS 里 discard（intents.py:258）」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch05-q19",
+    "kind": "概念题",
+    "q": "当前意图域的优先级链是什么？运行期选择存在哪里、以什么为键？",
+    "answer": "优先级：① 运行期选择（opencode_fastpath/domain_state.json，以 profile 的 cfg.path 为键）② profile.behavior.intent_domain ③ 兜底「日常」。domain_state.json 的键是 profile 路径，所以 aoe4 启动器切到游戏不会影响 ops 启动器切到运维；文件也按 (mtime_ns, size) 缓存。",
+    "evidence": "讲解 chapters/05_domain.tex §5.2：「当前域 = 运行期选择（domain_state.json，按 profile 路径为键）若存在；profile.behavior.intent_domain 否则若存在；「日常」兜底」",
+    "difficulty": 1
+  },
+  {
+    "id": "ch05-q20",
+    "kind": "反例题",
+    "q": "「打开类意图在任何域都能用」——有人以为这是写了一处域判断的特例代码。请说明真正的机制，以及怎么让它只在日常域生效。",
+    "answer": "不是特例代码，而是两个机制叠加：① launch_app/open_url/open_file 三条 tag=system（system 在任何域都生效）；② 若本 profile 的闭集为空就代理到共享 json 的闭集（aoe4 域就是这种情况）。若只想在日常域能打开，把那三条的 tag 从 system 改成「日常」即可（一行改动）。",
+    "evidence": "讲解 chapters/05_domain.tex §5.3：「“打开类在任何域都开”不是特例代码，而是两个机制叠加……只要用户把这三条 tag 改回“日常”，游戏域就不再能“打开B站”」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch06-q21",
+    "kind": "数值题",
+    "q": "PreGain 的 target=0.05、ref=0.0005、max_gain=80、smooth=0.3、当前 gain=1.0。算第一次更新后的 gain；若该块 pk=0.02，limiter 是否介入？",
+    "answer": "want = clip(0.05/0.0005, 0.1, 80) = clip(100,0.1,80) = 80；gain ← 1.0 + (80−1.0)×0.3 = 1.0+23.7 = 24.7。pk×gain = 0.02×24.7 = 0.494 < ceiling 0.95，limiter 不介入；若 gain 已到 80，则 0.02×80=1.6>0.95，实际 g=0.95/0.02=47.5。",
+    "evidence": "讲解 chapters/06_vad.tex §6.2 最小数字算例：「want = clip(0.05/0.0005, 0.1, 80)=clip(100,0.1,80)=80」「gain ← 1.0+(80−1.0)×0.3 = 24.7」「若 gain 已到 80……g=0.95/0.02=47.5」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch06-q22",
+    "kind": "数值题",
+    "q": "状态机里 db 门限 60 对应 rms_float 多少？为什么本仓要把它降到 40 或 0？",
+    "answer": "db = 20lg(rms_int16+1e-7)，rms_int16 = 32767×rms_float。db=60 ⇒ rms_int16=10^3=1000 ⇒ rms_float=1000/32767=0.0305。也就是说门限 60 要求每块 RMS≥0.0305 才算语音；post-gain 电平刚到 0.03 的语音会被整段拦掉（prob=0.999 也没用）。本仓降到 40（⇒0.0031）或 0（几乎只看概率）。",
+    "evidence": "讲解 chapters/06_vad.tex §6.2「dB 门限与 RMS 的换算」表：「60（标准实现的旧默认） | 10^3=1000 | 1000/32767=0.0305 | 要求块 RMS ≥0.0305 才算语音」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch06-q23",
+    "kind": "概念题",
+    "q": "Silero 状态机怎么判 hit？IDLE→ACTIVE、ACTIVE→INACTIVE 的条件各是什么？",
+    "answer": "每 32ms 帧算 db；对最近 smoothing_window 帧的 prob 与 db 取均值 (sp,sd)；hit = (sp≥prob_threshold) 且 (sd≥db_threshold)。IDLE 下 hit_count 累加，达到 required_hits 就转 ACTIVE（并把 pre_buffer 的 20 帧拷贝进 chunks）；ACTIVE 下 hit 则 miss_count 清零、否则累加，达到 required_misses 就转 INACTIVE、输出 concat(chunks)，然后回 IDLE。",
+    "evidence": "讲解 chapters/06_vad.tex §6.3 公式组：「hit ← (sp≥prob_thr) ∧ (sd≥db_thr)」「IDLE→ACTIVE ⟺ hit_count≥required_hits」「ACTIVE→INACTIVE ⟺ miss_count≥required_misses」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch06-q24",
+    "kind": "数值题",
+    "q": "按当前配置 required_misses=16、required_hits=1、smoothing_window=2、帧长 512/16000，分别说出起判延迟、平滑窗、停止窗与预滚的毫秒数；max_speech_ms=6000 对应多少帧？",
+    "answer": "帧长 512/16000=32ms。required_hits=1 → 起判延迟 32ms；smoothing_window=2 → 64ms；required_misses=16 → 512ms；pre_buffer_chunks=20 → 640ms 预滚；max_speech_ms=6000 → 6000/32=187 帧（共享 json 的 12000 → 375 帧）。",
+    "evidence": "讲解 chapters/06_vad.tex §6.3 时间换算表：「required_hits | 1 | 32ms」「smoothing_window | 2 | 64ms」「required_misses | 16 | 512ms」「pre_buffer_chunks | 20 | 640ms」「max_speech_ms（aoe4/ops） | 6000 | 187 帧」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch06-q25",
+    "kind": "概念题",
+    "q": "为什么 pre_buffer 必须是「所有状态下都 append、收段时不清空」的环形缓冲？旧实现会造成什么后果？",
+    "answer": "旧实现只在 IDLE 里 append，收段时 pre_buffer.clear() 再补 1 块；于是上一段刚收完就接着说时，预滚远不足 640ms，而触发还要等「平滑+hits」约 200~300ms，段起点落到起音之后（从说话中间切进来）。实测 utt/162207 段头 RMS 是段内的 2.35 倍（最响在开头），转写吃掉「感」。改成任何状态都 append、收段不清空后，f2 触发时 chunks 已有约 20 帧=640ms 预滚。",
+    "evidence": "讲解 chapters/06_vad.tex §6.3 核心要点框：「预滚是『环形缓冲』而不是『触发时的快照』：pre_buffer.append(chunk) 在所有状态下都执行，收段时不清空（vad_silero.py:198-209）」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch06-q26",
+    "kind": "反例题",
+    "q": "有人说「短口令被吞是因为阈值太高，把 vad_prob_threshold 从 0.30 调到 0.50 更稳」。请用甜点曲线说明为什么方向反了。",
+    "answer": "Silero 概率主要由 post-gain 电平决定：RMS 0.005→prob 约 0.017、0.02→0.389、0.03→0.741、0.05→0.868。阈值调高到 0.50 时，只有电平足够高的帧才过线，小声/短口令起音更容易被漏（且起判延迟增加）。正确方向是让 AGC 把电平推到甜点区（target 0.05、max_gain 80），阈值维持 0.30/1/2。",
+    "evidence": "讲解 chapters/06_vad.tex §6.2 甜点曲线表：「0.020 | 0.389 | 0.135 | 0.916 | 边缘」「0.030 | 0.741 | 0.334 | 0.963 | 可用」「0.050 | 0.868 | 0.561 | 0.989 | 甜点」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch06-q27",
+    "kind": "数值题",
+    "q": "停判阈值改为「相对噪声底」后：floor（20 分位）=0.003、段峰值 pk=0.5 时 thr 等于多少？与旧阈值 max(0.02,0.10×pk) 相比，语音起点会提前多少？",
+    "answer": "新 thr = min(max(floor×3, 0.004), max(0.02, 0.05×pk)) = min(max(0.009,0.004), max(0.02,0.025)) = min(0.009, 0.025) = 0.009。旧 thr = max(0.02, 0.05) = 0.05。新阈值低得多，起点更靠前；实测 10 段录音里 7/10 段的起音被吞，中位 100ms（用户第一轮）/184ms（本文复跑），最大数百 ms（如「工作」566ms→5ms）。",
+    "evidence": "讲解 chapters/14_measure.tex §14.2 表：「163950_…工作 | 0.344 | 566ms | 5ms | 560ms」「中位 / 平均 / 最大（10 段）| 184 / 220 / 560ms」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch06-q28",
+    "kind": "概念题",
+    "q": "vad_adapt 的起判自适应：什么条件判定「疑似漏检」？放宽的顺序是什么？回收的步长与上限是什么？",
+    "answer": "判定：块 RMS > max(0.004, 噪声底×3) 持续 1.5s 仍没有段输出（got_segment 为假），说明起判偏严。放宽顺序：prob 每次 −0.03，降到下限 0.25 后才把 required_hits 改为 1（消息以 info 可见）。回收：60s 无漏检则每 60s prob +0.01，上限严格等于 behavior.vad_prob_threshold（配置值）——不能硬编码 0.40。",
+    "evidence": "讲解 chapters/06_vad.tex §6.5 表：「起判 | 持续有声 >1.5s 未出段 | prob −0.03（floor 0.25） | 先 prob 后 hits→1」「起判 | 60s 无漏检 | prob +0.01 | 上限 = 配置值（不硬编码 0.40）」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch06-q29",
+    "kind": "数值题",
+    "q": "停止窗自适应：档案值 base=16 帧时，可调区间 [max(8,base−8), min(30,base+8)] 是多少 ms？拼接一次加几帧？连续多少段无拼接才减一帧？",
+    "answer": "区间 = [8, 24] 帧 = 256~768ms（set_window_ms 再硬夹 [8,30]）。发生一次「与上一段拼接」加 1 帧（32ms），但每两次拼接才加 1（n_stitch%2==1）；连续 20 段无拼接才减 1 帧（CLEAN_DECAY_EVERY=20）。",
+    "evidence": "讲解 chapters/06_vad.tex §6.5：「停止窗 | 发生一次『与上一段拼接』 | +1 帧（32ms） | 每两次拼接加 1（n_stitch%2==1）」「停止窗 | 连续 20 段无拼接 | −1 帧 | CLEAN_DECAY_EVERY=20」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch07-q30",
+    "kind": "数值题",
+    "q": "单句语音校准：句内最大停顿 max_int 分别为 600ms、200ms、900ms 时，target_ms 与 misses 各是多少？（min=500, factor=1.35, upper=864）",
+    "answer": "600ms → 1.35×600=810，clamp(810,500,864)=810ms → misses=round(810/32)=25 帧（800ms）。200ms → 270 → clamp=500ms → misses=16（512ms）。900ms → 1215 → clamp=864ms → misses=27（864ms）。",
+    "evidence": "讲解 chapters/07_calib.tex §7.2 逐步算例：「max(pauses)=600ms ⇒ 1.35×600=810 ⇒ clamp(810,500,864)=810 ⇒ misses=round(25.3)=25 帧（800ms）」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch07-q31",
+    "kind": "概念题",
+    "q": "批量校准的「切碎率 ≤ 目标」在 n_files=200、目标 3% 时等价于取停顿分布的什么分位？为什么批量校准要求样本量？",
+    "answer": "cut_rate(w) = 100/n_files × #{pauses p ≥ w}。cut_rate ≤ 3% ⇔ #{p ≥ w} ≤ 0.03n；n=200 时允许 6 个，推荐窗约等于停顿分布的 p97。若 n=10，0.03n=0.3<1，就退化成「w 必须大于最大停顿」，推荐值会偏高、不稳健——这就是默认 --n 200 的原因。判停延迟会随 w 线性增加（+w ms）。",
+    "evidence": "讲解 chapters/07_calib.tex §7.3：「当 n=200 时允许 6 个；因此推荐窗约等于停顿分布的 p97」「若 n=10，0.03n=0.3<1，就退化成『必须 w>max(p)』」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch07-q32",
+    "kind": "反例题",
+    "q": "有人按文档说「调整静音判定」会现场校准成功。请指出当前代码的实际行为与证据。",
+    "answer": "实际跑不完。vad_action._finish() 里 b 与 target 都是未定义名字（b 只在上一个函数 act_vad_calibrate 作用域；target 只在 else 分支赋成了 target_ms）。用合成音频直接调用 _finish() 得到 NameError: name 'b' is not defined，被外层 except 捕获后打印「静音判定校准失败」。所以用户会先看到「语音校准已开始」，8 秒后看到失败；批量版 vad_calib.py 不受影响，可替代。",
+    "evidence": "讲解 chapters/07_calib.tex §7.2 常见坑框：「本文用合成音频直接调用 _finish()，得到 NameError: name 'b' is not defined……当前提交版本的单句语音校准跑不完」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch07-q33",
+    "kind": "概念题",
+    "q": "批量校准的预滚推荐里，ahead_cap_ms、onset_margin_ms、ahead_frac 各由什么统计量决定？为什么要加 keep_extra_ms=120？",
+    "answer": "need = p90(head_ms)+120（让保留静音覆盖 90% 录音的段首静音再加余量）；ahead_cap = clamp(need,300,640)（VAD 只给 640ms）；onset_margin = clamp(p90(head_ms)+50,80,250)；ahead_frac = clamp(need/p50(seg_len_ms),0.10,0.50)。120ms 的余量是为了在「段首静音」统计之外再留一点安全边界，避免刚好切在 p90 边界上。",
+    "evidence": "讲解 chapters/07_calib.tex §7.3 公式组：「need = p90(head_ms)+120」「ahead_cap = clamp(need,300,640)」「ahead_frac = clamp(need/p50(seg_len_ms),0.10,0.50)」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch08-q34",
+    "kind": "概念题",
+    "q": "终端听写的四条特殊规则是什么？为什么终端里必须跳过回读验证？",
+    "answer": "① on 模式下 in_text_field() 直接把终端算成可输入（终端没有 Win32 caret、UIA 读不到输入行）；② type_text 跳过回读验证（UIA 读到的可能是整个滚动缓冲区/输入行，包含判断会把「写进去了」误报成「没写进去」）；③ 不打尾随空格（终端里没有意义，rstrip）；④ clear_field 在终端里明确拒绝（Ctrl+A/Delete 在 shell/REPL/TUI 里是别的东西）。",
+    "evidence": "讲解 chapters/08_dictation.tex §8.2 四条特殊规则：「type_text 跳过回读验证，消息写成『终端窗口：键盘已发送，不做回读验证』」「clear_field() 在终端里明确拒绝」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch08-q35",
+    "kind": "反例题",
+    "q": "听写回读验证的旧写法是 `if key in after: 成功`。为什么会造成「假成功」？正确判据是什么？",
+    "answer": "因为 UIA 读到的 after 可能是整个文档/聊天区（实测 12739 字），里面早就有你之前说过的同一句话，`key in after` 平凡成立 → 日志写「已确认写进输入框（12739→12739 字）」而实际一个字没进去。正确判据是「出现次数增加」：after.count(key) > before.count(key)，即这一次是我们新加进去的；失败时日志给出 before/after 长度与出现次数。",
+    "evidence": "讲解 chapters/08_dictation.tex §8.5 与 annotated/typein_poll.tex 注：「不能用 key in after …… 文档里早就有你之前说过的同一句话 → 这个判断平凡成立」「必须要求【出现次数增加】」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch08-q36",
+    "kind": "数值题",
+    "q": "typein 轮询验证的参数是什么？与旧固定 sleep 相比，正常情况省下多少时间、上限是多少？",
+    "answer": "每 30ms 读一次输入框，读到「新增」立即停；上限 250ms；before 读不到（UIA 不支持）时只等 30ms 读一次就走「未验证」分支。旧实现固定 sleep(0.15)≈153ms；新实现正常约 30~60ms，即省下约 90~120ms 的日志等待（「文字进框」时刻不受影响，受影响的是「日志写出」）。",
+    "evidence": "讲解 chapters/08_dictation.tex §8.5 表：「验证等待 | 固定 sleep(0.15) | 轮询 30ms，读到新增即停 | 正常 ≈30ms」「上限 | — | 250ms」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch09-q37",
+    "kind": "概念题",
+    "q": "ASR 热词的总开关是什么？默认是开还是关？日志里 hotwords 数量的上限是多少、按当前清单各域候选各是多少？",
+    "answer": "总开关是环境变量 OPENCODE_ASR_BIAS=1（asr_vllm.HOTWORD_ENABLED），默认关闭（DEFAULT_HOTWORDS=[]，即使传了 hotwords 也不生效）。上限 LIMIT=120。按当前 intent_config.json 复算：日常域候选 132、游戏 139、运维 174，都被截断到 120。",
+    "evidence": "讲解 chapters/09_asr_hotword.tex §9.3：「HOTWORD_ENABLED = (os.environ.get(\"OPENCODE_ASR_BIAS\") == \"1\")」；§9.2 表：「日常 | 132 | 120 | 被 LIMIT 截断」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch09-q38",
+    "kind": "数值题",
+    "q": "热词偏置 α 的经验红线是多少？α=12/24 会出现什么现象？「只偏首 token」与「偏置全部 token」的实测完全一致率分别是多少？",
+    "answer": "α=6 是红线（α≤8 正常，α=12 开始污染）。同一段真实录音：领域热词 15 个 α=6 →「测试一下静音判定」正确；α=12 →「准一准一准一…」复读；α=24 →「校准语音校准语音…」复读。42 条中英混合（α=6）：不加热词 42.9%/56.0%（完全一致/拉丁保住），只偏首 token 42.9%/46.4%（比不加还差 9.6 点），偏置全部 token 52.4%/56.0%。",
+    "evidence": "讲解 chapters/09_asr_hotword.tex §9.1 表：「领域热词 15 个，α=12 | 准一准一准一…（复读） | 崩坏」「只偏首 token | 42.9% | 46.4% | 比不加热词还差 9.6 点」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch09-q39",
+    "kind": "反例题",
+    "q": "有人为了「让识别更准」把热词偏置调到 α=24，并说反正 logit_bias 只是加分、加多点没坏处。错在哪？",
+    "answer": "加分过大会盖过声学证据：实测 α=12 就开始复读（「准一准一准一…」）、α=24 变成「校准语音校准语音…」，整句转写崩坏，比不加还糟。而且 logit_bias 是软偏置，模型本来可以吐别的词——偏置过强等于把解码器往热词上推，压低其它词的命中，与「保证不漏」相反。所以即使开了开关也必须 α=6。",
+    "evidence": "讲解 chapters/09_asr_hotword.tex §9.1 核心要点框：「α 是『给热词 token 的 logits 加多少分』……α≥12 时加分盖过声学证据，解码器开始复读某个热词，整句转写崩坏。所以 α=6 是红线」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch10-q40",
+    "kind": "概念题",
+    "q": "启动类动作的「前提」与「验证」分别检查什么？_watch 与 _watch_alive_s 的默认值是多少？",
+    "answer": "前提：条目若写 _require_process/_require_path，则先确认该进程在跑，不在就先 Popen 启动器并轮询 tasklist 直到出现（上限 launch_require_wait_s，默认 30/35s）。验证：Popen 返回不等于真起来——轮询 _watch 里的本体进程，连续 _watch_alive_s（默认 6s，条目可覆盖）都在才算成功；超时则返回 False + 手动地址。launch_verify_s 默认 30s 是验证总超时。",
+    "evidence": "讲解 chapters/10_launch.tex §10.1 表：「_watch | 条目 | 本体进程名列表 | 超时 → ❌ + 手动地址」「_watch_alive_s | launch_alive_s=6 | 本体需连续存活的秒数」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch10-q41",
+    "kind": "反例题",
+    "q": "「炉石能启动」——有人用 Hearthstone Beta Launcher.exe -launch -uid hs_beta，看进程出现过 0.2s 就判成功。请指出两处错误与正确姿势。",
+    "answer": "错误①判断「出现过」而不是「稳定存活」：launcher 单独跑会挂 0.2~1s 后退出（日志 Command Line: 为空），正确做法是要求 _watch 的 Hearthstone.exe 连续存活 _watch_alive_s 秒。错误②启动方式不对：本体必须由 Battle.net 带上下文启动，正确姿势是 Battle.net.exe --exec=launch WTCG（成功时日志有 -launch -uid hs_beta、Startup stage 到 LaunchGame）；AoE4 走 Steam.exe steam://rungameid/1466860。",
+    "evidence": "讲解 chapters/10_launch.tex §10.3 表：「Hearthstone Beta Launcher.exe -launch -uid hs_beta | 进程出现 0.2s 后退出 | Command Line: 为空」「Battle.net.exe --exec=launch WTCG | 进程出现并稳定存活」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch10-q42",
+    "kind": "反例题",
+    "q": "Patch [S] 曾在给 chunk=_arr 这一行加注释时把赋值吃掉。用户会看到什么现象？日志里三处长度指标应满足什么关系？",
+    "answer": "现象：日志说「裁剪静音 0.42s」但 ASR 收到的还是未裁原段，转写行恒报原段长度（用户原话「裁剪了为什么还要报原长度」）。修复后记录 _oc_seg_s（原段）与 _oc_sent_s（真正送 ASR 的长度），日志口径为「裁剪静音 _cut：原段 X → 送 ASR Z」，三者关系必须自洽：X = Z + _cut，且 送 ASR 的长度 = len(chunk)/SR（chunk 已是裁剪结果）。",
+    "evidence": "讲解 chapters/10_launch.tex §10.2：「裁剪结果赋值那行曾被上面这段补丁替换掉 → 裁剪只写了日志、ASR 拿到的还是没裁的原音频」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch11-q43",
+    "kind": "概念题",
+    "q": "reply 的「总返回」是怎么触发的？IDLE_S 与 PENDING_IDLE_S 各是多少、pending 的作用是什么？",
+    "answer": "不在 10+ 个 return 分支里插 flush，而是用空闲定时器：begin() 清账本并起 1.5s 定时器，每次 note() 记账都重置定时器；到点 flush() 时若 pending>0（听写等异步未完成）就再推迟 0.8s。IDLE_S=1.5、PENDING_IDLE_S=0.8。items≥2 才打「⇒ 总返回」，agent.last_reply 永远写。wait_utterance() 通过 threading.Event 等 final，外部调用方可阻塞到本句（含听写）真正处理完。",
+    "evidence": "讲解 chapters/11_reply_log_mic.tex §11.1 核心要点框：「IDLE_S=1.5：最后一次记账后 1.5s 无新账算本句结束；PENDING_IDLE_S=0.8：异步（听写）刚结束时稍等再收账」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch11-q44",
+    "kind": "数值题",
+    "q": "麦克风看门狗实测：38022 块、块长 30ms、监控时长 1140s。折算音频多少秒？音频/时长比说明什么？平均间隔公式为什么除以 n−1？",
+    "answer": "折算音频 = 38022×30ms = 1140.66s ≈ 1140.7s；ratio = 1140.66/1140 ≈ 1.0006，说明这一小时没有丢块。平均间隔 = sum_ms / (n−1)，因为 n 块之间只有 n−1 个间隔。报告里 0 丢块、0 驱动溢出、最大空窗 46ms（<1.6×30=48ms，未计入超块）。",
+    "evidence": "讲解 chapters/11_reply_log_mic.tex §11.3 表：「块 × 30ms | 1140.7s | 38022×30/1000=1140.66s」「音频/时长比 | 1.0006 | 140.66/140 ≈ 1.0006（无丢块）」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch11-q45",
+    "kind": "概念题",
+    "q": "dlog 的级别判定顺序是什么？为什么带 ⚠️/❌/⛔ 的行「永远可见」？哪些内容被强制压到 debug？",
+    "answer": "顺序：① 含 ⚠️/❌/⛔ → warn（不受调用方 tag 影响，永远显示）② tag==ERR → error、tag==WARN → warn ③ 命中 _FORCE_DEBUG（已注入 / 已确认写进去 / 转写「 / ⏱ [听写]）→ debug ④ 命中 _INFO_PAT（🎤 「 / 🎯 / 转写 / VAD 段转写 / ✅ / ❌ / ⏱ / ⇒ / 已启动 / 已打开 / 日志级别= / 意图清单： / 意图域 / ⛔）→ info ⑤ 其余 debug。告警强制可见是为了不再出现「日志里有但用户看不到」的血债。",
+    "evidence": "讲解 chapters/11_reply_log_mic.tex §11.2 归类顺序与自检第 15 项：「带 ⚠️ 的行必定可见（不受 tag 影响）」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch12-q46",
+    "kind": "数值题",
+    "q": "补丁工程：PATCHES 有几处？MARKERS 有几个？为什么 len(PATCHES) 比 len(MARKERS) 多 2？selfcheck 有几项？",
+    "answer": "len(PATCHES)=35，len(MARKERS)=33，selfcheck 41 项。MARKERS = 26 个字母 + [A2,E2,F2,G2,H2,I2,I3] = 33；PATCHES 里另有 B2/C2/D2 三处纯文本替换（docstring/argparse/openra 横幅）刻意不带 marker，G 的标记写在 O 补丁块里，所以 35 = 33 + 3(B2/C2/D2) − 1(G 被 O 块包含) ... 等价地：实际补丁 35 处，其中 32 处各自带唯一 marker、O 块内嵌 G，共 33 个 marker。README 写的 33/31 与 patch.py 注释写的 30/27 都已过期。",
+    "evidence": "讲解 chapters/12_patch_selfcheck.tex §12.1 表：「代码实测（本文）| len(PATCHES)=35，len(MARKERS)=33，且 voice_agent.py 里 33 个 marker 各出现 1 次 | 以这个为准」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch12-q47",
+    "kind": "反例题",
+    "q": "有人说 patch --apply 是幂等的，意思是「检测到已打过就跳过」。请纠正它对「幂等」的实现方式，并列出另外两条安全机制。",
+    "answer": "实现方式是「先从备份还原再重打」：apply() 若发现源文件里有 [OPENCODE 标记，就 shutil.copy2(BACKUP, TARGET) 还原，然后重新跑全部 PATCHES；若已打过但没有备份则拒绝重复应用。另两条安全机制：① 每处锚点必须 src.count(anchor)==1，否则整体放弃返回 1（不写歪）；② 打完先 compile(src) 语法校验，失败不落盘。",
+    "evidence": "讲解 chapters/12_patch_selfcheck.tex §12.4：「幂等策略：if MARK in src → 若备份存在则 shutil.copy2(BACKUP, TARGET) 还原，再重新打一遍。注意它是『还原重打』，不是『跳过已打的』」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch13-q48",
+    "kind": "概念题",
+    "q": "参数总表里说：「vad_min_speech_ms 在 silero 后端不生效」「stream_min_s 不再是丢弃阈值」「vad_silence_ms 主要是兼容口径」。请分别说明每个参数真正的读取方。",
+    "answer": "vad_min_speech_ms 只在 voice_agent.py 构造 Segmenter（能量后端）时传入；silero 后端用 SileroVADEngine，不读它（silero 的最短段由 _a_flush 的 0.15s 规则管）。stream_min_s 在 _a_flush 里只用于「偏短告警」分支（<0.15s 才真的丢弃并 WARN）。vad_silence_ms 由 vad_adapt.set_window_ms 写回内存 cfg，silero 真值看 required_misses×32ms。",
+    "evidence": "讲解 chapters/13_params.tex §13.2 三个「名字在、作用不在」的参数：「vad_min_speech_ms：silero 后端不读；只有 Segmenter（energy）读」「stream_min_s：I2 之后不再是丢弃阈值，只是『偏短告警』阈值」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch13-q49",
+    "kind": "数值题",
+    "q": "参数总表给出三份 profile 的差异：vad_min_speech_ms、vad_max_speech_ms、ahead_frac、log_level、fastpath_min_prefix、dictation_stitch 各是多少？",
+    "answer": "vad_min_speech_ms：共享 200 / aoe4 250 / ops 缺省；vad_max_speech_ms：aoe4、ops 6000，共享 12000；ahead_frac：共享、ops 0.432，aoe4 0.461；log_level：共享、ops info，aoe4 debug；fastpath_min_prefix：共享 3，aoe4、ops 2；dictation_stitch：共享 true，aoe4 false（gap 共享 1.5s / aoe4 0.8s）。",
+    "evidence": "讲解 chapters/13_params.tex 参数总表各行（「vad_max_speech_ms | 6000（aoe4/ops）/ 12000（共享）」「log_level | info（共享、ops）/ debug（aoe4）」「fastpath_min_prefix | 3（共享）/ 2（aoe4、ops）」）",
+    "difficulty": 3
+  },
+  {
+    "id": "ch14-q50",
+    "kind": "数值题",
+    "q": "silero 甜点曲线：用户第一轮在 RMS 0.03/0.05/0.08 的 prob 各是多少？本文复跑的中位/p90 又是多少？两轮共同结论是什么？",
+    "answer": "第一轮：0.03→0.741、0.05→0.868、0.08→0.857（0.12 回落到 0.764）。本文复跑（165018 载体）：0.03→中位 0.334/p90 0.963、0.05→0.561/0.989、0.08→0.608/0.990。两轮绝对值不同（录音不同、中位被非语音帧拉低），但结论一致：post-gain RMS 要 ≥0.03，甜点 0.05~0.08，低于 0.02 基本随机（0.005→0.005~0.017）。",
+    "evidence": "讲解 chapters/14_measure.tex §14.1 表：「0.030 | 0.741 | 0.334 | 0.963」「0.050 | 0.868 | 0.561 | 0.989」「0.080 | 0.857 | 0.608 | 0.990」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch14-q51",
+    "kind": "反例题",
+    "q": "有人拿本文复跑的 vad_sens_sweep 表（prob 0.15~0.50 漏检都为 0）断言「prob 阈值根本不重要、现场经验是错的」。请指出该推断的漏洞。",
+    "answer": "漏洞在那批录音的电平：sweep 用的是最近 25 条较响录音，且引擎 AGC target 0.03/max_gain 60 已把电平推到可用区，所以 prob 阈值在这个区间不敏感。它证明的是「当 post-gain 电平到位时阈值不敏感」，反过来说明 AGC（电平）才是主变量；不能用来否定现场「0.30/hits1」的经验（现场问题正是电平不到位时阈值偏严导致漏检）。",
+    "evidence": "讲解 chapters/14_measure.tex §14.6 表后说明：「重要限制：这批录音本身电平已够，prob 阈值区间内几乎无差别，因此它不能用来否定『0.30/hits1』的现场经验」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch14-q52",
+    "kind": "概念题",
+    "q": "DSH-Voice-Input-Plugin 为什么转写得好？列出它的录音/VAD 关键参数，并指出哪一条是「起音别切」修复的参考来源。",
+    "answer": "它用 getUserMedia{channelCount:1, echoCancellation, noiseSuppression} + Chromium 默认 AGC + AudioContext(16000)，浏览器侧已把电平拉到可用区；能量 VAD 参数 silenceMs 1500 / minSegmentMs 1000 / maxSegmentMs 15000 / rmsFloor 0.0025 / rmsCeiling 0.012 / voiceMargin 2.0 / noiseDown 0.25 / noiseUp 0.002，判据是 peak ≥ max(rmsFloor×3, 0.004)——「相对噪声底」判据与本仓 I3 新阈值同构，是起音修复的来源；minSegmentMs=1000（不够就继续攒）则是 I2「别丢短段」的来源。",
+    "evidence": "讲解 chapters/14_measure.tex §14.4：「判据是『相对噪声底』而不是『相对峰值』：peak >= max(rmsFloor*3, 0.004) 与本仓 I3 的新阈值同构，这就是『起音别切』修复的参考来源」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch15-q53",
+    "kind": "反例题",
+    "q": "现状与风险.md 的风险 A7 写「麦克风监控那两行不在 INFO 白名单 → log_level=info 时看不到」。请核对并说明真相。",
+    "answer": "描述有误。dlog.log 的级别判定是 lv = _LEVELS.get(level) if level else _LEVELS.get(_infer_level(...))——显式 level 优先于内容推断。micwatch._maybe_report 打小结时传了 level=\"info\"，所以 info 级别下可见；「白名单」只影响未显式给 level 的调用。本文已在勘误表把它标为「已修正」。",
+    "evidence": "讲解 chapters/15_risks.tex §15.3 核心要点框：「micwatch._maybe_report 传 level=\"info\"，所以 info 级别下可见；『白名单』只影响未显式给 level 的调用」",
+    "difficulty": 3
+  },
+  {
+    "id": "ch02-q54",
+    "kind": "反例题",
+    "q": "有人以为「收藏夹那三条命令（fav_open/fav_show/fav_sync）也在唯一开关里，可以直接 enabled=false 关掉」。核对一下，错在哪？",
+    "answer": "它们不在 intent_registry 的 45 条里。模式匹配（intents.PATTERNS）能命中它们，但 intents.enabled(cfg, intent_id) 对「不在清单里」的意图返回 True（不拦、保持既有行为），所以既不能在命令列表里看见，也无法用 enabled 关掉。修法是往 intent_registry 加 3 条 system 条目（says+pinyin+desc 写清「第N条」走模式匹配）。",
+    "evidence": "讲解 chapters/15_risks.tex §15.3 表 A1：「fav_open/fav_show/fav_sync 不在清单里 | 核实：intent_registry 45 条中确实没有这三个 id；模式匹配能命中，但 enabled() 查不到会默认放行 ⇒ 无法用开关关掉」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch07-q55",
+    "kind": "反例题",
+    "q": "有人以为 `python -m opencode_fastpath.vad_calib --apply aoe4` 只是打印推荐值、不会动配置。请说明它实际会改哪些键，以及它做的一致性校验。",
+    "answer": "它会用正则替换/插入 aoe4 profile 的：vad_required_misses、vad_silence_ms（没有就插）、onset_margin_ms、ahead_cap_ms（夹到 ≤640）、ahead_frac、asr_gain_cap（保底 max(200, cap)），并写入一行 _comment_vad_misses；写完后立刻 json.load 校验合法，避免把配置写坏。不加 --apply 才只看推荐值。",
+    "evidence": "讲解 chapters/07_calib.tex §7.3 末尾：「--apply 会正则替换 vad_required_misses、vad_silence_ms，并写入 onset_margin_ms / ahead_cap_ms / ahead_frac / asr_gain_cap 与一行 _comment_vad_misses。写完后立刻 json.load 校验合法」",
+    "difficulty": 2
+  },
+  {
+    "id": "ch12-q56",
+    "kind": "反例题",
+    "q": "「selfcheck 不需要模型/麦克风，所以它是纯只读的。」请指出它实际产生的一处副作用及其证据。",
+    "answer": "它会给运行期领域状态留下记录：selfcheck 用 _CfgSwitch(path=\"_selfcheck_switch.json\") 调 set_domain()，set_domain 会把按键写进 opencode_fastpath/domain_state.json。实测该文件里确实留有 \"_selfcheck_switch.json\": \"日常\"。所以「纯只读」不严格；本文把它列为新增发现之一。",
+    "evidence": "讲解 chapters/12_patch_selfcheck.tex §12.5 常见坑框：「自检有副作用：它用 _CfgSwitch(path=\"_selfcheck_switch.json\") 调 set_domain()，会把条目写进 domain_state.json」",
+    "difficulty": 2
+  }
+]

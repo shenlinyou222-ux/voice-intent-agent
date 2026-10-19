@@ -1,0 +1,1265 @@
+{
+  "generator": "opencode",
+  "session": "ses_eb3637506ffeoeQ5UIVdyl40q4",
+  "version": 1,
+  "ids": {
+    "da": 0,
+    "gai": 1,
+    "len": 2,
+    "wu": 3,
+    "guan": 4,
+    "li": 5,
+    "ji": 6,
+    "dong": 7,
+    "yi": 8,
+    "jia": 9,
+    "yun": 10,
+    "jin": 11,
+    "san": 12,
+    "lu": 13,
+    "wen": 14,
+    "jian": 15,
+    "zi": 16,
+    "yuan": 17,
+    "min": 18,
+    "lin": 19,
+    "ti": 20,
+    "si": 21,
+    "hu": 22,
+    "zong": 23,
+    "duan": 24,
+    "liu": 25,
+    "lan": 26,
+    "mai": 27,
+    "bo": 28,
+    "han": 29,
+    "gong": 30,
+    "zo": 31,
+    "ho": 32,
+    "ban": 33,
+    "tong": 34,
+    "zu": 35,
+    "sou": 36,
+    "zan": 37,
+    "bi": 38,
+    "jue": 39,
+    "wan": 40,
+    "ye": 41,
+    "dou": 42,
+    "bao": 43,
+    "jie": 44,
+    "lun": 45,
+    "gu": 46,
+    "dai": 47,
+    "ma": 48,
+    "hai": 49,
+    "ge": 50,
+    "su": 51,
+    "you": 52,
+    "wai": 53,
+    "bai": 54,
+    "go": 55
+  },
+  "entries": [
+    {
+      "intent": "launch_app",
+      "arg": "任务管理器",
+      "triggers": [
+        "打开任务管理器",
+        "启动任务管理器",
+        "开一下任务管理器",
+        "运行任务管理器",
+        "上任务管理器",
+        "进入任务管理器",
+        "打开任务管理器",
+        "启动任务管理器",
+        "开一下任务管理器",
+        "运行任务管理器",
+        "上任务管理器",
+        "进入任务管理器"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "文件管理器",
+      "triggers": [
+        "打开文件管理器",
+        "启动文件管理器",
+        "开一下文件管理器",
+        "运行文件管理器",
+        "上文件管理器",
+        "进入文件管理器",
+        "打开文件管理器",
+        "启动文件管理器",
+        "开一下文件管理器",
+        "运行文件管理器",
+        "上文件管理器",
+        "进入文件管理器",
+        "打开资源管理器",
+        "启动资源管理器",
+        "开一下资源管理器",
+        "运行资源管理器",
+        "上资源管理器",
+        "进入资源管理器"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "命令行",
+      "triggers": [
+        "打开命令行",
+        "启动命令行",
+        "开一下命令行",
+        "运行命令行",
+        "上命令行",
+        "进入命令行",
+        "打开命令行",
+        "启动命令行",
+        "开一下命令行",
+        "运行命令行",
+        "上命令行",
+        "进入命令行",
+        "打开cmd",
+        "启动cmd",
+        "开一下cmd",
+        "运行cmd",
+        "上cmd",
+        "进入cmd",
+        "打开命令提示符",
+        "启动命令提示符",
+        "开一下命令提示符",
+        "运行命令提示符",
+        "上命令提示符",
+        "进入命令提示符"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "PowerShell",
+      "triggers": [
+        "打开PowerShell",
+        "启动PowerShell",
+        "开一下PowerShell",
+        "运行PowerShell",
+        "上PowerShell",
+        "进入PowerShell",
+        "打开powershell",
+        "启动powershell",
+        "开一下powershell",
+        "运行powershell",
+        "上powershell",
+        "进入powershell",
+        "打开终端",
+        "启动终端",
+        "开一下终端",
+        "运行终端",
+        "上终端",
+        "进入终端"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "Edge浏览器",
+      "triggers": [
+        "打开Edge浏览器",
+        "启动Edge浏览器",
+        "开一下Edge浏览器",
+        "运行Edge浏览器",
+        "上Edge浏览器",
+        "进入Edge浏览器",
+        "打开edge",
+        "启动edge",
+        "开一下edge",
+        "运行edge",
+        "上edge",
+        "进入edge",
+        "打开edge浏览器",
+        "启动edge浏览器",
+        "开一下edge浏览器",
+        "运行edge浏览器",
+        "上edge浏览器",
+        "进入edge浏览器"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "Steam",
+      "triggers": [
+        "打开Steam",
+        "启动Steam",
+        "开一下Steam",
+        "运行Steam",
+        "上Steam",
+        "进入Steam",
+        "打开steam",
+        "启动steam",
+        "开一下steam",
+        "运行steam",
+        "上steam",
+        "进入steam"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "Blender",
+      "triggers": [
+        "打开Blender",
+        "启动Blender",
+        "开一下Blender",
+        "运行Blender",
+        "上Blender",
+        "进入Blender",
+        "打开blender",
+        "启动blender",
+        "开一下blender",
+        "运行blender",
+        "上blender",
+        "进入blender"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "Ollama",
+      "triggers": [
+        "打开Ollama",
+        "启动Ollama",
+        "开一下Ollama",
+        "运行Ollama",
+        "上Ollama",
+        "进入Ollama",
+        "打开ollama",
+        "启动ollama",
+        "开一下ollama",
+        "运行ollama",
+        "上ollama",
+        "进入ollama"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "DeepSeek",
+      "triggers": [
+        "打开DeepSeek",
+        "启动DeepSeek",
+        "开一下DeepSeek",
+        "运行DeepSeek",
+        "上DeepSeek",
+        "进入DeepSeek",
+        "打开deepseek",
+        "启动deepseek",
+        "开一下deepseek",
+        "运行deepseek",
+        "上deepseek",
+        "进入deepseek",
+        "打开harness",
+        "启动harness",
+        "开一下harness",
+        "运行harness",
+        "上harness",
+        "进入harness",
+        "打开dsh",
+        "启动dsh",
+        "开一下dsh",
+        "运行dsh",
+        "上dsh",
+        "进入dsh"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "Trae",
+      "triggers": [
+        "打开Trae",
+        "启动Trae",
+        "开一下Trae",
+        "运行Trae",
+        "上Trae",
+        "进入Trae",
+        "打开trae",
+        "启动trae",
+        "开一下trae",
+        "运行trae",
+        "上trae",
+        "进入trae"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "Clash",
+      "triggers": [
+        "打开Clash",
+        "启动Clash",
+        "开一下Clash",
+        "运行Clash",
+        "上Clash",
+        "进入Clash",
+        "打开clash",
+        "启动clash",
+        "开一下clash",
+        "运行clash",
+        "上clash",
+        "进入clash"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "Python",
+      "triggers": [
+        "打开Python",
+        "启动Python",
+        "开一下Python",
+        "运行Python",
+        "上Python",
+        "进入Python",
+        "打开python",
+        "启动python",
+        "开一下python",
+        "运行python",
+        "上python",
+        "进入python"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "媒体播放器",
+      "triggers": [
+        "打开媒体播放器",
+        "启动媒体播放器",
+        "开一下媒体播放器",
+        "运行媒体播放器",
+        "上媒体播放器",
+        "进入媒体播放器",
+        "打开媒体播放器",
+        "启动媒体播放器",
+        "开一下媒体播放器",
+        "运行媒体播放器",
+        "上媒体播放器",
+        "进入媒体播放器"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "WorkBuddy",
+      "triggers": [
+        "打开WorkBuddy",
+        "启动WorkBuddy",
+        "开一下WorkBuddy",
+        "运行WorkBuddy",
+        "上WorkBuddy",
+        "进入WorkBuddy",
+        "打开workbuddy",
+        "启动workbuddy",
+        "开一下workbuddy",
+        "运行workbuddy",
+        "上workbuddy",
+        "进入workbuddy",
+        "打开work buddy",
+        "启动work buddy",
+        "开一下work buddy",
+        "运行work buddy",
+        "上work buddy",
+        "进入work buddy",
+        "打开工作伙伴",
+        "启动工作伙伴",
+        "开一下工作伙伴",
+        "运行工作伙伴",
+        "上工作伙伴",
+        "进入工作伙伴",
+        "打开wb",
+        "启动wb",
+        "开一下wb",
+        "运行wb",
+        "上wb",
+        "进入wb"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "千问",
+      "triggers": [
+        "打开千问",
+        "启动千问",
+        "开一下千问",
+        "运行千问",
+        "上千问",
+        "进入千问",
+        "打开千问",
+        "启动千问",
+        "开一下千问",
+        "运行千问",
+        "上千问",
+        "进入千问",
+        "打开通义",
+        "启动通义",
+        "开一下通义",
+        "运行通义",
+        "上通义",
+        "进入通义",
+        "打开通义千问",
+        "启动通义千问",
+        "开一下通义千问",
+        "运行通义千问",
+        "上通义千问",
+        "进入通义千问",
+        "打开qwen",
+        "启动qwen",
+        "开一下qwen",
+        "运行qwen",
+        "上qwen",
+        "进入qwen"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "launch_app",
+      "arg": "千问办公",
+      "triggers": [
+        "打开千问办公",
+        "启动千问办公",
+        "开一下千问办公",
+        "运行千问办公",
+        "上千问办公",
+        "进入千问办公",
+        "打开千问办公",
+        "启动千问办公",
+        "开一下千问办公",
+        "运行千问办公",
+        "上千问办公",
+        "进入千问办公",
+        "打开通义办公",
+        "启动通义办公",
+        "开一下通义办公",
+        "运行通义办公",
+        "上通义办公",
+        "进入通义办公",
+        "打开qwen办公",
+        "启动qwen办公",
+        "开一下qwen办公",
+        "运行qwen办公",
+        "上qwen办公",
+        "进入qwen办公",
+        "打开办公助手",
+        "启动办公助手",
+        "开一下办公助手",
+        "运行办公助手",
+        "上办公助手",
+        "进入办公助手"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "B站",
+      "triggers": [
+        "打开B站",
+        "启动B站",
+        "开一下B站",
+        "运行B站",
+        "上B站",
+        "进入B站",
+        "打开b站",
+        "启动b站",
+        "开一下b站",
+        "运行b站",
+        "上b站",
+        "进入b站",
+        "打开哔哩哔哩",
+        "启动哔哩哔哩",
+        "开一下哔哩哔哩",
+        "运行哔哩哔哩",
+        "上哔哩哔哩",
+        "进入哔哩哔哩"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "知乎",
+      "triggers": [
+        "打开知乎",
+        "启动知乎",
+        "开一下知乎",
+        "运行知乎",
+        "上知乎",
+        "进入知乎",
+        "打开知乎",
+        "启动知乎",
+        "开一下知乎",
+        "运行知乎",
+        "上知乎",
+        "进入知乎"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "GitHub",
+      "triggers": [
+        "打开GitHub",
+        "启动GitHub",
+        "开一下GitHub",
+        "运行GitHub",
+        "上GitHub",
+        "进入GitHub",
+        "打开github",
+        "启动github",
+        "开一下github",
+        "运行github",
+        "上github",
+        "进入github"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "掘金",
+      "triggers": [
+        "打开掘金",
+        "启动掘金",
+        "开一下掘金",
+        "运行掘金",
+        "上掘金",
+        "进入掘金",
+        "打开掘金",
+        "启动掘金",
+        "开一下掘金",
+        "运行掘金",
+        "上掘金",
+        "进入掘金"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "CSDN",
+      "triggers": [
+        "打开CSDN",
+        "启动CSDN",
+        "开一下CSDN",
+        "运行CSDN",
+        "上CSDN",
+        "进入CSDN",
+        "打开csdn",
+        "启动csdn",
+        "开一下csdn",
+        "运行csdn",
+        "上csdn",
+        "进入csdn"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "HuggingFace",
+      "triggers": [
+        "打开HuggingFace",
+        "启动HuggingFace",
+        "开一下HuggingFace",
+        "运行HuggingFace",
+        "上HuggingFace",
+        "进入HuggingFace",
+        "打开huggingface",
+        "启动huggingface",
+        "开一下huggingface",
+        "运行huggingface",
+        "上huggingface",
+        "进入huggingface",
+        "打开hf",
+        "启动hf",
+        "开一下hf",
+        "运行hf",
+        "上hf",
+        "进入hf"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "ModelScope",
+      "triggers": [
+        "打开ModelScope",
+        "启动ModelScope",
+        "开一下ModelScope",
+        "运行ModelScope",
+        "上ModelScope",
+        "进入ModelScope",
+        "打开modelscope",
+        "启动modelscope",
+        "开一下modelscope",
+        "运行modelscope",
+        "上modelscope",
+        "进入modelscope"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "DeepSeek网页",
+      "triggers": [
+        "打开DeepSeek网页",
+        "启动DeepSeek网页",
+        "开一下DeepSeek网页",
+        "运行DeepSeek网页",
+        "上DeepSeek网页",
+        "进入DeepSeek网页",
+        "打开deepseek网址",
+        "启动deepseek网址",
+        "开一下deepseek网址",
+        "运行deepseek网址",
+        "上deepseek网址",
+        "进入deepseek网址",
+        "打开deepseek官网",
+        "启动deepseek官网",
+        "开一下deepseek官网",
+        "运行deepseek官网",
+        "上deepseek官网",
+        "进入deepseek官网",
+        "打开deepseek网页",
+        "启动deepseek网页",
+        "开一下deepseek网页",
+        "运行deepseek网页",
+        "上deepseek网页",
+        "进入deepseek网页"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "豆包",
+      "triggers": [
+        "打开豆包",
+        "启动豆包",
+        "开一下豆包",
+        "运行豆包",
+        "上豆包",
+        "进入豆包",
+        "打开豆包",
+        "启动豆包",
+        "开一下豆包",
+        "运行豆包",
+        "上豆包",
+        "进入豆包",
+        "打开doubao",
+        "启动doubao",
+        "开一下doubao",
+        "运行doubao",
+        "上doubao",
+        "进入doubao",
+        "打开豆包ai",
+        "启动豆包ai",
+        "开一下豆包ai",
+        "运行豆包ai",
+        "上豆包ai",
+        "进入豆包ai",
+        "打开字节豆包",
+        "启动字节豆包",
+        "开一下字节豆包",
+        "运行字节豆包",
+        "上字节豆包",
+        "进入字节豆包"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "Stack Overflow",
+      "triggers": [
+        "打开Stack Overflow",
+        "启动Stack Overflow",
+        "开一下Stack Overflow",
+        "运行Stack Overflow",
+        "上Stack Overflow",
+        "进入Stack Overflow",
+        "打开stackoverflow",
+        "启动stackoverflow",
+        "开一下stackoverflow",
+        "运行stackoverflow",
+        "上stackoverflow",
+        "进入stackoverflow"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "arXiv",
+      "triggers": [
+        "打开arXiv",
+        "启动arXiv",
+        "开一下arXiv",
+        "运行arXiv",
+        "上arXiv",
+        "进入arXiv",
+        "打开arxiv",
+        "启动arxiv",
+        "开一下arxiv",
+        "运行arxiv",
+        "上arxiv",
+        "进入arxiv",
+        "打开论文库",
+        "启动论文库",
+        "开一下论文库",
+        "运行论文库",
+        "上论文库",
+        "进入论文库"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "PapersWithCode",
+      "triggers": [
+        "打开PapersWithCode",
+        "启动PapersWithCode",
+        "开一下PapersWithCode",
+        "运行PapersWithCode",
+        "上PapersWithCode",
+        "进入PapersWithCode",
+        "打开paperswithcode",
+        "启动paperswithcode",
+        "开一下paperswithcode",
+        "运行paperswithcode",
+        "上paperswithcode",
+        "进入paperswithcode",
+        "打开论文代码",
+        "启动论文代码",
+        "开一下论文代码",
+        "运行论文代码",
+        "上论文代码",
+        "进入论文代码"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "Kaggle",
+      "triggers": [
+        "打开Kaggle",
+        "启动Kaggle",
+        "开一下Kaggle",
+        "运行Kaggle",
+        "上Kaggle",
+        "进入Kaggle",
+        "打开kaggle",
+        "启动kaggle",
+        "开一下kaggle",
+        "运行kaggle",
+        "上kaggle",
+        "进入kaggle"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "HackerNews",
+      "triggers": [
+        "打开HackerNews",
+        "启动HackerNews",
+        "开一下HackerNews",
+        "运行HackerNews",
+        "上HackerNews",
+        "进入HackerNews",
+        "打开hackernews",
+        "启动hackernews",
+        "开一下hackernews",
+        "运行hackernews",
+        "上hackernews",
+        "进入hackernews",
+        "打开hn",
+        "启动hn",
+        "开一下hn",
+        "运行hn",
+        "上hn",
+        "进入hn",
+        "打开黑客新闻",
+        "启动黑客新闻",
+        "开一下黑客新闻",
+        "运行黑客新闻",
+        "上黑客新闻",
+        "进入黑客新闻"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "GoogleScholar",
+      "triggers": [
+        "打开GoogleScholar",
+        "启动GoogleScholar",
+        "开一下GoogleScholar",
+        "运行GoogleScholar",
+        "上GoogleScholar",
+        "进入GoogleScholar",
+        "打开googlescholar",
+        "启动googlescholar",
+        "开一下googlescholar",
+        "运行googlescholar",
+        "上googlescholar",
+        "进入googlescholar",
+        "打开谷歌学术",
+        "启动谷歌学术",
+        "开一下谷歌学术",
+        "运行谷歌学术",
+        "上谷歌学术",
+        "进入谷歌学术"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "PyPI",
+      "triggers": [
+        "打开PyPI",
+        "启动PyPI",
+        "开一下PyPI",
+        "运行PyPI",
+        "上PyPI",
+        "进入PyPI",
+        "打开pypi",
+        "启动pypi",
+        "开一下pypi",
+        "运行pypi",
+        "上pypi",
+        "进入pypi"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "DockerHub",
+      "triggers": [
+        "打开DockerHub",
+        "启动DockerHub",
+        "开一下DockerHub",
+        "运行DockerHub",
+        "上DockerHub",
+        "进入DockerHub",
+        "打开dockerhub",
+        "启动dockerhub",
+        "开一下dockerhub",
+        "运行dockerhub",
+        "上dockerhub",
+        "进入dockerhub",
+        "打开docker",
+        "启动docker",
+        "开一下docker",
+        "运行docker",
+        "上docker",
+        "进入docker"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "Claude",
+      "triggers": [
+        "打开Claude",
+        "启动Claude",
+        "开一下Claude",
+        "运行Claude",
+        "上Claude",
+        "进入Claude",
+        "打开claude",
+        "启动claude",
+        "开一下claude",
+        "运行claude",
+        "上claude",
+        "进入claude",
+        "打开anthropic",
+        "启动anthropic",
+        "开一下anthropic",
+        "运行anthropic",
+        "上anthropic",
+        "进入anthropic"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "OpenAI",
+      "triggers": [
+        "打开OpenAI",
+        "启动OpenAI",
+        "开一下OpenAI",
+        "运行OpenAI",
+        "上OpenAI",
+        "进入OpenAI",
+        "打开openai",
+        "启动openai",
+        "开一下openai",
+        "运行openai",
+        "上openai",
+        "进入openai",
+        "打开chatgpt",
+        "启动chatgpt",
+        "开一下chatgpt",
+        "运行chatgpt",
+        "上chatgpt",
+        "进入chatgpt",
+        "打开gpt",
+        "启动gpt",
+        "开一下gpt",
+        "运行gpt",
+        "上gpt",
+        "进入gpt"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "YouTube",
+      "triggers": [
+        "打开YouTube",
+        "启动YouTube",
+        "开一下YouTube",
+        "运行YouTube",
+        "上YouTube",
+        "进入YouTube",
+        "打开youtube",
+        "启动youtube",
+        "开一下youtube",
+        "运行youtube",
+        "上youtube",
+        "进入youtube",
+        "打开油管",
+        "启动油管",
+        "开一下油管",
+        "运行油管",
+        "上油管",
+        "进入油管"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "维基百科",
+      "triggers": [
+        "打开维基百科",
+        "启动维基百科",
+        "开一下维基百科",
+        "运行维基百科",
+        "上维基百科",
+        "进入维基百科",
+        "打开wikipedia",
+        "启动wikipedia",
+        "开一下wikipedia",
+        "运行wikipedia",
+        "上wikipedia",
+        "进入wikipedia",
+        "打开wiki",
+        "启动wiki",
+        "开一下wiki",
+        "运行wiki",
+        "上wiki",
+        "进入wiki",
+        "打开维基",
+        "启动维基",
+        "开一下维基",
+        "运行维基",
+        "上维基",
+        "进入维基"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "开源中国",
+      "triggers": [
+        "打开开源中国",
+        "启动开源中国",
+        "开一下开源中国",
+        "运行开源中国",
+        "上开源中国",
+        "进入开源中国",
+        "打开开源中国",
+        "启动开源中国",
+        "开一下开源中国",
+        "运行开源中国",
+        "上开源中国",
+        "进入开源中国",
+        "打开oschina",
+        "启动oschina",
+        "开一下oschina",
+        "运行oschina",
+        "上oschina",
+        "进入oschina"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "博客园",
+      "triggers": [
+        "打开博客园",
+        "启动博客园",
+        "开一下博客园",
+        "运行博客园",
+        "上博客园",
+        "进入博客园",
+        "打开博客园",
+        "启动博客园",
+        "开一下博客园",
+        "运行博客园",
+        "上博客园",
+        "进入博客园",
+        "打开cnblogs",
+        "启动cnblogs",
+        "开一下cnblogs",
+        "运行cnblogs",
+        "上cnblogs",
+        "进入cnblogs"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "Gitee",
+      "triggers": [
+        "打开Gitee",
+        "启动Gitee",
+        "开一下Gitee",
+        "运行Gitee",
+        "上Gitee",
+        "进入Gitee",
+        "打开gitee",
+        "启动gitee",
+        "开一下gitee",
+        "运行gitee",
+        "上gitee",
+        "进入gitee",
+        "打开码云",
+        "启动码云",
+        "开一下码云",
+        "运行码云",
+        "上码云",
+        "进入码云"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "机器之心",
+      "triggers": [
+        "打开机器之心",
+        "启动机器之心",
+        "开一下机器之心",
+        "运行机器之心",
+        "上机器之心",
+        "进入机器之心",
+        "打开机器之心",
+        "启动机器之心",
+        "开一下机器之心",
+        "运行机器之心",
+        "上机器之心",
+        "进入机器之心",
+        "打开jiqizhixin",
+        "启动jiqizhixin",
+        "开一下jiqizhixin",
+        "运行jiqizhixin",
+        "上jiqizhixin",
+        "进入jiqizhixin"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    },
+    {
+      "intent": "open_url",
+      "arg": "InfoQ",
+      "triggers": [
+        "打开InfoQ",
+        "启动InfoQ",
+        "开一下InfoQ",
+        "运行InfoQ",
+        "上InfoQ",
+        "进入InfoQ",
+        "打开infoq",
+        "启动infoq",
+        "开一下infoq",
+        "运行infoq",
+        "上infoq",
+        "进入infoq"
+      ],
+      "additive": false,
+      "destructive": false,
+      "markers": {
+        "source": "intent_config.json"
+      }
+    }
+  ]
+}

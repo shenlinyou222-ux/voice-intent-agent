@@ -1,0 +1,69 @@
+# 语音启动 DSH 会话时套用的【模型层】—— 与 desktop profile 一致。
+# 为什么需要：headless 的 cordis.patch.yml 是空的 []，会落到 bundle 默认的
+# llm-deepseek(api.deepseek.com)，而那个 key 余额为 0 → 任务立刻 402 QUOTA。
+# 用 `dsh headless --patch dsh_model_patch.yml ...` 覆盖 provider/model；
+# 密钥仍从 ~/.dsh/.credentials.yaml 的 refs 按 apiKeyEnv 名字解析。
+
+- id: llm-deepseek
+  name: "@deepseek-ai/dsh-llm-deepseek-api-key"
+  config:
+    models:
+      - id: deepseek-flash
+        name: deepseek-flash
+        contextWindow: 1000000
+    baseURL: https://api.deepseek.com
+- id: agent-default-model
+  name: "@deepseek-ai/dsh-agent-default-model"
+  config:
+    provider: opencode-go
+    model: deepseek-v4.1-flash
+- id: llm-pi-ai
+  name: "@deepseek-ai/dsh-llm-pi-ai"
+  config:
+    providers:
+      opencode-go:
+        apiKeyEnv: OPENCODE_GO_API_KEY
+      zijie:
+        displayName: zijie
+        apiKeyEnv: ZIJIE_API_KEY
+        api: openai-completions
+        baseURL: https://ark.cn-beijing.volces.com/api/coding/v3
+        defaultMaxTokens: 65536
+        models:
+          - id: doubao-seedance-2-5-260628
+            name: doubao-seedance-2-5
+          - id: glm-5-3-flash-260828
+            name: glm-5-3-flash
+          - id: deepseek-v4-1-flash-260910
+            name: deepseek-v4-1-flash
+          - id: deepseek-v4-flash-ga-260731
+            name: deepseek-v4-flash-ga
+      qwen-token-plan-cn:
+        displayName: qwen-token-plan-cn
+        apiKeyEnv: QWEN_TOKEN_PLAN_CN_API_KEY
+        api: openai-completions
+        baseURL: https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
+        defaultMaxTokens: 65536
+        models:
+          - id: qwen3.8-max
+            name: qwen3.8-max
+          - id: qwen3.8-flash
+            name: qwen3.8-flash
+          - id: qwen3.7-max
+            name: qwen3.7-max
+          - id: qwen3.7-plus
+            name: qwen3.7-plus
+          - id: qwen3.6-flash
+            name: qwen3.6-flash
+          - id: glm-5.3
+            name: glm-5.3
+          - id: glm-5.2
+            name: glm-5.2
+          - id: deepseek-v4-pro
+            name: deepseek-v4-pro
+          - id: deepseek-v4.1-flash
+            name: deepseek-v4.1-flash
+          - id: deepseek-v4-flash-0731
+            name: deepseek-v4-flash-0731
+          - id: auto
+            name: auto
