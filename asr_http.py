@@ -41,11 +41,17 @@ class HTTPASR:
     """调 app 那条 llama-server 转录接口（OpenAI 兼容），额外带热词 prompt。"""
 
     def __init__(self, url=DEFAULT_URL, timeout=120.0, language="zh",
-                 prompt=None, temperature=0.0, **kw):
+                 prompt=None, temperature=0.0, send_prompt=False, **kw):
         self.url = url or DEFAULT_URL
         self.timeout = float(timeout)
         self.language = language
-        self.prompt = prompt or ""      # ⭐ 只保留这一项自定义：热词上下文
+        # ⚠️ 2026-10-21 血债：prompt（热词上下文）在 /v1/audio/transcriptions 上
+        #   会让 Qwen3-ASR 解码退化 —— 同一段 1.79s 音频实测：
+        #     带 prompt：6.7s、154 字「ه류류류…и типать типать…」，撞满 max_tokens
+        #     不带    ：0.35s、「喂喂，现在呢？」
+        #   所以默认【不发】；确需实验时显式 send_prompt=True。
+        self.prompt = prompt or ""      # 保留字段，便于日志/调试
+        self.send_prompt = bool(send_prompt)
         self.temperature = float(temperature)
         self.load_ms = 0.0
         self.last_ms = 0.0
@@ -83,8 +89,8 @@ class HTTPASR:
         field("model", "qwen3-asr")
         field("language", self.language)
         field("response_format", "json")
-        if self.prompt:
-            field("prompt", self.prompt)          # ⭐ 热词上下文
+        if self.prompt and self.send_prompt:
+            field("prompt", self.prompt)          # ⚠️ 默认不发（会退化，见 __init__ 注释）
         if self.temperature:
             field("temperature", str(self.temperature))
         parts.append(f'--{B}\r\nContent-Disposition: form-data; name="file"; '

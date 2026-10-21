@@ -47,11 +47,11 @@ def snapshot(cfg):
     except Exception:
         dom, smy = "?", ""
     return {"asr_gain_cap": _num(b, "asr_gain_cap", 200),
-            "vad_prob_threshold": _num(b, "vad_prob_threshold", 0.4),
-            "vad_required_hits": int(_num(b, "vad_required_hits", 2)),
-            "vad_required_misses": int(_num(b, "vad_required_misses", 19)),
-            "vad_max_gain": _num(b, "vad_max_gain", 60),
-            "vad_target_rms": _num(b, "vad_target_rms", 0.03),
+            "vad_prob_threshold": _num(b, "vad_prob_threshold", 0.3),
+            "vad_required_hits": int(_num(b, "vad_required_hits", 1)),
+            "vad_required_misses": int(_num(b, "vad_required_misses", 16)),
+            "vad_max_gain": _num(b, "vad_max_gain", 80),
+            "vad_target_rms": _num(b, "vad_target_rms", 0.05),
             "domain": dom, "intent_summary": smy}
 
 

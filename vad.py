@@ -51,13 +51,13 @@ ABS_MIN_RMS = 1.5 / 32768
 class Segmenter:
     """输入 16 kHz float32 小块，输出一句一句的音频"""
 
-    def __init__(self, silence_ms=1300, min_speech_ms=400, energy_threshold=0.0025,
+    def __init__(self, silence_ms=500, min_speech_ms=200, energy_threshold=0.0025,
                  max_speech_ms=12000, frame_ms=30, use_webrtcvad=False,
                  aggressiveness=1, adaptive_floor=True,
                  floor_mult=1.5, ceil_mult=8.0, voice_margin=2.0,
                  ref_fall=0.01, ref_rise=0.0005,
                  noise_floor=0.0008, noise_down=0.25, noise_up=0.002,
-                 min_run_ms=240, pre_roll_ms=300):
+                 min_run_ms=150, pre_roll_ms=300):
         self.frame_ms = frame_ms
         self.frame_len = int(SAMPLE_RATE * frame_ms / 1000)      # 480 @30ms
         self.silence_frames = max(1, int(silence_ms / frame_ms))

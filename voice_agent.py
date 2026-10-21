@@ -34,6 +34,43 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:
         pass
 
+# ⚠️ 2026-10-21：日志落盘不要再走 Windows PowerShell 5.1 的管道
+#   （`& python ... | Tee-Object` / `ForEach-Object` 会用 OEM 代码页解码子进程
+#    的 UTF-8 输出，所有中文变成 '?'，日志直接没法看）。
+#   改为进程内 tee：stdout 照常进控制台（句柄直连，显示正常），同时由 Python
+#   自己按 UTF-8 追加到 VOICE_AGENT_TEE 指定的文件。
+_tee_path = os.environ.get("VOICE_AGENT_TEE")
+if _tee_path:
+    class _Tee:
+        def __init__(self, stream, path):
+            self._stream = stream
+            self._f = None
+            try:
+                self._f = open(path, "a", encoding="utf-8", buffering=1)
+            except Exception:
+                pass
+
+        def write(self, s):
+            if self._f is not None:
+                try:
+                    self._f.write(s)
+                except Exception:
+                    pass
+            return self._stream.write(s)
+
+        def flush(self):
+            for f in (self._f, self._stream):
+                if f is not None:
+                    try:
+                        f.flush()
+                    except Exception:
+                        pass
+
+        def __getattr__(self, name):
+            return getattr(self._stream, name)
+
+    sys.stdout = _Tee(sys.stdout, _tee_path)
+
 # ⭐ 冻结（PyInstaller）后 __file__ 指向 _internal\，不是 exe 所在目录，
 #   所以配置/模型必须按 sys.executable 找。不处理的话会报
 #   FileNotFoundError: ...\dist\voice_agent\_internal\intent_config.json
@@ -128,6 +165,8 @@ from dlog import log                              # noqa: E402
 #    ② 重复率：同一个字占比 >45% = 乱码（「核核核核」）
 #    ③ 中英交替密度：汉字/字母每两个字就翻一次 = 乱码（「t核核mbo核核」）
 # ══════════════════════════════════════════════════════════════
+
+
 def plausible(text, cfg=None, max_len=30, max_repeat=0.45, max_flip=0.40):
     """判断转写像不像一句人话
 
@@ -196,13 +235,13 @@ class Agent:
         self.device = device
         b = cfg.behavior
         self.seg = Segmenter(
-            silence_ms=b.get("vad_silence_ms", 700),
-            min_speech_ms=b.get("vad_min_speech_ms", 400),
+            silence_ms=b.get("vad_silence_ms", 500),
+            min_speech_ms=b.get("vad_min_speech_ms", 200),
             energy_threshold=b.get("vad_energy_threshold", 0.0025),
-            max_speech_ms=b.get("vad_max_speech_ms", 6000),
+            max_speech_ms=b.get("vad_max_speech_ms", 12000),
             aggressiveness=b.get("vad_aggressiveness", 1),
             use_webrtcvad=b.get("use_webrtcvad", False),
-            min_run_ms=b.get("vad_min_run_ms", 240),
+            min_run_ms=b.get("vad_min_run_ms", 150),
             floor_mult=b.get("vad_floor_mult", 1.5),
             ceil_mult=b.get("vad_ceil_mult", 8.0),
             voice_margin=b.get("vad_voice_margin", 2.0),
@@ -241,13 +280,13 @@ class Agent:
             from vad_silero import VADFactory
             self.seg = VADFactory.get_vad_engine(
                 "silero_vad",
-                target_rms=float(b.get("vad_target_rms", 0.03)),
-                max_gain=float(b.get("vad_max_gain", 30.0)),
-                prob_threshold=float(b.get("vad_prob_threshold", 0.4)),
-                db_threshold=float(b.get("vad_db_threshold", 60)),
-                required_hits=int(b.get("vad_required_hits", 3)),
-                required_misses=int(b.get("vad_required_misses", 24)),
-                smoothing_window=int(b.get("vad_smoothing_window", 5)),   # ★ 平滑窗（越大越稳但越慢）
+                target_rms=float(b.get("vad_target_rms", 0.05)),
+                max_gain=float(b.get("vad_max_gain", 80.0)),
+                prob_threshold=float(b.get("vad_prob_threshold", 0.3)),
+                db_threshold=float(b.get("vad_db_threshold", 40)),
+                required_hits=int(b.get("vad_required_hits", 1)),
+                required_misses=int(b.get("vad_required_misses", 16)),
+                smoothing_window=int(b.get("vad_smoothing_window", 2)),   # ★ 平滑窗（越大越稳但越慢）
                 max_speech_ms=int(b.get("vad_max_speech_ms", 12000)),
             )
         # ASR 后端：ctc = 自训 ctc_head 贪心解码；own = Qwen3-ASR 自己的解码器
@@ -276,6 +315,22 @@ class Agent:
         self._asr_ms = 0.0          # 最近一句的 ASR 耗时/token 数（打日志用）
         self._asr_tok = 0
         self.stats = {"heard": 0, "executed": 0, "rejected": 0, "failed": 0}
+
+    def vad_summary(self) -> str:
+        """启动时打印【实际生效】的 VAD 参数（不是配置里写了什么）。"""
+        seg = self.seg
+        sm = getattr(seg, "sm", None)
+        if sm is not None:
+            gain = getattr(seg, "gain", None)
+            tgt = getattr(gain, "target", None)
+            gmax = getattr(gain, "max_gain", None)
+            _pct = getattr(gain, "pct_cfg", None)
+            return (f"backend=silero | prob {sm.prob_threshold:.2f} / db {sm.db_threshold:.0f} / "
+                    f"hits {sm.required_hits} / misses {sm.required_misses}(≈{sm.required_misses * 32}ms) / "
+                    f"平滑 {sm.smoothing_window} | AGC 目标 {tgt} 上限 ×{gmax}"
+                    + (f" / pct {_pct:.0f}" if _pct is not None else ""))
+        return (f"backend={self.vad_backend} | 静音 {getattr(seg, 'silence_frames', '?')} 帧 / "
+                f"最短语音 {getattr(seg, 'min_speech_frames', '?')} 帧")
 
     def _apply_int8(self):
         """把【解码器 + A】动态量化成 int8。
@@ -507,8 +562,11 @@ class Agent:
             _a = HTTPASR(url=_url,
                          timeout=float(self.cfg.behavior.get("asr_http_timeout") or 120),
                          language=str(self.cfg.behavior.get("asr_http_language") or "zh"),
-                         prompt=ctx)
-            log(f"   ASR(http) 端点 {_url}  热词 {len(ctx or '')} 字", "ASR")
+                         prompt=ctx,
+                         send_prompt=bool(self.cfg.behavior.get("asr_http_prompt", False)))
+            log(f"   ASR(http) 端点 {_url}  热词 {len(ctx or '')} 字"
+                + ("（已发 prompt）" if _a.send_prompt else "（不发 prompt：实测会退化）"),
+                "ASR")
             try:
                 _a.load()
                 log(f"   ASR(http) 健康检查 OK（{_a.load_ms:.0f}ms）", "ASR")
@@ -2548,6 +2606,7 @@ def main():
         f"actions/asr_gguf/dlog 的 MD5 前 8 位，用来确认跑的是哪一版）", "SYS")
     dry = True if args.dry_run else None
     agent = Agent(cfg, model_dir=args.model_dir, device=args.device_type, dry=dry)
+    log(f"VAD 参数（实际生效）：{agent.vad_summary()}", "SYS")
     if dry:
         log("⚠️  DRY-RUN 模式：只打印，不真的启动程序/开浏览器")
 

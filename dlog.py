@@ -20,7 +20,7 @@ _LEVELS = {"trace": 0, "debug": 1, "info": 2, "warn": 3, "error": 4}
 _LEVEL = _LEVELS.get((os.environ.get("VOICE_AGENT_LOG") or "info").lower(), 2)
 
 # INFO 白名单：转写 / 耗时 / 动作结果 / 错误（其余一律 debug）
-_INFO_PAT = re.compile(r"(🎤 「|🎯 |转写「|转写 |VAD 段转写|✅ |❌ |⏱|⇒ |已启动 |已打开 |"
+_INFO_PAT = re.compile(r"(🎤 「|🎯 |转写「|转写 |VAD 段转写|VAD 参数|✅ |❌ |⏱|⇒ |已启动 |已打开 |"
                        r"日志级别=|意图清单：|意图表：|意图域|⛔ )")
 
 # 即使命中白名单也要压到 debug 的"细枝末节"（想看就 VOICE_AGENT_LOG=debug）

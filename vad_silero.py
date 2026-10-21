@@ -53,8 +53,8 @@ class PreGain:
     <0.05），所以增益偏大不会把噪声变成语音；反过来增益太小则一切都像静音。
     """
 
-    def __init__(self, target_rms=0.03, window_s=None, pct=None,
-                 min_gain=0.1, max_gain=30.0, smooth=0.3, ceiling=0.95):
+    def __init__(self, target_rms=0.05, window_s=None, pct=None,
+                 min_gain=0.1, max_gain=80.0, smooth=0.3, ceiling=0.95):
         # [OPENCODE] AGC 百分位/窗口可配（默认改为【跟随典型语音电平】）
         #   实测（2026-10-19 用户反馈『对着麦说话录不到』）：silero 要 post-gain
         #   RMS >= ~0.03 才判得出人声（0.005→prob 0.017 / 0.05→0.868）。
@@ -156,8 +156,10 @@ class State(Enum):
 
 
 class StateMachine:
-    def __init__(self, prob_threshold=0.4, db_threshold=60, required_hits=3,
-                 required_misses=24, smoothing_window=5, pre_buffer_chunks=20):
+    # ★ 2026-10-21 默认值对齐线上实测口径（原 0.4/60/3/24/5 是"常开听不到人"的旧值：
+    #   db 60 要求块 RMS>=0.0305，会把 prob=0.999 的轻语音整段拦掉）
+    def __init__(self, prob_threshold=0.3, db_threshold=40, required_hits=1,
+                 required_misses=16, smoothing_window=2, pre_buffer_chunks=20):
         self.state = State.IDLE
         self.prob_threshold = prob_threshold
         self.db_threshold = db_threshold
@@ -240,10 +242,12 @@ class StateMachine:
 #  引擎：把 480/任意长度的流按 512 对齐喂给 Silero
 # ══════════════════════════════════════════════════════════════
 class SileroVADEngine:
-    def __init__(self, model_path=None, pre_gain=True, target_rms=0.03,
-                 prob_threshold=0.4, db_threshold=60, required_hits=3,
-                 required_misses=24, smoothing_window=5, max_speech_ms=12000,
-                 max_gain=30.0):
+    # ★ 默认值与 intent_config.json / opencode_fastpath/vad_profiles.json 对齐
+    #   （未显式传参时也必须能正常起判，不能回落到旧的 0.4/60/3/24/5）
+    def __init__(self, model_path=None, pre_gain=True, target_rms=0.05,
+                 prob_threshold=0.3, db_threshold=40, required_hits=1,
+                 required_misses=16, smoothing_window=2, max_speech_ms=12000,
+                 max_gain=80.0):
         self.vad = SileroVAD(model_path)
         self.sm = StateMachine(prob_threshold, db_threshold, required_hits,
                                required_misses, smoothing_window)
@@ -368,11 +372,11 @@ class VADFactory:
             return None
         return SileroVADEngine(model_path=kw.get("model_path"),
                                pre_gain=kw.get("pre_gain", True),
-                               target_rms=kw.get("target_rms", 0.03),
-                               max_gain=kw.get("max_gain", 30.0),
-                               prob_threshold=kw.get("prob_threshold", 0.4),
-                               db_threshold=kw.get("db_threshold", 60),
-                               required_hits=kw.get("required_hits", 3),
-                               required_misses=kw.get("required_misses", 24),
-                               smoothing_window=kw.get("smoothing_window", 5),   # ★ 之前没转发 → 传了也不生效 ✗
+                               target_rms=kw.get("target_rms", 0.05),
+                               max_gain=kw.get("max_gain", 80.0),
+                               prob_threshold=kw.get("prob_threshold", 0.3),
+                               db_threshold=kw.get("db_threshold", 40),
+                               required_hits=kw.get("required_hits", 1),
+                               required_misses=kw.get("required_misses", 16),
+                               smoothing_window=kw.get("smoothing_window", 2),   # ★ 之前没转发 → 传了也不生效 ✗
                                max_speech_ms=kw.get("max_speech_ms", 12000))

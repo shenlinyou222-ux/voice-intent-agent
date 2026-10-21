@@ -89,8 +89,8 @@ class AdaptiveVad:
         b = self._beh()
         save(int(b.get("vad_required_misses") or self.current() or 16), "adapt", self.speaker,
              extra={"ahead_trim_ms": self.current_trim(b),
-                    "prob": float(getattr(self._sm(), "prob_threshold", 0.4) or 0.4),
-                    "hits": int(getattr(self._sm(), "required_hits", 2) or 2),
+                    "prob": float(getattr(self._sm(), "prob_threshold", 0.3) or 0.3),
+                    "hits": int(getattr(self._sm(), "required_hits", 1) or 1),
                     "n_miss": self.n_miss, "n_clip": self.n_clip,
                     "n_adjust": self.n_adjust, "why": why})
 
@@ -230,8 +230,8 @@ class AdaptiveVad:
             self._voice_since = 0.0
             self._last_miss = now
             self.n_miss += 1
-            prob = float(getattr(sm, "prob_threshold", 0.4))
-            hits = int(getattr(sm, "required_hits", 2))
+            prob = float(getattr(sm, "prob_threshold", 0.3))
+            hits = int(getattr(sm, "required_hits", 1))
             # ★ 用户实测：起判漏掉短口令/起音 —— 这条"系统自己发现漏检"的消息必须 INFO 可见
             if prob > 0.25:
                 sm.prob_threshold = round(prob - 0.03, 2)
@@ -246,11 +246,11 @@ class AdaptiveVad:
         elif (now - self._last_miss) > 60:
             if (now - self._last_recover) > 60:
                 self._last_recover = now
-                prob = float(getattr(sm, "prob_threshold", 0.4))
+                prob = float(getattr(sm, "prob_threshold", 0.3))
                 # ★ 修正（2026-10-19 用户实测）：回收上限必须 = 【配置里的值】，
                 #   不能硬编码 0.40 —— 否则用户把灵敏度调到 0.30，60s 一次 +0.01
                 #   会在 10 分钟内爬回 0.40，又开始漏检（"我明明调过啊"）。
-                _cap = float(self._beh().get("vad_prob_threshold", 0.40) or 0.40)
+                _cap = float(self._beh().get("vad_prob_threshold", 0.30) or 0.30)
                 if prob < _cap:
                     sm.prob_threshold = round(min(_cap, prob + 0.01), 3)
                     self._log(f"   [OPENCODE] 起判回收：prob → {sm.prob_threshold}"
