@@ -171,7 +171,8 @@ class StateMachine:
         self.hit_count = 0
         self.prob_window = collections.deque(maxlen=smoothing_window)
         self.db_window = collections.deque(maxlen=smoothing_window)
-        self.pre_buffer = collections.deque(maxlen=pre_buffer_chunks)
+        self.pre_buffer_chunks = int(max(0, pre_buffer_chunks))
+        self.pre_buffer = collections.deque(maxlen=self.pre_buffer_chunks)
         self._pending = []
 
     @classmethod
@@ -247,10 +248,21 @@ class SileroVADEngine:
     def __init__(self, model_path=None, pre_gain=True, target_rms=0.05,
                  prob_threshold=0.3, db_threshold=40, required_hits=1,
                  required_misses=16, smoothing_window=2, max_speech_ms=12000,
-                 max_gain=80.0):
+                 max_gain=80.0, pre_roll_ms=640.0):
         self.vad = SileroVAD(model_path)
+        # ⭐ 预滚（段起点往前带多少音频）：
+        #   之前写死在 StateMachine 默认值 20 块 = 640ms，配置里改不了。
+        #   640ms 是"旧触发链路（5 块平滑 + hits≥2 ≈ 250ms 延迟）"的兜底值；
+        #   现在 prob .3 / hits 1 / 平滑 2，触发延迟 ~64ms，640ms 明显过长 ——
+        #   段首会带进上一句的尾巴/环境噪声，ASR 容易多吃字。
+        #   改成按毫秒配置（vad_preroll_ms），默认 640 保持老行为；
+        #   实际生效值由 vad_summary() 打到启动日志。
+        chunk_ms = 1000.0 * WINDOW / SR
+        self.preroll_chunks = int(max(0, round(float(pre_roll_ms) / chunk_ms)))
+        self.preroll_ms = self.preroll_chunks * chunk_ms
         self.sm = StateMachine(prob_threshold, db_threshold, required_hits,
-                               required_misses, smoothing_window)
+                               required_misses, smoothing_window,
+                               pre_buffer_chunks=self.preroll_chunks)
         # max_gain 默认 30：本机麦克风说话约 0.0015 RMS，×30 → 0.045，
         # 正好落在 Silero 判"语音"的区间（离线实测 prob 0.956）；
         # 顶到 ×100 会过冲+削波，prob 反而掉到 0.000（见 PreGain 注释）。
@@ -379,4 +391,5 @@ class VADFactory:
                                required_hits=kw.get("required_hits", 1),
                                required_misses=kw.get("required_misses", 16),
                                smoothing_window=kw.get("smoothing_window", 2),   # ★ 之前没转发 → 传了也不生效 ✗
-                               max_speech_ms=kw.get("max_speech_ms", 12000))
+                               max_speech_ms=kw.get("max_speech_ms", 12000),
+                               pre_roll_ms=kw.get("pre_roll_ms", 640.0))

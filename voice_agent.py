@@ -288,6 +288,7 @@ class Agent:
                 required_misses=int(b.get("vad_required_misses", 16)),
                 smoothing_window=int(b.get("vad_smoothing_window", 2)),   # ★ 平滑窗（越大越稳但越慢）
                 max_speech_ms=int(b.get("vad_max_speech_ms", 12000)),
+                pre_roll_ms=float(b.get("vad_preroll_ms", 640)),          # ★ 预滚（段起点往前带多少音频）
             )
         # ASR 后端：ctc = 自训 ctc_head 贪心解码；own = Qwen3-ASR 自己的解码器
         self.asr_backend = b.get("asr_backend", "ctc")
@@ -320,6 +321,8 @@ class Agent:
         """启动时打印【实际生效】的 VAD 参数（不是配置里写了什么）。"""
         seg = self.seg
         sm = getattr(seg, "sm", None)
+        _pre = float(getattr(seg, "preroll_ms", 0.0) or 0.0)
+        _pre_n = int(getattr(sm, "pre_buffer_chunks", 0) or 0) if sm is not None else 0
         if sm is not None:
             gain = getattr(seg, "gain", None)
             tgt = getattr(gain, "target", None)
@@ -327,10 +330,27 @@ class Agent:
             _pct = getattr(gain, "pct_cfg", None)
             return (f"backend=silero | prob {sm.prob_threshold:.2f} / db {sm.db_threshold:.0f} / "
                     f"hits {sm.required_hits} / misses {sm.required_misses}(≈{sm.required_misses * 32}ms) / "
-                    f"平滑 {sm.smoothing_window} | AGC 目标 {tgt} 上限 ×{gmax}"
+                    f"平滑 {sm.smoothing_window} | 预滚 {_pre:.0f}ms({_pre_n}块) | "
+                    f"AGC 目标 {tgt} 上限 ×{gmax}"
                     + (f" / pct {_pct:.0f}" if _pct is not None else ""))
         return (f"backend={self.vad_backend} | 静音 {getattr(seg, 'silence_frames', '?')} 帧 / "
-                f"最短语音 {getattr(seg, 'min_speech_frames', '?')} 帧")
+                f"最短语音 {getattr(seg, 'min_speech_frames', '?')} 帧"
+                + (f" | 预滚 {_pre:.0f}ms" if _pre else ""))
+
+    def trim_summary(self) -> str:
+        """启动时打印【实际生效】的段首裁剪参数（用户 2026-10-21 要求可见）。"""
+        b = self.cfg.behavior
+        frac = float(b.get("ahead_frac", 0.2))
+        cap_cfg = int(b.get("ahead_cap_ms", 640))
+        margin = int(b.get("onset_margin_ms", 100))
+        pre = float(getattr(self.seg, "preroll_ms", 0.0) or 0.0)
+        if self.vad_backend == "ptt":
+            return f"PTT | 预滚 {pre:.0f}ms（按下前）"
+        trim = int(b.get("ahead_trim_ms", max(0, int(pre) - cap_cfg)))
+        cap = max(0, int(pre) - trim)
+        return (f"VAD 预滚 {pre:.0f}ms | 头部保留 = min[{cap}ms, 总长×{frac:.2f}, "
+                f"语音起点−{margin}ms] | ahead_trim {trim}ms / cap {cap_cfg}ms / "
+                f"frac {frac:.2f} / onset_margin {margin}ms")
 
     def _apply_int8(self):
         """把【解码器 + A】动态量化成 int8。
@@ -1497,6 +1517,7 @@ class Agent:
             #   环境噪声 0.0005 → 0.03 > 0.02）→ 起点永远算成 0 → 安全上限失效，
             #   实测「补农」段 1.09s 里 0.76s 空白被当语音送进 ASR ✗
             _arr = np.asarray(chunk, dtype=np.float32).ravel()
+            self._oc_preroll_ms = 0.0          # 本段实际保留的预滚（起点 → 语音起点）
             _pk_seg = float(np.abs(_arr).max()) if _arr.size else 0.0
             # [OPENCODE-I3] 起音别切（用户实测：吞的是【前面】不是后面）
             #   旧：max(0.02, 0.10×段峰值) —— 轻声起音/擦音（sh/s、气声）达不到峰值的
@@ -1511,24 +1532,34 @@ class Agent:
                 #   keep = min(640 − ahead_trim_ms, 总长 × ahead_frac)；起点前再留 onset_margin_ms
                 _b2 = self.cfg.behavior
                 _m = int(SAMPLE_RATE * float(_b2.get("onset_margin_ms", 100)) / 1000.0)
+                # ★ 上限基准 = 实际预滚（vad_preroll_ms），不再写死 640：
+                #   预滚改成 320 后，若还按 640 算，日志/上限会和实际段结构对不上。
+                _pre_base = float(getattr(self.seg, "preroll_ms", 640.0) or 640.0)
                 _trim = int(_b2.get("ahead_trim_ms",
-                            max(0, 640 - int(_b2.get("ahead_cap_ms", 640)))))
-                _cap = int(SAMPLE_RATE * max(0, 640 - _trim) / 1000.0)
+                            max(0, int(_pre_base) - int(_b2.get("ahead_cap_ms", 640)))))
+                _cap = int(SAMPLE_RATE * max(0, _pre_base - _trim) / 1000.0)
                 _lim_head = min(_cap, int(len(_arr) * float(_b2.get("ahead_frac", 0.2))))
+                _seg_len = len(_arr)
                 _a0 = min(_lim_head, max(0, int(_idx[0]) - _m))             # ★★ 两者取小
                 _a1 = min(len(_arr), int(_idx[-1]) + _m)
                 if _a1 - _a0 >= 3200:
                     _cut = (len(_arr) - (_a1 - _a0)) / SAMPLE_RATE
                     _arr = _arr[_a0:_a1]
+                    _pre_keep_ms = max(0, int(_idx[0]) - _a0) / SAMPLE_RATE * 1000.0
+                    self._oc_preroll_ms = _pre_keep_ms
                     if _cut > 0.05:
                         # [OPENCODE-V] 表述修正：原段 → 送 ASR 的长度 + 三个约束
                         log(f"   裁剪静音 {_cut:.2f}s：{len(_arr)/SAMPLE_RATE + _cut:.2f}s"
                             f" → 送 ASR {len(_arr)/SAMPLE_RATE:.2f}s"
                             f"（头部保留 {_a0/SAMPLE_RATE*1000:.0f}ms"
-                            f" = min[640−砍{_trim}ms={max(0, 640-_trim)}ms, "
-                            f"总长×{float(_b2.get('ahead_frac', 0.2)):.2f}={_lim_head/SAMPLE_RATE*1000:.0f}ms, "
+                            f" = min[{_pre_base:.0f}−砍{_trim}ms={max(0, _pre_base-_trim):.0f}ms, "
+                            f"总长×{float(_b2.get('ahead_frac', 0.2)):.2f}={_seg_len*float(_b2.get('ahead_frac', 0.2))/SAMPLE_RATE*1000:.0f}ms, "
                             f"起点前{_m/SAMPLE_RATE*1000:.0f}ms={max(0, int(_idx[0]) - _m)/SAMPLE_RATE*1000:.0f}ms]"
-                            f"，语音起点 {_idx[0]/SAMPLE_RATE:.2f}s）", "ASR")
+                            f"，预滚 {_pre_keep_ms:.0f}ms，语音起点 {_idx[0]/SAMPLE_RATE:.2f}s）",
+                            "ASR", level="info")
+                    else:
+                        log(f"   预滚 {_pre_keep_ms:.0f}ms（段首保留 {_a0/SAMPLE_RATE*1000:.0f}ms，"
+                            f"语音起点 {_idx[0]/SAMPLE_RATE:.2f}s，未裁剪）", "ASR", level="info")
             # [OPENCODE-S] 预滚裁剪的【在线信号】: 送 ASR 音频的段首能量比
             #   >0.35 = 起音被切(砍太多) / <0.06 连续多段 = 段首全静音(可多砍)
             try:
@@ -1566,8 +1597,10 @@ class Agent:
             _oc_sent = float(getattr(self, "_oc_sent_s", 0.0) or len(chunk) / 16000.0)
             _oc_seg = float(getattr(self, "_oc_seg_s", 0.0) or _oc_sent)
             _oc_cut = _oc_seg - _oc_sent
+            _oc_pre = float(getattr(self, "_oc_preroll_ms", 0.0) or 0.0)
             log(f"   VAD 段转写 {_oc_sent:.2f}s（送 ASR）"
                 + (f"；原段 {_oc_seg:.2f}s − 裁 {_oc_cut:.2f}s" if _oc_cut > 0.05 else "")
+                + f"；预滚 {_oc_pre:.0f}ms"
                 + f" → 「{self._a_text or '(空)'}」  {_ms:.0f}ms", "ASR")
             if not self._a_text:
                 log("   段无文本 → 丢弃（不触发整段兜底）", "ASR")
@@ -2607,6 +2640,7 @@ def main():
     dry = True if args.dry_run else None
     agent = Agent(cfg, model_dir=args.model_dir, device=args.device_type, dry=dry)
     log(f"VAD 参数（实际生效）：{agent.vad_summary()}", "SYS")
+    log(f"预滚/裁剪参数（实际生效）：{agent.trim_summary()}", "SYS", level="info")
     if dry:
         log("⚠️  DRY-RUN 模式：只打印，不真的启动程序/开浏览器")
 

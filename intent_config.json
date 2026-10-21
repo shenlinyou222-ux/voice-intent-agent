@@ -1814,6 +1814,8 @@
     "intent_domain": "日常",
     "_comment_intent_registry": "唯一开关：intent_config.json → intent_registry（默认域 日常）；说「切换到游戏/运维/日常」会在运行期覆盖（记在 opencode_fastpath/domain_state.json）",
     "vad_smoothing_window": 2,
+    "vad_preroll_ms": 320,
+    "_comment_vad_preroll": "预滚 = 段起点往前带多少音频。用户 2026-10-21 反馈 640ms 太多：640 = 20 块×32ms，是旧触发链路（平滑 5 + hits≥2 ≈ 250ms 延迟）的兜底值；现在 prob 0.3 / hits 1 / 平滑 2，触发延迟 ≈64ms，320ms 足够，段首少带 0.3s 噪声/上一句尾巴。日志里『预滚 xxxms』是每段实际保留量（加载后按块对齐）。",
     "vad_calib_min_ms": 500,
     "vad_calib_factor": 1.35,
     "_comment_vad_calib": "语音校准（单句版）：说一句话 → 按句内最大停顿×1.35 定停止窗（下限 512 / 上限 864ms），同一段音频顺带校准预滚 + ASR 增益",
