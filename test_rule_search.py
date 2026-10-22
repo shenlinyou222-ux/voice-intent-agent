@@ -23,9 +23,12 @@ CASES = [
     ("搜索文件季度报告", "file_search"),          # 连写触发词，本来就对
     ("查找文件", "file_search"),
     # 不能误判成 file_search 的
-    ("搜索python教程", "web_search"),
-    ("查查日志文件。", "web_search"),             # 「日志文件」是搜索词，不是文件宾语
-    ("搜索量化方法", "web_search"),
+    # ⚠️ 2026-10-22：web_search 已被用户明令删除（actions.py 里三处 return unknown），
+    #    所以这三条的期望从 web_search 改为 unknown —— 它们现在的价值是钉住
+    #    「别把网页搜索句误判成 file_search」这条边界，而不是要求真的去搜索。
+    ("搜索python教程", "unknown"),
+    ("查查日志文件。", "unknown"),             # 「日志文件」是搜索词，不是文件宾语
+    ("搜索量化方法", "unknown"),
     ("打开文件管理器", "launch_app"),
     ("打开密码本文件", "open_file"),
     ("精确查找测试报告", "exact_search"),

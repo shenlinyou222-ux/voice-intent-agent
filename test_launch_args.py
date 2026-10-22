@@ -35,6 +35,9 @@ cfg_raw["apps"] += [
      "path": DSH, "args": ["web", "--no-open"]},
     {"name": "DSH任务", "aliases": ["dsh任务"],
      "path": DSH, "args": ["headless", "跑一下测试"]},
+    # ⚠️ 2026-10-22：记事本已从正式闭集裁剪。本测试用的是临时配置，
+    #    这里补一条最小条目，保住「无 args 的普通 exe 也要走对路径」这个用例。
+    {"name": "记事本", "aliases": ["记事本"], "path": NOTEPAD},
 ]
 with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False,
                                  encoding="utf-8") as f:

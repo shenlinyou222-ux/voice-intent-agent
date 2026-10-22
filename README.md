@@ -189,11 +189,31 @@ n_window_infer = 800  → 注意力窗口 = 800 mel 帧 = 8.0 秒
 
 ## 测试
 
+### 规则层（不需要模型、不需要 torch）
+
 ```powershell
-python actions.py --list --selftest   # 规则分句自测（不需要模型）
-python vad.py wavs                    # VAD 分句自测
-python test_agent.py                  # 端到端测试（模型 + 动作）
+python actions.py --list --selftest   # 列闭集 + 12 条分句自测
+python test_arg_clean.py              # 句末标点/语气词不得弄脏参数
+python test_rule_search.py            # 文件搜索 vs 网页搜索的边界
+python test_clauses.py                # 多指令切分
+python test_asr_correct.py            # ASR 同音/错字纠错（需 pypinyin）
+python test_launch_args.py            # .cmd 启动参数拼装
+python test_add_command.py            # 加新程序/网址不改代码（模型层需 torch）
 ```
+
+> 2026-10-22 实测（Windows + Python 3.12）：23/23、16/16、13/13、13/13、3/3、规则层 9/9 全绿。
+> 依赖 `pypinyin`；缺它时 `test_asr_correct.py` 会退化成 11/13（「直呼→知乎」这类同音纠错失效），
+> 这是依赖缺失，不是代码错。
+
+### 端到端（需要模型 / torch）
+
+```powershell
+python test_agent.py                  # 模型 + 动作
+python test_hotword.py                # 热词
+```
+
+⚠️ `test_add_command.py`、`test_agent.py`、`test_hotword.py` 的模型层会 `import torch`；
+只做规则回归的环境里 `test_add_command.py` 会打印 `[skip] 模型层跳过` 并以 0 退出。
 
 ---
 

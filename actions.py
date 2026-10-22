@@ -29,6 +29,16 @@ import urllib.parse
 import webbrowser
 from pathlib import Path
 
+# ⭐ Windows 非 UTF-8 控制台（cp1252 / cp936）打印中文或 ✅❌ 会直接
+#   UnicodeEncodeError，测试脚本一开头就崩。本仓库所有输出都是中文/符号，
+#   因此导入时统一切到 UTF-8（errors=replace 兜底；被 pytest 捕获时没有
+#   reconfigure 就跳过）。2026-10-22 实测：英文系统上 7 个 test_*.py 全崩。
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 # ⭐ 冻结（PyInstaller）后 __file__ 指向 _internal\，不是 exe 所在目录，
 #   所以配置/模型必须按 sys.executable 找。不处理的话会报
 #   FileNotFoundError: ...\dist\voice_agent\_internal\intent_config.json
@@ -464,9 +474,18 @@ def _parse_core(t, cfg, orig):
     #      file_search（标签是 open_file —— 打开分支在后面，得让它先走）；
     #      「帮我把这个文件删掉」也被抢（标签 unknown）。
     _open_pref = _match_prefix(t, cfg.triggers.get("open", []))[0]
-    _has_search = (any(x in t for x in cfg.triggers.get("web_search", []))
-                   or any(x in t for x in cfg.triggers.get("file_search", []))
-                   or any(x in t for x in cfg.triggers.get("exact_prefix", [])))
+    # ⚠️ 2026-10-22：原来这里读 cfg.triggers["web_search"]，但 web_search 已被
+    #   用户明令废弃（配置里没有这个 key）→ 闸门恒为 False，导致下面 ②c/②d
+    #   两条 file_search 规则全部变成死代码（实测「找一下文件X」「X这个文件」
+    #   全落到 unknown）。改成直接认「搜索动词」本身，不再依赖废弃的触发词表。
+    _SV = ("搜索", "搜一下", "搜搜", "搜", "查找", "查一下", "查查", "查",
+           "找一下", "找")
+    _file_marker = any(w in t for w in
+                       ("这个文件", "这个文档", "那个文件", "那个文档"))
+    _has_search = (any(x in t for x in cfg.triggers.get("file_search", []))
+                   or any(x in t for x in cfg.triggers.get("exact_prefix", []))
+                   or re.search(r"(找|搜|查)(一下|一搜|个|个儿)?文件", t) is not None
+                   or (_file_marker and any(v in t for v in _SV)))
     if not _open_pref and _has_search:
         # ②c 「X这个文件 / X那个文档」= 明确在指某个文件（语料里的 file_search 句式）
         #     ⚠️ 判据必须是【指示代词 + 文件】，不能只看「文件」二字：
@@ -476,7 +495,7 @@ def _parse_core(t, cfg, orig):
         for _w in ("这个文件", "这个文档", "那个文件", "那个文档"):
             if _w in t:
                 _arg = t.replace(_w, "")
-                _k, _r = _match_any(_arg, cfg.triggers.get("web_search", []))
+                _k, _r = _match_any(_arg, _SV)
                 return "file_search", _clean_arg(_r if _r else _arg)
         # ②d 搜索动词紧跟「文件」= 找文件（「找一下文件X」「搜个文件X」）
         #    注意「查查日志文件」「搜索配置文件」不匹配（动词和「文件」之间隔着宾语）
@@ -1636,7 +1655,9 @@ def list_commands(cfg: Config):
     lines.append("【4】参数化命令（用转写文本，不查闭集）")
     lines.append("-" * 78)
     lines.append(f"    说「打开 xxx」        （xxx 不在上面任何闭集里）→ 默认浏览器打开/搜索")
-    lines.append(f"    说「搜索 xxx」        → 默认浏览器搜索（{cfg.search.get('web_engine_name','')}）")
+    # ⚠️ 2026-10-22：web_search 已按用户要求删除，但帮助文本还在承诺这条命令，
+    #    实测「搜索python教程」→ unknown，与这里写的完全不一致。如实标注。
+    lines.append(f"    说「搜索 xxx」        → 已停用（web_search 已删除，判为 unknown，不执行）")
     lines.append(f"    说「搜索文件 xxx」    → 文件管理器搜索（范围 {cfg.search.get('file_manager_root')}）")
     lines.append(f"    说「精确查找 xxx」    → 【必须含「精确」】用转写原文搜索，不纠错")
     lines.append("")
@@ -1646,26 +1667,6 @@ def list_commands(cfg: Config):
     lines.append("")
     lines.append("=" * 78)
     return "\n".join(lines)
-
-
-if __name__ == "__main__":
-    cfg = Config(sys.argv[1] if len(sys.argv) > 1 and sys.argv[1].endswith(".json") else None)
-    if "--list" in sys.argv or len(sys.argv) == 1:
-        print(list_commands(cfg))
-    if "--selftest" in sys.argv:
-        print("\n" + "=" * 78)
-        print("  分句自测（纯规则，不需要模型）")
-        print("=" * 78)
-        cases = [
-            "启动记事本", "打开B站", "打开B站网页", "打开季度报告文件",
-            "打开github.com", "打开这个不存在的玩意儿", "搜索python教程",
-            "搜索文件季度报告", "精确查找resnet50", "今天天气怎么样",
-            "帮我打开任务管理器", "运行Blender",
-        ]
-        for c in cases:
-            it, arg = parse(c, cfg)
-            ok, msg, _ = dispatch(it, arg, cfg, dry=True)
-            print(f"  {c:24s} → {it:14s} arg={arg!r:18s} {msg}")
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -1913,3 +1914,38 @@ def game_status(cfg=None):
         return _OPENRA.probe(cfg)
     except Exception as e:
         return {"ok": False, "err": f"{type(e).__name__}: {e}"}
+
+
+# ══════════════════════════════════════════════════════════════════════
+# 命令行入口
+#
+# ⚠️ 必须放在文件末尾：`parse()` 会调用 `_game_parse()`，后者定义在本文件
+#    靠后的位置。入口若提前执行，`python actions.py --selftest` 会直接抛
+#    `NameError: name '_game_parse' is not defined`（2026-10-22 实测）。
+# ══════════════════════════════════════════════════════════════════════
+if __name__ == "__main__":
+    # Windows 非 UTF-8 控制台（cp1252/cp936）打印中文会 UnicodeEncodeError，
+    # 一启动就崩；这里统一切到 UTF-8（errors=replace 兜底，绝不因编码再挂）。
+    for _stream in (sys.stdout, sys.stderr):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
+    cfg = Config(sys.argv[1] if len(sys.argv) > 1 and sys.argv[1].endswith(".json") else None)
+    if "--list" in sys.argv or len(sys.argv) == 1:
+        print(list_commands(cfg))
+    if "--selftest" in sys.argv:
+        print("\n" + "=" * 78)
+        print("  分句自测（纯规则，不需要模型）")
+        print("=" * 78)
+        cases = [
+            "启动记事本", "打开B站", "打开B站网页", "打开季度报告文件",
+            "打开github.com", "打开这个不存在的玩意儿", "搜索python教程",
+            "搜索文件季度报告", "精确查找resnet50", "今天天气怎么样",
+            "帮我打开任务管理器", "运行Blender",
+        ]
+        for c in cases:
+            it, arg = parse(c, cfg)
+            ok, msg, _ = dispatch(it, arg, cfg, dry=True)
+            print(f"  {c:24s} → {it:14s} arg={arg!r:18s} {msg}")

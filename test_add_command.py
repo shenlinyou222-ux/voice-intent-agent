@@ -88,7 +88,14 @@ else:
     print("  找不到 tts_batch.ps1")
 
 if made:
-    from model_runner import IntentModel, read_wav
+    # ⚠️ 2026-10-22：模型层是可选项。没装 torch（只做规则回归的环境）时
+    #    这里原来直接 ModuleNotFoundError 崩掉，导致前面 9/9 的规则结果也拿不到。
+    try:
+        from model_runner import IntentModel, read_wav
+    except Exception as e:
+        print(f"  [skip] 模型层跳过（{type(e).__name__}: {e}）")
+        made = []
+if made:
     m = IntentModel(model_dir=HERE / "model", device="cpu")
     print()
     good = 0

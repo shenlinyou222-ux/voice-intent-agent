@@ -17,24 +17,28 @@ from actions import Config, parse, resolve, resolve_closed   # noqa: E402
 CFG = Config("intent_config.json")
 
 # (期望意图, 转写)  —— 全是"正确命令 + ASR 常见尾巴"
+# ⚠️ 2026-10-22：记事本 / 腾讯视频 已被有意从闭集裁剪（见 intent_config.json），
+#    原用例只会测出「闭集里没有」；这里换成仍在闭集的 任务管理器 / GitHub，
+#    测试目的（句末标点/语气词不能弄脏参数）完全不变。
 CASES = [
-    ("launch_app", "启动记事本。"),
-    ("launch_app", "启动记事本"),
-    ("launch_app", "启动记事本！"),
-    ("launch_app", "启动记事本，"),
+    ("launch_app", "启动任务管理器。"),
+    ("launch_app", "启动任务管理器"),
+    ("launch_app", "启动任务管理器！"),
+    ("launch_app", "启动任务管理器，"),
     ("launch_app", "启动媒体播放器。"),
     ("launch_app", "打开任务管理器。"),
     ("launch_app", "启动Blender。"),
     ("launch_app", "启动Blender吧。"),
     ("launch_app", "启动steam。"),
-    ("open_url", "打开腾讯视频。"),
-    ("open_url", "启动腾讯视频。"),          # 腾讯视频是网址条目 → 期望 open_url
+    ("open_url", "打开GitHub。"),
+    ("open_url", "启动GitHub。"),          # GitHub 是网址条目 → 期望 open_url
     ("open_url", "打开知乎。"),
     ("open_url", "打开B站。"),
     ("open_url", "打开b站吧。"),
-    ("open_file", "打开密码本文件。"),
-    ("open_file", "打开密码本。"),
-    ("launch_app", "把记事本打开。"),
+    ("launch_app", "打开命令行。"),
+    # ⚠️ 2026-10-22：files 闭集当前为空（密码本等条目已裁剪），
+    #    原 open_file 两条只能测出「闭集里没有」，已换成 open_url 条目。
+    ("launch_app", "把任务管理器打开。"),
     ("launch_app", "帮我打开微信。"),          # 微信不在闭集 → 应拒识（反向用例）
 ]
 
