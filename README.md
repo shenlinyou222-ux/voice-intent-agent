@@ -82,13 +82,13 @@ voice_agent\
 
 ```powershell
 python build_dataset.py      # 从配置生成训练数据（含 TTS 任务表）
-python tts_batch.ps1         # 合成语音（用 Windows SAPI）
+# 合成语音：用任意 TTS 按任务表生成 wavs/（原 tts_batch.ps1 未包含在本仓库）
 python train_intent.py       # 训练（约 15 分钟）
 python package_model.py      # 打包 bundle
 ```
 
 > 💡 只想加一个程序/网址？也可以走**增量添加**：新意图只训头的那一行 + 400 条老数据回放，
-> **0.2 秒**搞定，不用全量重训（见 `incremental_test.py`）。
+> **0.2 秒**搞定，不用全量重训。
 
 ---
 
@@ -237,7 +237,7 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
 
 # 3. 生成训练数据 → 合成语音 → 训意图头（约 15 分钟）
 python build_dataset.py
-python tts_batch.ps1
+# 合成语音：用任意 TTS 生成 wavs/（原脚本未包含）
 python train_intent.py
 python package_model.py
 
