@@ -22,6 +22,8 @@
 | `intent_index.json`、`*/profiles/*/index.json` | 派生索引，由脚本重建 |
 | 真实意图配置里的**本机绝对路径** | 见 `intent_config.json` 的 `apps[].path` |
 
+> 仓库内的 `intent_config.json` 是**脱敏示例**（条目数少于实际配置），照格式换成你自己的程序/网址即可。
+
 复现步骤见文末「复现」。
 
 ---
